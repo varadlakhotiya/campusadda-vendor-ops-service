@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recipe</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside id="sidebar" class="sidebar"></aside>
+  <main class="main">
+    <div class="topbar"><h2>Recipe / BOM</h2></div>
+
+    <div class="section form-grid">
+      <select id="vendorSelect"></select>
+      <select id="menuItemSelect"></select>
+      <select id="inventoryItemSelect"></select>
+      <input id="quantityRequired" type="number" step="0.001" placeholder="Quantity Required">
+      <button class="btn-primary" id="addIngredientBtn">Add Ingredient</button>
+      <button class="btn-secondary" id="validateRecipeBtn">Validate Recipe</button>
+    </div>
+
+    <div class="section">
+      <h3>Ingredients</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Inventory Item</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody id="ingredientsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>Recipe Validation</h3>
+      <pre id="recipeValidationBox"></pre>
+    </div>
+  </main>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/api.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/guards.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/recipe.js"></script>
+</body>
+</html>

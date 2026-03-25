@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Vendor Ops</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <div class="topbar">
+        <h2>Dashboard</h2>
+      </div>
+
+      <div class="section">
+        <label>Select Vendor</label>
+        <select id="vendorSelect"></select>
+      </div>
+
+      <div class="card-grid">
+        <div class="card"><h3>Assigned Users</h3><p id="assignedUserCount">0</p></div>
+        <div class="card"><h3>Menu Items</h3><p id="activeMenuItemCount">0</p></div>
+        <div class="card"><h3>Low Stock</h3><p id="lowStockItemCount">0</p></div>
+        <div class="card"><h3>Today Orders</h3><p id="todayOrderCount">0</p></div>
+      </div>
+
+      <div class="section" style="margin-top:20px;">
+        <h3>Recent Alerts</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recentAlertsBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/guards.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

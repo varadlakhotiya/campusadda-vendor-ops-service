@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vendors - Vendor Ops</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <div class="topbar"><h2>Vendors</h2></div>
+
+      <div class="section">
+        <h3>Create Vendor</h3>
+        <form id="vendorForm" class="form-grid">
+          <input id="vendorCode" placeholder="Vendor Code" required>
+          <input id="name" placeholder="Vendor Name" required>
+          <input id="contactName" placeholder="Contact Name">
+          <input id="contactPhone" placeholder="Contact Phone">
+          <input id="contactEmail" placeholder="Contact Email">
+          <input id="locationLabel" placeholder="Location Label">
+          <input id="campusArea" placeholder="Campus Area">
+          <input id="status" value="ACTIVE" placeholder="Status">
+          <input id="sourceSystem" value="VENDOR_OPS" placeholder="Source System">
+          <input id="externalVendorId" placeholder="External Vendor ID">
+          <textarea id="description" placeholder="Description"></textarea>
+          <button class="btn-primary" type="submit">Create Vendor</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h3>Vendor List</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Campus Area</th>
+            </tr>
+          </thead>
+          <tbody id="vendorsTableBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/guards.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/vendors.js"></script>
+</body>
+</html>
