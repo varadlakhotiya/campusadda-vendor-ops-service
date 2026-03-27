@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: campusadda_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: campusadda_vendor_ops
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - campusadda_net
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: campusadda_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - campusadda_net
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: campusadda_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - campusadda_net
+
+  backend:
+    build:
+      context: ../backend
+    container_name: campusadda_backend
+    depends_on:
+      - mysql
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_URL: jdbc:mysql://mysql:3306/campusadda_vendor_ops?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: appuser
+      DB_PASSWORD: apppass
+      JWT_SECRET: change-this-to-a-very-long-secret-key-change-this
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      APP_ML_SERVICE_BASE_URL: http://ml-service:8001
+    networks:
+      - campusadda_net
+
+  ml-service:
+    build:
+      context: ../ml-service
+    container_name: campusadda_ml_service
+    ports:
+      - "8001:8001"
+    networks:
+      - campusadda_net
+
+  dashboard:
+    build:
+      context: ../dashboard
+    container_name: campusadda_dashboard
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    networks:
+      - campusadda_net
+
+volumes:
+  mysql_data:
+
+networks:
+  campusadda_net:
