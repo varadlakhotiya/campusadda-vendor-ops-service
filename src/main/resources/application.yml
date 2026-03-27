@@ -26,4 +26,23 @@ app:
       full-name: Super Admin
       email: admin@campusadda.com
       phone: 9999999999
-      password: Admin@123
+      password: Admin@
+      
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+app:
+  kafka:
+    topics:
+      order-created: order-created
+      order-status-updated: order-status-updated
+      stock-updated: stock-updated
+      low-stock-alert-created: low-stock-alert-created
+
+  scheduler:
+    outbox-publish-delay-ms: 15000
+    daily-etl-cron: "0 5 0 * * *"      

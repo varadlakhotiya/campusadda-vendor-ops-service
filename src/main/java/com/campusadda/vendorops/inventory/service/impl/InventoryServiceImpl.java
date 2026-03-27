@@ -13,6 +13,7 @@ import com.campusadda.vendorops.inventory.repository.StockMovementRepository;
 import com.campusadda.vendorops.inventory.service.InventoryService;
 import com.campusadda.vendorops.inventory.validator.InventoryValidator;
 import com.campusadda.vendorops.inventory.validator.StockOperationValidator;
+import com.campusadda.vendorops.outbox.service.OutboxService; // ✅ NEW
 import com.campusadda.vendorops.security.SecurityUtils;
 import com.campusadda.vendorops.user.entity.User;
 import com.campusadda.vendorops.user.repository.UserRepository;
@@ -39,6 +40,8 @@ public class InventoryServiceImpl implements InventoryService {
     private final VendorValidator vendorValidator;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
+
+    private final OutboxService outboxService; // ✅ NEW
 
     @Override
     public InventoryItemResponse createInventoryItem(Long vendorId, CreateInventoryItemRequest request) {
@@ -171,5 +174,15 @@ public class InventoryServiceImpl implements InventoryService {
         movement.setEventTime(LocalDateTime.now());
 
         stockMovementRepository.save(movement);
+
+        // ✅ OUTBOX EVENT (ADDED)
+        outboxService.saveEvent(
+                "INVENTORY",
+                item.getId(),
+                "STOCK_UPDATED",
+                item.getItemCode(),
+                "{\"inventoryItemId\":" + item.getId() +
+                        ",\"currentQuantity\":\"" + item.getCurrentQuantity() + "\"}"
+        );
     }
 }
