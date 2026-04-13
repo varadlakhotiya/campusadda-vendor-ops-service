@@ -10,8 +10,10 @@ const state = {
   selectedCategoryId: null,
   cart: [],
   globalQuery: "",
-  vendorQuery: "",
   itemQuery: "",
+  ui: {
+    activeLayer: null
+  },
   tracking: {
     orderNumber: "",
     phone: "",
@@ -22,6 +24,13 @@ const state = {
 
 const els = {};
 
+const LAYERS = {
+  vendor: "vendorModal",
+  cart: "cartDrawer",
+  account: "accountDrawer",
+  tracking: "trackingDrawer"
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
   cacheElements();
   bindStaticEvents();
@@ -31,18 +40,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     renderVendorSkeletons();
     renderMenuSkeletons();
+    renderCart();
     renderTrackingState("Enter your order number and phone number to see live status updates.");
+    renderTrackingPanel(null);
     await loadVendors();
     restoreTrackingSession();
   } catch (error) {
-    showToast(error.message, "error");
+    showToast(error.message || "Unable to load vendors.", "error");
     renderMenuEmpty("We could not load the menu right now. Please try again.");
   }
 });
 
 function cacheElements() {
   [
+    "globalSearchInput",
+    "heroVendorCount",
+    "heroItemCount",
+    "heroAvgPrep",
+    "heroFeaturedMeta",
+    "heroFeaturedVendorName",
+    "heroFeaturedDescription",
+    "heroFeaturedItems",
+    "heroFeaturedTags",
+    "heroFeaturedImage",
+    "vendorsCountLabel",
     "vendorsList",
+    "vendorsCarousel",
+    "prevVendorsBtn",
+    "nextVendorsBtn",
+    "heroTrackBtn",
+    "footerTrackLink",
+    "footerAccountLink",
+    "footerCartLink",
+    "footerSavedOrdersLink",
+    "scrollToCartBtn",
+    "openAccountBtn",
+    "openTrackingBtn",
+    "backdrop",
+    "vendorModal",
+    "closeVendorModalBtn",
+    "vendorHeroImage",
+    "vendorHeroStatus",
+    "vendorHeroLocation",
     "vendorTitle",
     "vendorSubtitle",
     "vendorDescription",
@@ -51,40 +90,32 @@ function cacheElements() {
     "selectedVendorCategoriesCount",
     "selectedVendorAvgPrep",
     "categoriesRow",
+    "itemSearchInput",
+    "clearItemSearchBtn",
+    "resultCountLabel",
     "menuGrid",
-    "cartPanel",
+    "cartDrawer",
+    "closeCartBtn",
     "cartItems",
     "cartVendorInfo",
-    "cartTotal",
     "cartItemsBadge",
     "cartCountBadge",
     "cartSummaryMeta",
+    "cartTotal",
     "checkoutForm",
     "customerName",
     "customerPhone",
     "customerNotes",
     "orderResult",
-    "globalSearchInput",
-    "vendorSearchInput",
-    "itemSearchInput",
-    "clearItemSearchBtn",
-    "resultCountLabel",
-    "vendorsCountLabel",
-    "scrollToCartBtn",
-    "toastContainer",
-    "heroVendorCount",
-    "heroItemCount",
-    "heroAvgPrep",
-    "heroFeaturedVendorName",
-    "heroFeaturedMeta",
-    "heroFeaturedDescription",
-    "heroFeaturedTags",
-    "heroFeaturedItems",
+    "accountDrawer",
+    "closeAccountBtn",
+    "trackingDrawer",
+    "closeTrackingBtn",
+    "refreshTrackingBtn",
     "trackingForm",
     "trackingOrderNumber",
     "trackingPhone",
     "trackOrderBtn",
-    "refreshTrackingBtn",
     "trackingState",
     "trackingPanel",
     "trackingVendorName",
@@ -93,7 +124,8 @@ function cacheElements() {
     "trackingSteps",
     "trackingItems",
     "trackingHistory",
-    "trackingLastUpdated"
+    "trackingLastUpdated",
+    "toastContainer"
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -104,22 +136,12 @@ function bindStaticEvents() {
     state.globalQuery = normalizeText(event.target.value);
     renderVendors();
     syncSelectedVendorWithFilters();
-    renderMenuItems();
-    updateHeroPreview();
-  });
-
-  els.vendorSearchInput?.addEventListener("input", (event) => {
-    state.vendorQuery = normalizeText(event.target.value);
-    renderVendors();
-    syncSelectedVendorWithFilters();
-    renderMenuItems();
-    updateHeroPreview();
+    renderHeroPreview();
   });
 
   els.itemSearchInput?.addEventListener("input", (event) => {
     state.itemQuery = normalizeText(event.target.value);
     renderMenuItems();
-    updateHeroPreview();
   });
 
   els.clearItemSearchBtn?.addEventListener("click", () => {
@@ -128,44 +150,66 @@ function bindStaticEvents() {
     }
     state.itemQuery = "";
     renderMenuItems();
-    updateHeroPreview();
   });
 
-  els.scrollToCartBtn?.addEventListener("click", () => {
-    els.cartPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+  els.prevVendorsBtn?.addEventListener("click", () => scrollVendorCarousel(-1));
+  els.nextVendorsBtn?.addEventListener("click", () => scrollVendorCarousel(1));
+
+  els.heroTrackBtn?.addEventListener("click", () => openLayer("tracking"));
+  els.footerTrackLink?.addEventListener("click", () => openLayer("tracking"));
+  els.openTrackingBtn?.addEventListener("click", () => openLayer("tracking"));
+  els.openAccountBtn?.addEventListener("click", () => openLayer("account"));
+  els.footerAccountLink?.addEventListener("click", () => openLayer("account"));
+  els.scrollToCartBtn?.addEventListener("click", () => openLayer("cart"));
+  els.footerCartLink?.addEventListener("click", () => openLayer("cart"));
+  els.footerSavedOrdersLink?.addEventListener("click", () => {
+    openLayer("account");
+    document.getElementById("myOrdersCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  els.closeVendorModalBtn?.addEventListener("click", closeActiveLayer);
+  els.closeCartBtn?.addEventListener("click", closeActiveLayer);
+  els.closeAccountBtn?.addEventListener("click", closeActiveLayer);
+  els.closeTrackingBtn?.addEventListener("click", closeActiveLayer);
+  els.backdrop?.addEventListener("click", closeActiveLayer);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeActiveLayer();
+    }
   });
 
   els.vendorsList?.addEventListener("click", async (event) => {
-    const trigger = event.target.closest("[data-vendor-id]");
-    if (!trigger) return;
+    const card = event.target.closest("[data-vendor-id]");
+    if (!card) return;
 
-    const vendorId = Number(trigger.getAttribute("data-vendor-id"));
-    if (!vendorId || state.selectedVendor?.id === vendorId) return;
+    const vendorId = Number(card.getAttribute("data-vendor-id"));
+    if (!vendorId) return;
 
     try {
       await selectVendor(vendorId);
+      openLayer("vendor");
     } catch (error) {
-      showToast(error.message, "error");
+      showToast(error.message || "Unable to open vendor.", "error");
     }
   });
 
   els.categoriesRow?.addEventListener("click", (event) => {
-    const trigger = event.target.closest("[data-category-id]");
-    if (!trigger) return;
+    const chip = event.target.closest("[data-category-id]");
+    if (!chip) return;
 
-    const rawValue = trigger.getAttribute("data-category-id");
+    const rawValue = chip.getAttribute("data-category-id");
     state.selectedCategoryId = rawValue === "all" ? null : Number(rawValue);
     renderCategories();
     renderMenuItems();
-    updateHeroPreview();
   });
 
   els.menuGrid?.addEventListener("click", (event) => {
-    const actionButton = event.target.closest("[data-action]");
-    if (!actionButton) return;
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
 
-    const action = actionButton.getAttribute("data-action");
-    const itemId = Number(actionButton.getAttribute("data-item-id"));
+    const action = button.getAttribute("data-action");
+    const itemId = Number(button.getAttribute("data-item-id"));
     if (!itemId) return;
 
     if (action === "qty-inc") {
@@ -184,11 +228,11 @@ function bindStaticEvents() {
   });
 
   els.cartItems?.addEventListener("click", (event) => {
-    const actionButton = event.target.closest("[data-cart-action]");
-    if (!actionButton) return;
+    const button = event.target.closest("[data-cart-action]");
+    if (!button) return;
 
-    const action = actionButton.getAttribute("data-cart-action");
-    const index = Number(actionButton.getAttribute("data-index"));
+    const action = button.getAttribute("data-cart-action");
+    const index = Number(button.getAttribute("data-index"));
     if (Number.isNaN(index)) return;
 
     if (action === "inc") {
@@ -207,446 +251,62 @@ function bindStaticEvents() {
   });
 }
 
+function scrollVendorCarousel(direction) {
+  const track = els.vendorsList || els.vendorsCarousel;
+  if (!track) return;
+  const delta = Math.max(track.clientWidth * 0.72, 320) * direction;
+  track.scrollBy({ left: delta, behavior: "smooth" });
+}
+
+function setLayerState(layerName, isOpen) {
+  const id = LAYERS[layerName];
+  const panel = id ? els[id] : null;
+  if (!panel) return;
+
+  panel.classList.toggle("hidden", !isOpen);
+  panel.classList.toggle("active", isOpen);
+  panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+}
+
+function openLayer(layerName) {
+  if (!LAYERS[layerName]) return;
+
+  Object.keys(LAYERS).forEach((name) => setLayerState(name, name === layerName));
+  state.ui.activeLayer = layerName;
+  els.backdrop?.classList.remove("hidden");
+  document.body.classList.add("ui-open", "drawer-open");
+}
+
+function closeActiveLayer() {
+  Object.keys(LAYERS).forEach((name) => setLayerState(name, false));
+  state.ui.activeLayer = null;
+  els.backdrop?.classList.add("hidden");
+  document.body.classList.remove("ui-open", "drawer-open");
+}
+
 async function loadVendors() {
   const response = await CustomerApi.get("/vendors");
   state.vendors = Array.isArray(response.data) ? response.data : [];
   state.vendorMenusById = {};
   state.vendorSearchIndexById = {};
+  state.selectedVendor = null;
+  state.menu = null;
+  state.selectedCategoryId = null;
 
   if (state.vendors.length > 0) {
     await warmVendorSearchIndex();
   }
 
-  state.selectedVendor = null;
-  state.menu = null;
-  state.selectedCategoryId = null;
-
   updateHeroStats();
   renderVendors();
   renderVendorHeader();
   renderCategories();
   renderMenuItems();
-  updateHeroPreview();
+  renderHeroPreview();
 
   if (state.vendors.length === 0) {
     renderMenuEmpty("No vendors are available right now.");
-    if (els.resultCountLabel) {
-      els.resultCountLabel.textContent = "No vendors available.";
-    }
   }
-}
-
-async function selectVendor(vendorId, options = {}) {
-  const numericVendorId = Number(vendorId);
-  if (!numericVendorId) {
-    state.selectedVendor = null;
-    state.menu = null;
-    state.selectedCategoryId = null;
-    renderVendorHeader();
-    renderCategories();
-    renderMenuItems();
-    updateHeroPreview();
-    return;
-  }
-
-  if (!options.silentLoading) {
-    renderMenuSkeletons();
-  }
-
-  let menu = state.vendorMenusById[numericVendorId];
-
-  if (!menu) {
-    const response = await CustomerApi.get(`/vendors/${numericVendorId}/menu`);
-    menu = response.data || { items: [], categories: [] };
-    state.vendorMenusById[numericVendorId] = menu;
-  }
-
-  const vendor = state.vendors.find((entry) => Number(entry.id) === numericVendorId) || null;
-  if (vendor) {
-    state.vendorSearchIndexById[numericVendorId] = buildVendorSearchIndex(vendor, menu);
-  }
-
-  state.menu = menu;
-  state.selectedVendor = vendor;
-  state.selectedCategoryId = null;
-
-  renderVendors();
-  renderVendorHeader();
-  renderCategories();
-  renderMenuItems();
-  renderCart();
-  updateHeroStats();
-  updateHeroPreview();
-
-  if (!options.silentLoading && window.innerWidth <= 1140) {
-    document.getElementById("menuPanel")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
-}
-
-function renderVendors() {
-  const vendors = getFilteredVendors();
-  els.vendorsList.innerHTML = "";
-  els.vendorsCountLabel.textContent = `${vendors.length} vendor${vendors.length === 1 ? "" : "s"}`;
-
-  if (vendors.length === 0) {
-    els.vendorsList.innerHTML = `<div class="empty-state">No vendors match your search.</div>`;
-    return;
-  }
-
-  vendors.forEach((vendor) => {
-    const isActive = vendor.id === state.selectedVendor?.id;
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = `vendor-card ${isActive ? "active" : ""}`;
-    card.setAttribute("data-vendor-id", String(vendor.id));
-
-    const menu = state.vendorMenusById[Number(vendor.id)] || { items: [], categories: [] };
-    const itemCount = menu.items?.length || 0;
-    const categoryCount = menu.categories?.length || 0;
-    const avgPrep = calculateAveragePrep(menu.items || []);
-    const initials = getInitials(vendor.name);
-    const location = [vendor.locationLabel, vendor.campusArea].filter(Boolean).join(" • ") || "Campus pickup available";
-
-    const summaryLine = itemCount
-      ? `${itemCount} dish${itemCount === 1 ? "" : "es"} • ${categoryCount} categor${categoryCount === 1 ? "y" : "ies"}`
-      : "Fresh campus menu";
-
-    const prepLine = avgPrep > 0 ? `${avgPrep} min avg prep` : "Pickup ready";
-
-    card.innerHTML = `
-      <div class="vendor-card-top">
-        <div class="vendor-avatar">${escapeHtml(initials)}</div>
-        <div class="vendor-card-copy">
-          <div class="vendor-card-heading">
-            <h3>${escapeHtml(vendor.name || "Vendor")}</h3>
-            ${isActive ? '<span class="vendor-active-badge">Selected</span>' : ''}
-          </div>
-          <div class="vendor-meta-line">${escapeHtml(location)}</div>
-        </div>
-      </div>
-      <p class="vendor-card-description">${escapeHtml(vendor.description || "Fresh menu available for pickup orders.")}</p>
-      <div class="vendor-quick-stats">
-        <span class="vendor-stat-chip">${escapeHtml(summaryLine)}</span>
-        <span class="vendor-stat-chip">${escapeHtml(prepLine)}</span>
-      </div>
-      <div class="vendor-card-footer">
-        <span class="vendor-tag">Pickup</span>
-        <span class="vendor-tag">Campus ready</span>
-        <span class="vendor-tag">Live menu</span>
-      </div>
-    `;
-
-    els.vendorsList.appendChild(card);
-  });
-}
-
-function renderVendorHeader() {
-  if (!state.selectedVendor || !state.menu) {
-    els.vendorTitle.textContent = "Select a vendor";
-    els.vendorSubtitle.textContent = "";
-    els.vendorDescription.textContent = "Pick a vendor from the left to see a redesigned menu experience.";
-    els.selectedVendorItemsCount.textContent = "0";
-    els.selectedVendorCategoriesCount.textContent = "0";
-    els.selectedVendorAvgPrep.textContent = "0 min";
-    els.selectedVendorMeta.innerHTML = "";
-    return;
-  }
-
-  const vendorName = state.menu?.vendorName || state.selectedVendor?.name || "Select a vendor";
-  const subtitle = [state.menu?.locationLabel, state.menu?.campusArea].filter(Boolean).join(" • ");
-  const description = state.selectedVendor?.description || "Browse a curated menu with a polished, modern food ordering layout.";
-  const items = state.menu?.items || [];
-  const categories = state.menu?.categories || [];
-  const avgPrep = calculateAveragePrep(items);
-
-  els.vendorTitle.textContent = vendorName;
-  els.vendorSubtitle.textContent = subtitle;
-  els.vendorDescription.textContent = description;
-  els.selectedVendorItemsCount.textContent = String(items.length);
-  els.selectedVendorCategoriesCount.textContent = String(categories.length);
-  els.selectedVendorAvgPrep.textContent = `${avgPrep} min`;
-
-  els.selectedVendorMeta.innerHTML = "";
-  [
-    subtitle || "Campus pickup",
-    `${items.length} dishes available`,
-    `${categories.length} categories`,
-    `Avg prep ${avgPrep} min`
-  ].forEach((label) => {
-    const pill = document.createElement("span");
-    pill.className = "meta-pill";
-    pill.textContent = label;
-    els.selectedVendorMeta.appendChild(pill);
-  });
-}
-
-function renderCategories() {
-  if (!state.selectedVendor || !state.menu) {
-    els.categoriesRow.innerHTML = "";
-    return;
-  }
-
-  const categories = state.menu?.categories || [];
-  els.categoriesRow.innerHTML = "";
-
-  const allChip = document.createElement("button");
-  allChip.type = "button";
-  allChip.className = `category-chip ${state.selectedCategoryId === null ? "active" : ""}`;
-  allChip.setAttribute("data-category-id", "all");
-  allChip.textContent = "All";
-  els.categoriesRow.appendChild(allChip);
-
-  categories.forEach((category) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = `category-chip ${state.selectedCategoryId === category.id ? "active" : ""}`;
-    chip.setAttribute("data-category-id", String(category.id));
-    chip.textContent = category.categoryName;
-    els.categoriesRow.appendChild(chip);
-  });
-}
-
-function renderMenuItems() {
-  const items = getFilteredMenuItems();
-  const totalItems = state.menu?.items?.length || 0;
-  els.menuGrid.innerHTML = "";
-
-  if (!state.selectedVendor || !state.menu) {
-    renderMenuEmpty("Select a vendor to see the menu.");
-    els.resultCountLabel.textContent = "No vendor selected.";
-    return;
-  }
-
-  els.resultCountLabel.textContent = items.length === totalItems
-    ? `Showing all ${items.length} dishes`
-    : `Showing ${items.length} of ${totalItems} dishes`;
-
-  if (items.length === 0) {
-    renderMenuEmpty("No menu items match your search or selected category.");
-    return;
-  }
-
-  items.forEach((item, index) => {
-    const isUnavailable = item.isAvailable === false;
-    const card = document.createElement("article");
-    card.className = `menu-card animate-up ${isUnavailable ? "unavailable" : ""}`;
-    card.style.animationDelay = `${Math.min(index * 40, 240)}ms`;
-
-    const imageUrl = item.primaryImageUrl || `https://placehold.co/800x600/ede9fe/4338ca?text=${encodeURIComponent(item.itemName || "Dish")}`;
-    const foodBadge = item.isVeg ? "Veg" : "Non-Veg";
-    const price = formatCurrency(item.price);
-    const prep = item.prepTimeMinutes ? `${item.prepTimeMinutes} min prep` : "Freshly prepared";
-    const category = getCategoryName(item.categoryId);
-    const actionLabel = isUnavailable ? "Unavailable" : "Add";
-    const availabilityLabel = isUnavailable ? "Currently unavailable" : "Pickup ready";
-    const disabledAttribute = isUnavailable ? "disabled" : "";
-
-    card.innerHTML = `
-      <div class="menu-card-media">
-        <img src="${escapeAttribute(imageUrl)}" alt="${escapeAttribute(item.itemName || "Menu Item")}" loading="lazy" />
-        <div class="media-overlay">
-          <span class="item-type-badge">${foodBadge}</span>
-        </div>
-      </div>
-      <div class="menu-card-body">
-        <div class="menu-card-heading">
-          <div>
-            <div class="menu-card-kicker">${escapeHtml(category)}</div>
-            <h3>${escapeHtml(item.itemName || "Menu Item")}</h3>
-          </div>
-          <div class="price">${price}</div>
-        </div>
-        <div class="menu-description">${escapeHtml(item.description || "Tasty campus special prepared on order.")}</div>
-        <div class="menu-meta-row">
-          <span class="vendor-tag">${escapeHtml(foodBadge)}</span>
-          <span class="vendor-tag">${escapeHtml(prep)}</span>
-          <span class="vendor-tag">${escapeHtml(availabilityLabel)}</span>
-        </div>
-        <div class="menu-card-actions">
-          <div class="quantity-stepper">
-            <button type="button" class="qty-button" data-action="qty-dec" data-item-id="${item.id}" ${disabledAttribute}>−</button>
-            <input id="menuQty-${item.id}" type="number" min="1" value="1" ${disabledAttribute} />
-            <button type="button" class="qty-button" data-action="qty-inc" data-item-id="${item.id}" ${disabledAttribute}>+</button>
-          </div>
-          <button type="button" class="btn-primary" data-action="add-to-cart" data-item-id="${item.id}" ${disabledAttribute}>${actionLabel}</button>
-        </div>
-      </div>
-    `;
-
-    els.menuGrid.appendChild(card);
-  });
-}
-
-function renderCart() {
-  const cart = state.cart;
-  els.cartItems.innerHTML = "";
-
-  if (cart.length === 0) {
-    els.cartVendorInfo.textContent = "Your cart is empty. Add a few dishes to get started.";
-    els.cartItems.innerHTML = `<div class="empty-state">No dishes added yet.</div>`;
-    els.cartTotal.textContent = "₹0.00";
-    els.cartItemsBadge.textContent = "0 items";
-    els.cartCountBadge.textContent = "0";
-    els.cartSummaryMeta.innerHTML = "";
-    return;
-  }
-
-  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const total = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const estimatedPrep = cart.reduce((sum, item) => sum + (Number(item.prepTimeMinutes) || 0), 0) || calculateAveragePrep(state.menu?.items || []);
-
-  els.cartVendorInfo.textContent = `Ordering from ${cart[0].vendorName}`;
-  els.cartItemsBadge.textContent = `${itemCount} item${itemCount === 1 ? "" : "s"}`;
-  els.cartCountBadge.textContent = String(itemCount);
-  els.cartTotal.textContent = formatCurrency(total);
-  els.cartSummaryMeta.innerHTML = `
-    <span class="cart-summary-pill">${itemCount} item${itemCount === 1 ? "" : "s"}</span>
-    <span class="cart-summary-pill">Estimated prep ${estimatedPrep} min</span>
-  `;
-
-  cart.forEach((item, index) => {
-    const row = document.createElement("div");
-    row.className = "cart-item animate-up";
-    row.style.animationDelay = `${Math.min(index * 40, 180)}ms`;
-    row.innerHTML = `
-      <div class="cart-item-header">
-        <div>
-          <strong>${escapeHtml(item.itemName)}</strong>
-          <div class="muted">${formatCurrency(item.unitPrice)} each</div>
-        </div>
-        <div class="cart-item-price">${formatCurrency(item.unitPrice * item.quantity)}</div>
-      </div>
-      <div class="cart-item-footer">
-        <div class="cart-item-qty">
-          <button type="button" class="qty-button" data-cart-action="dec" data-index="${index}">−</button>
-          <span>${item.quantity}</span>
-          <button type="button" class="qty-button" data-cart-action="inc" data-index="${index}">+</button>
-        </div>
-        <button type="button" class="remove-link" data-cart-action="remove" data-index="${index}">Remove</button>
-      </div>
-    `;
-    els.cartItems.appendChild(row);
-  });
-}
-
-function renderVendorSkeletons() {
-  if (!els.vendorsList) return;
-  els.vendorsList.innerHTML = Array.from({ length: 4 }, () => `
-    <div class="vendor-skeleton skeleton-card">
-      <div class="skeleton-avatar skeleton-card"></div>
-      <div class="skeleton-line md"></div>
-      <div class="skeleton-line sm"></div>
-      <div class="skeleton-line lg"></div>
-      <div class="skeleton-line md"></div>
-    </div>
-  `).join("");
-}
-
-function renderMenuSkeletons() {
-  if (!els.menuGrid) return;
-  els.menuGrid.innerHTML = Array.from({ length: 6 }, () => `
-    <div class="menu-skeleton skeleton-card">
-      <div class="skeleton-block"></div>
-      <div class="skeleton-line md"></div>
-      <div class="skeleton-line lg" style="margin-top: 12px;"></div>
-      <div class="skeleton-line md" style="margin-top: 10px;"></div>
-      <div class="skeleton-line sm" style="margin-top: 18px;"></div>
-    </div>
-  `).join("");
-}
-
-function renderMenuEmpty(message) {
-  els.menuGrid.innerHTML = `<div class="empty-state">${escapeHtml(message)}</div>`;
-}
-
-function updateHeroStats() {
-  const totalVendors = state.vendors.length;
-  const allMenus = Object.values(state.vendorMenusById || {});
-  const allItems = allMenus.flatMap((menu) => menu?.items || []);
-  const totalItems = allItems.length;
-  const avgPrep = calculateAveragePrep(allItems);
-
-  els.heroVendorCount.textContent = String(totalVendors);
-  els.heroItemCount.textContent = String(totalItems || state.menu?.items?.length || 0);
-  els.heroAvgPrep.textContent = `${avgPrep || calculateAveragePrep(state.menu?.items || [])} min`;
-}
-
-function updateHeroPreview() {
-  const vendor = state.selectedVendor;
-  const items = getFilteredMenuItems().slice(0, 3);
-  const categories = state.menu?.categories || [];
-
-  els.heroFeaturedVendorName.textContent = vendor?.name || "CampusAdda Preview";
-  els.heroFeaturedMeta.textContent = vendor
-    ? [vendor.locationLabel, vendor.campusArea].filter(Boolean).join(" • ") || "Campus pickup ready"
-    : "Choose a vendor to preview menu highlights";
-  els.heroFeaturedDescription.textContent = vendor?.description || "Smooth browsing, elegant cards, premium colors, and stronger hierarchy.";
-
-  els.heroFeaturedTags.innerHTML = "";
-  (vendor
-    ? [
-        `${state.menu?.items?.length || 0} dishes`,
-        `${categories.length} categories`,
-        `Avg prep ${calculateAveragePrep(state.menu?.items || [])} min`
-      ]
-    : ["Modern UI", "Animated interactions", "Premium layout"]
-  ).forEach((tag) => {
-    const pill = document.createElement("span");
-    pill.className = "meta-pill";
-    pill.textContent = tag;
-    els.heroFeaturedTags.appendChild(pill);
-  });
-
-  els.heroFeaturedItems.innerHTML = "";
-  if (!items.length) {
-    els.heroFeaturedItems.innerHTML = `
-      <div class="mini-menu-item">
-        <div>
-          <strong>Start exploring</strong>
-          <span>Pick a vendor and search for dishes you want to feature here.</span>
-        </div>
-        <div class="mini-price">Live</div>
-      </div>
-    `;
-    return;
-  }
-
-  items.forEach((item) => {
-    const preview = document.createElement("div");
-    preview.className = "mini-menu-item";
-    preview.innerHTML = `
-      <div>
-        <strong>${escapeHtml(item.itemName)}</strong>
-        <span>${escapeHtml(getCategoryName(item.categoryId))} • ${escapeHtml(item.prepTimeMinutes ? `${item.prepTimeMinutes} min prep` : "Freshly prepared")}</span>
-      </div>
-      <div class="mini-price">${formatCurrency(item.price)}</div>
-    `;
-    els.heroFeaturedItems.appendChild(preview);
-  });
-}
-
-function getFilteredVendors() {
-  const queryParts = [state.globalQuery, state.vendorQuery]
-    .filter(Boolean)
-    .join(" ")
-    .split(" ")
-    .filter(Boolean);
-
-  if (!queryParts.length) {
-    return state.vendors;
-  }
-
-  return state.vendors.filter((vendor) => {
-    const vendorId = Number(vendor.id);
-    const haystack =
-      state.vendorSearchIndexById[vendorId] ||
-      buildVendorSearchIndex(vendor, state.vendorMenusById[vendorId]);
-
-    return queryParts.every((word) => haystack.includes(word));
-  });
 }
 
 async function warmVendorSearchIndex() {
@@ -666,36 +326,517 @@ async function warmVendorSearchIndex() {
   );
 }
 
-function buildVendorSearchIndex(vendor, menu) {
-  const categoryNames = (menu?.categories || []).map((entry) => entry.categoryName);
-  const itemText = (menu?.items || []).flatMap((item) => [
-    item.itemName,
-    item.description
-  ]);
-
-  return normalizeText(
-    [
-      vendor?.name,
-      vendor?.locationLabel,
-      vendor?.campusArea,
-      vendor?.description,
-      ...categoryNames,
-      ...itemText
-    ]
-      .filter(Boolean)
-      .join(" ")
-  );
-}
-
-function syncSelectedVendorWithFilters() {
-  if (!state.selectedVendor) {
+async function selectVendor(vendorId) {
+  const numericVendorId = Number(vendorId);
+  if (!numericVendorId) {
+    state.selectedVendor = null;
+    state.menu = null;
+    state.selectedCategoryId = null;
+    renderVendorHeader();
+    renderCategories();
+    renderMenuItems();
+    renderHeroPreview();
     return;
   }
 
-  const visibleVendorIds = new Set(
-    getFilteredVendors().map((vendor) => Number(vendor.id))
-  );
+  renderMenuSkeletons();
 
+  let menu = state.vendorMenusById[numericVendorId];
+  if (!menu) {
+    const response = await CustomerApi.get(`/vendors/${numericVendorId}/menu`);
+    menu = response.data || { items: [], categories: [] };
+    state.vendorMenusById[numericVendorId] = menu;
+  }
+
+  const vendor = state.vendors.find((entry) => Number(entry.id) === numericVendorId) || null;
+  if (vendor) {
+    state.vendorSearchIndexById[numericVendorId] = buildVendorSearchIndex(vendor, menu);
+  }
+
+  state.selectedVendor = vendor;
+  state.menu = menu;
+  state.selectedCategoryId = null;
+  state.itemQuery = "";
+
+  if (els.itemSearchInput) {
+    els.itemSearchInput.value = "";
+  }
+
+  renderVendors();
+  renderVendorHeader();
+  renderCategories();
+  renderMenuItems();
+  renderHeroPreview();
+  renderCart();
+}
+
+function renderVendors() {
+  const vendors = getFilteredVendors();
+  if (!els.vendorsList) return;
+
+  els.vendorsList.innerHTML = "";
+  if (els.vendorsCountLabel) {
+    els.vendorsCountLabel.textContent = `${vendors.length} vendor${vendors.length === 1 ? "" : "s"}`;
+  }
+
+  if (vendors.length === 0) {
+    els.vendorsList.innerHTML = `<div class="empty-state-card"><strong>No vendors match your search.</strong><div class="muted">Try a different keyword.</div></div>`;
+    return;
+  }
+
+  vendors.forEach((vendor, index) => {
+    const isActive = Number(vendor.id) === Number(state.selectedVendor?.id);
+    const menu = state.vendorMenusById[Number(vendor.id)] || { items: [], categories: [] };
+    const itemCount = menu.items?.length || 0;
+    const categoryCount = menu.categories?.length || 0;
+    const avgPrep = calculateAveragePrep(menu.items || []);
+    const coverImage = getVendorCoverImage(vendor, menu);
+    const location = [vendor.locationLabel, vendor.campusArea].filter(Boolean).join(" • ") || "Campus pickup available";
+    const rating = getVendorDisplayRating(vendor, menu);
+    const description = vendor.description || "Fresh campus menu with pickup-friendly ordering.";
+
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `vendor-card reveal-up ${isActive ? "active" : ""}`;
+    card.style.animationDelay = `${Math.min(index * 40, 200)}ms`;
+    card.setAttribute("data-vendor-id", String(vendor.id));
+
+    card.innerHTML = `
+      <div class="vendor-card-cover">
+        <img src="${escapeAttribute(coverImage)}" alt="${escapeAttribute(vendor.name || "Vendor")}" loading="lazy" />
+        <div class="vendor-card-topline">
+          <span class="vendor-card-badge">${isActive ? "Selected" : "Live menu"}</span>
+          <span class="vendor-card-rating">★ ${escapeHtml(rating)}</span>
+        </div>
+      </div>
+      <div class="vendor-card-content">
+        <div class="vendor-card-copy">
+          <h3>${escapeHtml(vendor.name || "Vendor")}</h3>
+          <div class="vendor-location-line">${escapeHtml(location)}</div>
+          <p>${escapeHtml(description)}</p>
+        </div>
+        <div class="vendor-card-meta">
+          <span class="vendor-stat">${escapeHtml(`${itemCount} dishes`)}</span>
+          <span class="vendor-stat">${escapeHtml(`${categoryCount} categories`)}</span>
+          <span class="vendor-stat">${escapeHtml(avgPrep ? `${avgPrep} min prep` : "Pickup ready")}</span>
+        </div>
+        <div class="vendor-card-tags">
+          <span class="vendor-tag">Campus ready</span>
+          <span class="vendor-tag">Quick browse</span>
+          <span class="vendor-tag">Student favourite</span>
+        </div>
+      </div>
+    `;
+
+    els.vendorsList.appendChild(card);
+  });
+}
+
+function renderVendorHeader() {
+  if (!state.selectedVendor || !state.menu) {
+    if (els.vendorHeroImage) {
+      els.vendorHeroImage.src = "https://placehold.co/1400x900/ffedd5/9a3412?text=Vendor+Menu";
+    }
+    if (els.vendorHeroStatus) {
+      els.vendorHeroStatus.textContent = "Campus pickup";
+    }
+    if (els.vendorHeroLocation) {
+      els.vendorHeroLocation.textContent = "Choose a vendor to begin";
+    }
+    if (els.vendorTitle) {
+      els.vendorTitle.textContent = "Select a vendor";
+    }
+    if (els.vendorSubtitle) {
+      els.vendorSubtitle.textContent = "";
+    }
+    if (els.vendorDescription) {
+      els.vendorDescription.textContent = "Pick a vendor card to open a full menu experience.";
+    }
+    if (els.selectedVendorItemsCount) {
+      els.selectedVendorItemsCount.textContent = "0";
+    }
+    if (els.selectedVendorCategoriesCount) {
+      els.selectedVendorCategoriesCount.textContent = "0";
+    }
+    if (els.selectedVendorAvgPrep) {
+      els.selectedVendorAvgPrep.textContent = "0 min";
+    }
+    if (els.selectedVendorMeta) {
+      els.selectedVendorMeta.innerHTML = "";
+    }
+    return;
+  }
+
+  const items = state.menu.items || [];
+  const categories = state.menu.categories || [];
+  const avgPrep = calculateAveragePrep(items);
+  const subtitle = [state.menu.locationLabel, state.menu.campusArea].filter(Boolean).join(" • ");
+  const heroLocation = subtitle || [state.selectedVendor.locationLabel, state.selectedVendor.campusArea].filter(Boolean).join(" • ") || "Campus pickup";
+
+  if (els.vendorHeroImage) {
+    els.vendorHeroImage.src = getVendorCoverImage(state.selectedVendor, state.menu);
+  }
+  if (els.vendorHeroStatus) {
+    els.vendorHeroStatus.textContent = items.length ? `${items.length} dishes available` : "Live menu";
+  }
+  if (els.vendorHeroLocation) {
+    els.vendorHeroLocation.textContent = heroLocation;
+  }
+  if (els.vendorTitle) {
+    els.vendorTitle.textContent = state.menu.vendorName || state.selectedVendor.name || "Vendor";
+  }
+  if (els.vendorSubtitle) {
+    els.vendorSubtitle.textContent = heroLocation;
+  }
+  if (els.vendorDescription) {
+    els.vendorDescription.textContent = state.selectedVendor.description || "Browse the full menu in a cleaner, more premium ordering experience.";
+  }
+  if (els.selectedVendorItemsCount) {
+    els.selectedVendorItemsCount.textContent = String(items.length);
+  }
+  if (els.selectedVendorCategoriesCount) {
+    els.selectedVendorCategoriesCount.textContent = String(categories.length);
+  }
+  if (els.selectedVendorAvgPrep) {
+    els.selectedVendorAvgPrep.textContent = `${avgPrep} min`;
+  }
+
+  if (els.selectedVendorMeta) {
+    els.selectedVendorMeta.innerHTML = "";
+    [
+      heroLocation,
+      `${items.length} dishes available`,
+      `${categories.length} categories`,
+      avgPrep ? `Avg prep ${avgPrep} min` : "Freshly prepared"
+    ].filter(Boolean).forEach((label) => {
+      const span = document.createElement("span");
+      span.className = "meta-pill";
+      span.textContent = label;
+      els.selectedVendorMeta.appendChild(span);
+    });
+  }
+}
+
+function renderCategories() {
+  if (!els.categoriesRow) return;
+
+  if (!state.selectedVendor || !state.menu) {
+    els.categoriesRow.innerHTML = "";
+    return;
+  }
+
+  const categories = state.menu.categories || [];
+  els.categoriesRow.innerHTML = "";
+
+  const allChip = document.createElement("button");
+  allChip.type = "button";
+  allChip.className = `category-chip ${state.selectedCategoryId === null ? "active" : ""}`;
+  allChip.setAttribute("data-category-id", "all");
+  allChip.textContent = "All";
+  els.categoriesRow.appendChild(allChip);
+
+  categories.forEach((category) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = `category-chip ${Number(state.selectedCategoryId) === Number(category.id) ? "active" : ""}`;
+    chip.setAttribute("data-category-id", String(category.id));
+    chip.textContent = category.categoryName || "Category";
+    els.categoriesRow.appendChild(chip);
+  });
+}
+
+function renderMenuItems() {
+  if (!els.menuGrid) return;
+
+  const items = getFilteredMenuItems();
+  const totalItems = state.menu?.items?.length || 0;
+  els.menuGrid.innerHTML = "";
+
+  if (!state.selectedVendor || !state.menu) {
+    renderMenuEmpty("Select a vendor to see the menu.");
+    if (els.resultCountLabel) {
+      els.resultCountLabel.textContent = "No vendor selected.";
+    }
+    return;
+  }
+
+  if (els.resultCountLabel) {
+    els.resultCountLabel.textContent = items.length === totalItems
+      ? `Showing all ${items.length} dishes`
+      : `Showing ${items.length} of ${totalItems} dishes`;
+  }
+
+  if (items.length === 0) {
+    renderMenuEmpty("No menu items match your search or selected category.");
+    return;
+  }
+
+  items.forEach((item, index) => {
+    const isUnavailable = item.isAvailable === false;
+    const imageUrl = item.primaryImageUrl || getVendorCoverImage(state.selectedVendor, state.menu, item.itemName || "Dish");
+    const foodBadge = item.isVeg ? "Veg" : "Non-Veg";
+    const prepLabel = item.prepTimeMinutes ? `${item.prepTimeMinutes} min prep` : "Freshly prepared";
+    const category = getCategoryName(item.categoryId);
+
+    const card = document.createElement("article");
+    card.className = `menu-card reveal-up ${isUnavailable ? "unavailable" : ""}`;
+    card.style.animationDelay = `${Math.min(index * 35, 180)}ms`;
+
+    card.innerHTML = `
+      <div class="menu-card-media">
+        <img src="${escapeAttribute(imageUrl)}" alt="${escapeAttribute(item.itemName || "Dish")}" loading="lazy" />
+        <div class="menu-card-badge-row">
+          <span class="item-type-badge">${escapeHtml(foodBadge)}</span>
+          <span class="availability-badge">${escapeHtml(isUnavailable ? "Unavailable" : "Pickup ready")}</span>
+        </div>
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-head">
+          <div>
+            <div class="menu-card-kicker">${escapeHtml(category)}</div>
+            <h3>${escapeHtml(item.itemName || "Menu Item")}</h3>
+          </div>
+          <div class="menu-price">${formatCurrency(item.price)}</div>
+        </div>
+        <p class="menu-description">${escapeHtml(item.description || "A student-friendly menu option prepared on order.")}</p>
+        <div class="menu-meta-row">
+          <span class="vendor-tag">${escapeHtml(prepLabel)}</span>
+          <span class="vendor-tag">${escapeHtml(foodBadge)}</span>
+          <span class="vendor-tag">${escapeHtml(item.trackInventory === false ? "Always available" : "Live availability")}</span>
+        </div>
+        <div class="menu-card-actions">
+          <div class="quantity-stepper">
+            <button type="button" class="qty-button" data-action="qty-dec" data-item-id="${item.id}" ${isUnavailable ? "disabled" : ""}>−</button>
+            <input id="menuQty-${item.id}" type="number" min="1" value="1" ${isUnavailable ? "disabled" : ""} />
+            <button type="button" class="qty-button" data-action="qty-inc" data-item-id="${item.id}" ${isUnavailable ? "disabled" : ""}>+</button>
+          </div>
+          <button type="button" class="primary-btn btn-full" data-action="add-to-cart" data-item-id="${item.id}" ${isUnavailable ? "disabled" : ""}>${isUnavailable ? "Unavailable" : "Add to cart"}</button>
+        </div>
+      </div>
+    `;
+
+    els.menuGrid.appendChild(card);
+  });
+}
+
+function renderCart() {
+  if (!els.cartItems) return;
+
+  const cart = state.cart;
+  els.cartItems.innerHTML = "";
+
+  if (!cart.length) {
+    if (els.cartVendorInfo) {
+      els.cartVendorInfo.textContent = "Your cart is empty. Add a few dishes to get started.";
+    }
+    els.cartItems.innerHTML = `<div class="empty-state">No dishes added yet.</div>`;
+    if (els.cartTotal) {
+      els.cartTotal.textContent = "₹0.00";
+    }
+    if (els.cartItemsBadge) {
+      els.cartItemsBadge.textContent = "0 items";
+    }
+    if (els.cartCountBadge) {
+      els.cartCountBadge.textContent = "0";
+    }
+    if (els.cartSummaryMeta) {
+      els.cartSummaryMeta.innerHTML = "";
+    }
+    return;
+  }
+
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  const estimatedPrep = cart.reduce((sum, item) => sum + (Number(item.prepTimeMinutes) || 0), 0) || calculateAveragePrep(state.menu?.items || []);
+
+  if (els.cartVendorInfo) {
+    els.cartVendorInfo.textContent = `Ordering from ${cart[0].vendorName}`;
+  }
+  if (els.cartItemsBadge) {
+    els.cartItemsBadge.textContent = `${itemCount} item${itemCount === 1 ? "" : "s"}`;
+  }
+  if (els.cartCountBadge) {
+    els.cartCountBadge.textContent = String(itemCount);
+  }
+  if (els.cartTotal) {
+    els.cartTotal.textContent = formatCurrency(total);
+  }
+  if (els.cartSummaryMeta) {
+    els.cartSummaryMeta.innerHTML = `
+      <span class="summary-pill">${itemCount} item${itemCount === 1 ? "" : "s"}</span>
+      <span class="summary-pill">Estimated prep ${estimatedPrep} min</span>
+    `;
+  }
+
+  cart.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "cart-item reveal-up";
+    row.style.animationDelay = `${Math.min(index * 35, 160)}ms`;
+    row.innerHTML = `
+      <div class="cart-item-header">
+        <div>
+          <strong>${escapeHtml(item.itemName)}</strong>
+          <div class="cart-item-meta">${formatCurrency(item.unitPrice)} each</div>
+        </div>
+        <div class="cart-item-price">${formatCurrency(item.unitPrice * item.quantity)}</div>
+      </div>
+      <div class="cart-item-footer">
+        <div class="cart-item-qty">
+          <button type="button" class="qty-button" data-cart-action="dec" data-index="${index}">−</button>
+          <span>${item.quantity}</span>
+          <button type="button" class="qty-button" data-cart-action="inc" data-index="${index}">+</button>
+        </div>
+        <button type="button" class="remove-link" data-cart-action="remove" data-index="${index}">Remove</button>
+      </div>
+    `;
+    els.cartItems.appendChild(row);
+  });
+}
+
+function renderVendorSkeletons() {
+  if (!els.vendorsList) return;
+  els.vendorsList.innerHTML = Array.from({ length: 4 }, (_, index) => `
+    <div class="empty-state-card reveal-up" style="animation-delay:${index * 40}ms">
+      <strong>Loading vendors...</strong>
+      <div class="muted">Fetching live vendor menus and images.</div>
+    </div>
+  `).join("");
+}
+
+function renderMenuSkeletons() {
+  if (!els.menuGrid) return;
+  els.menuGrid.innerHTML = Array.from({ length: 4 }, (_, index) => `
+    <div class="empty-state-card reveal-up" style="animation-delay:${index * 30}ms">
+      <strong>Loading menu...</strong>
+      <div class="muted">Preparing a premium vendor menu view.</div>
+    </div>
+  `).join("");
+}
+
+function renderMenuEmpty(message) {
+  if (!els.menuGrid) return;
+  els.menuGrid.innerHTML = `<div class="empty-state-card"><strong>${escapeHtml(message)}</strong><div class="muted">Choose another vendor or search differently.</div></div>`;
+}
+
+function updateHeroStats() {
+  const vendorCount = state.vendors.length;
+  const allMenus = Object.values(state.vendorMenusById);
+  const menuItemCount = allMenus.reduce((sum, menu) => sum + (menu.items?.length || 0), 0);
+  const prepValues = allMenus.flatMap((menu) => (menu.items || []).map((item) => Number(item.prepTimeMinutes)).filter((value) => Number.isFinite(value) && value > 0));
+  const averagePrep = prepValues.length ? Math.round(prepValues.reduce((sum, value) => sum + value, 0) / prepValues.length) : 0;
+
+  if (els.heroVendorCount) {
+    els.heroVendorCount.textContent = String(vendorCount);
+  }
+  if (els.heroItemCount) {
+    els.heroItemCount.textContent = String(menuItemCount);
+  }
+  if (els.heroAvgPrep) {
+    els.heroAvgPrep.textContent = `${averagePrep} min`;
+  }
+}
+
+function renderHeroPreview() {
+  const filteredVendors = getFilteredVendors();
+  const vendor = state.selectedVendor || null;
+  const menu = vendor ? state.vendorMenusById[Number(vendor.id)] || state.menu || { items: [], categories: [] } : null;
+  const items = (menu?.items || []).slice(0, 3);
+  const categories = menu?.categories || [];
+
+  if (els.heroFeaturedVendorName) {
+    els.heroFeaturedVendorName.textContent = vendor?.name || "CampusAdda Preview";
+  }
+  if (els.heroFeaturedMeta) {
+    els.heroFeaturedMeta.textContent = vendor
+      ? ([vendor.locationLabel, vendor.campusArea].filter(Boolean).join(" • ") || "Campus pickup available")
+      : "Pick any vendor card to preview its dishes here";
+  }
+  if (els.heroFeaturedDescription) {
+    els.heroFeaturedDescription.textContent = vendor?.description || "A warmer food-app style with cleaner hierarchy, quieter drawers, and a smoother ordering flow for students.";
+  }
+  if (els.heroFeaturedImage) {
+    els.heroFeaturedImage.src = vendor ? getVendorCoverImage(vendor, menu) : "https://placehold.co/1200x800/ffedd5/9a3412?text=CampusAdda+Preview";
+  }
+
+  if (els.heroFeaturedTags) {
+    els.heroFeaturedTags.innerHTML = "";
+    (vendor
+      ? [
+          `${menu?.items?.length || 0} dishes`,
+          `${categories.length} categories`,
+          `${calculateAveragePrep(menu?.items || []) || 0} min avg prep`
+        ]
+      : ["Warm palette", "Clean drawers", "Better cart flow"])
+      .forEach((tag) => {
+        const span = document.createElement("span");
+        span.className = "meta-pill";
+        span.textContent = tag;
+        els.heroFeaturedTags.appendChild(span);
+      });
+  }
+
+  if (els.heroFeaturedItems) {
+    els.heroFeaturedItems.innerHTML = "";
+
+    if (!items.length) {
+      els.heroFeaturedItems.innerHTML = `
+        <div class="hero-preview-item">
+          <div>
+            <strong>Start exploring</strong>
+            <div class="muted">Select a vendor to preview dishes here.</div>
+          </div>
+          <div class="hero-preview-price">Live</div>
+        </div>
+      `;
+      return;
+    }
+
+    items.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "hero-preview-item";
+      card.innerHTML = `
+        <div>
+          <strong>${escapeHtml(item.itemName || "Menu Item")}</strong>
+          <div class="muted">${escapeHtml(getCategoryNameFromMenu(item.categoryId, menu))} • ${escapeHtml(item.prepTimeMinutes ? `${item.prepTimeMinutes} min prep` : "Freshly prepared")}</div>
+        </div>
+        <div class="hero-preview-price">${formatCurrency(item.price)}</div>
+      `;
+      els.heroFeaturedItems.appendChild(card);
+    });
+  }
+}
+
+function getFilteredVendors() {
+  const queryParts = state.globalQuery.split(" ").filter(Boolean);
+  if (!queryParts.length) {
+    return state.vendors;
+  }
+
+  return state.vendors.filter((vendor) => {
+    const vendorId = Number(vendor.id);
+    const haystack = state.vendorSearchIndexById[vendorId] || buildVendorSearchIndex(vendor, state.vendorMenusById[vendorId]);
+    return queryParts.every((word) => haystack.includes(word));
+  });
+}
+
+function buildVendorSearchIndex(vendor, menu) {
+  const categoryNames = (menu?.categories || []).map((entry) => entry.categoryName);
+  const itemText = (menu?.items || []).flatMap((item) => [item.itemName, item.description]);
+
+  return normalizeText([
+    vendor?.name,
+    vendor?.locationLabel,
+    vendor?.campusArea,
+    vendor?.description,
+    ...categoryNames,
+    ...itemText
+  ].filter(Boolean).join(" "));
+}
+
+function syncSelectedVendorWithFilters() {
+  if (!state.selectedVendor) return;
+
+  const visibleVendorIds = new Set(getFilteredVendors().map((vendor) => Number(vendor.id)));
   if (visibleVendorIds.has(Number(state.selectedVendor.id))) {
     return;
   }
@@ -703,19 +844,21 @@ function syncSelectedVendorWithFilters() {
   state.selectedVendor = null;
   state.menu = null;
   state.selectedCategoryId = null;
+  state.itemQuery = "";
+  if (els.itemSearchInput) {
+    els.itemSearchInput.value = "";
+  }
 
   renderVendorHeader();
   renderCategories();
   renderMenuItems();
-  updateHeroPreview();
 }
-
 
 function getFilteredMenuItems() {
   const menu = state.menu;
   if (!menu) return [];
 
-  const queryParts = [state.globalQuery, state.itemQuery].filter(Boolean).join(" ").split(" ").filter(Boolean);
+  const queryParts = state.itemQuery.split(" ").filter(Boolean);
 
   return (menu.items || []).filter((item) => {
     const matchesCategory = state.selectedCategoryId === null || Number(item.categoryId) === Number(state.selectedCategoryId);
@@ -723,7 +866,7 @@ function getFilteredMenuItems() {
       return false;
     }
 
-    if (queryParts.length === 0) {
+    if (!queryParts.length) {
       return true;
     }
 
@@ -738,14 +881,17 @@ function getFilteredMenuItems() {
 }
 
 function getCategoryName(categoryId) {
-  const category = (state.menu?.categories || []).find((entry) => Number(entry.id) === Number(categoryId));
+  return getCategoryNameFromMenu(categoryId, state.menu);
+}
+
+function getCategoryNameFromMenu(categoryId, menu) {
+  const category = (menu?.categories || []).find((entry) => Number(entry.id) === Number(categoryId));
   return category?.categoryName || "Menu";
 }
 
 function updateMenuQuantityInput(itemId, delta) {
   const input = document.getElementById(`menuQty-${itemId}`);
   if (!input) return;
-
   const current = Math.max(1, Number(input.value) || 1);
   input.value = String(Math.max(1, current + delta));
 }
@@ -753,7 +899,7 @@ function updateMenuQuantityInput(itemId, delta) {
 function addToCart(menuItemId) {
   hideOrderResult();
   const item = (state.menu?.items || []).find((entry) => Number(entry.id) === Number(menuItemId));
-  if (!item) return;
+  if (!item || !state.menu) return;
 
   const qtyInput = document.getElementById(`menuQty-${menuItemId}`);
   const quantity = Math.max(1, Number(qtyInput?.value || 1));
@@ -814,16 +960,16 @@ function bindCheckout() {
   els.checkoutForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (state.cart.length === 0) {
+    if (!state.cart.length) {
       showToast("Add at least one dish before placing the order.", "info");
       return;
     }
 
     const payload = {
       vendorId: state.cart[0].vendorId,
-      customerName: els.customerName.value.trim(),
-      customerPhone: els.customerPhone.value.trim(),
-      notes: els.customerNotes.value.trim(),
+      customerName: els.customerName?.value.trim() || "",
+      customerPhone: els.customerPhone?.value.trim() || "",
+      notes: els.customerNotes?.value.trim() || "",
       items: state.cart.map((item) => ({
         menuItemId: item.menuItemId,
         quantity: item.quantity,
@@ -847,19 +993,19 @@ function bindCheckout() {
 
       const response = await CustomerApi.post("/orders", payload);
       const order = response.data || {};
-      const totalAmount =
-        order.totalAmount ||
-        state.cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+      const totalAmount = order.totalAmount || state.cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 
-      els.orderResult.classList.remove("hidden");
-      els.orderResult.innerHTML = `
-        <strong>Order placed successfully.</strong><br>
-        Order Number: ${escapeHtml(order.orderNumber || "-")}<br>
-        Vendor: ${escapeHtml(order.vendorName || state.cart[0]?.vendorName || "-")}<br>
-        Status: ${escapeHtml(order.status || "CREATED")}<br>
-        Total: ${formatCurrency(totalAmount)}<br><br>
-        <span class="muted">Live tracking has been started below.</span>
-      `;
+      if (els.orderResult) {
+        els.orderResult.classList.remove("hidden");
+        els.orderResult.innerHTML = `
+          <strong>Order placed successfully.</strong><br>
+          Order Number: ${escapeHtml(order.orderNumber || "-")}<br>
+          Vendor: ${escapeHtml(order.vendorName || state.cart[0]?.vendorName || "-")}<br>
+          Status: ${escapeHtml(order.status || "CREATED")}<br>
+          Total: ${formatCurrency(totalAmount)}<br><br>
+          <span class="muted">Tracking is ready in the tracking drawer.</span>
+        `;
+      }
 
       if (typeof window.refreshCustomerAccountData === "function") {
         await window.refreshCustomerAccountData();
@@ -884,12 +1030,8 @@ function bindCheckout() {
       if (typeof CustomerAuth !== "undefined" && typeof CustomerAuth.getStoredUser === "function") {
         const storedUser = CustomerAuth.getStoredUser();
         if (storedUser) {
-          if (els.customerName) {
-            els.customerName.value = storedUser.fullName || "";
-          }
-          if (els.customerPhone) {
-            els.customerPhone.value = storedUser.phone || "";
-          }
+          if (els.customerName) els.customerName.value = storedUser.fullName || "";
+          if (els.customerPhone) els.customerPhone.value = storedUser.phone || "";
         }
       }
 
@@ -901,9 +1043,10 @@ function bindCheckout() {
         startPolling: true
       });
 
+      openLayer("tracking");
       showToast("Order placed successfully", "success");
     } catch (error) {
-      showToast(error.message, "error");
+      showToast(error.message || "Failed to place order.", "error");
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
@@ -930,7 +1073,7 @@ function bindTracking() {
     const orderNumber = els.trackingOrderNumber?.value || state.tracking.orderNumber;
     const phone = els.trackingPhone?.value || state.tracking.phone;
 
-    if (!orderNumber.trim() || !phone.trim()) {
+    if (!String(orderNumber).trim() || !String(phone).trim()) {
       showToast("Enter order number and phone number first.", "info");
       return;
     }
@@ -948,26 +1091,38 @@ function bindTracking() {
 function restoreTrackingSession() {
   stopTrackingAutoRefresh();
 
-  state.tracking.orderNumber = "";
-  state.tracking.phone = "";
-  state.tracking.data = null;
-
+  let saved = null;
   try {
-    window.localStorage.removeItem(TRACKING_STORAGE_KEY);
+    const raw = window.localStorage.getItem(TRACKING_STORAGE_KEY);
+    saved = raw ? JSON.parse(raw) : null;
   } catch (_) {
-    // ignore local storage issues
+    saved = null;
   }
 
-  if (els.trackingOrderNumber) {
-    els.trackingOrderNumber.value = "";
+  if (!saved?.orderNumber || !saved?.phone) {
+    state.tracking.orderNumber = "";
+    state.tracking.phone = "";
+    state.tracking.data = null;
+    if (els.trackingOrderNumber) els.trackingOrderNumber.value = "";
+    if (els.trackingPhone) els.trackingPhone.value = "";
+    renderTrackingPanel(null);
+    renderTrackingState("Enter your order number and phone number to see live status updates.");
+    return;
   }
 
-  if (els.trackingPhone) {
-    els.trackingPhone.value = "";
-  }
+  state.tracking.orderNumber = saved.orderNumber;
+  state.tracking.phone = saved.phone;
 
-  renderTrackingPanel(null);
-  renderTrackingState("Enter your order number and phone number to see live status updates.");
+  if (els.trackingOrderNumber) els.trackingOrderNumber.value = saved.orderNumber;
+  if (els.trackingPhone) els.trackingPhone.value = saved.phone;
+
+  trackOrder({
+    orderNumber: saved.orderNumber,
+    phone: saved.phone,
+    showToastOnSuccess: false,
+    showToastOnError: false,
+    startPolling: true
+  });
 }
 
 async function trackOrder({
@@ -997,10 +1152,7 @@ async function trackOrder({
 
     renderTrackingState("Fetching latest order status...");
 
-    const path =
-      `/orders/track?orderNumber=${encodeURIComponent(normalizedOrderNumber)}` +
-      `&phone=${encodeURIComponent(normalizedPhone)}`;
-
+    const path = `/orders/track?orderNumber=${encodeURIComponent(normalizedOrderNumber)}&phone=${encodeURIComponent(normalizedPhone)}`;
     const response = await CustomerApi.get(path);
     const trackingData = response.data || null;
 
@@ -1048,30 +1200,32 @@ function startTrackingAutoRefresh() {
   }
 
   state.tracking.autoRefreshTimer = window.setInterval(async () => {
-    try {
-      await trackOrder({
-        orderNumber: state.tracking.orderNumber,
-        phone: state.tracking.phone,
-        showToastOnSuccess: false,
-        showToastOnError: false,
-        startPolling: false
-      });
-    } catch (_) {
-      // ignore silent polling errors
-    }
+    await trackOrder({
+      orderNumber: state.tracking.orderNumber,
+      phone: state.tracking.phone,
+      showToastOnSuccess: false,
+      showToastOnError: false,
+      startPolling: false
+    });
   }, TRACKING_POLL_INTERVAL_MS);
 }
 
 function stopTrackingAutoRefresh() {
-  if (state.tracking.autoRefreshTimer) {
-    window.clearInterval(state.tracking.autoRefreshTimer);
-    state.tracking.autoRefreshTimer = null;
-  }
+  if (!state.tracking.autoRefreshTimer) return;
+  window.clearInterval(state.tracking.autoRefreshTimer);
+  state.tracking.autoRefreshTimer = null;
 }
 
-function persistTrackingSession() {
-  // intentionally disabled:
-  // tracking should not survive a page reload for anonymous/public browsing
+function persistTrackingSession(orderNumber, phone) {
+  try {
+    if (!orderNumber || !phone) {
+      window.localStorage.removeItem(TRACKING_STORAGE_KEY);
+      return;
+    }
+    window.localStorage.setItem(TRACKING_STORAGE_KEY, JSON.stringify({ orderNumber, phone }));
+  } catch (_) {
+    // ignore storage issues
+  }
 }
 
 function renderTrackingState(message) {
@@ -1080,40 +1234,29 @@ function renderTrackingState(message) {
 }
 
 function renderTrackingPanel(order) {
+  if (!els.trackingPanel) return;
+
   if (!order) {
-    els.trackingPanel?.classList.add("hidden");
-    if (els.trackingVendorName) {
-      els.trackingVendorName.textContent = "Vendor";
-    }
-    if (els.trackingOrderMeta) {
-      els.trackingOrderMeta.innerHTML = "";
-    }
+    els.trackingPanel.classList.add("hidden");
+    if (els.trackingVendorName) els.trackingVendorName.textContent = "Vendor";
+    if (els.trackingOrderMeta) els.trackingOrderMeta.innerHTML = "";
     if (els.trackingStatusBadge) {
       els.trackingStatusBadge.textContent = "TRACKING";
       els.trackingStatusBadge.className = "tracking-status-badge";
     }
-    if (els.trackingSteps) {
-      els.trackingSteps.innerHTML = "";
-    }
-    if (els.trackingItems) {
-      els.trackingItems.innerHTML = "";
-    }
-    if (els.trackingHistory) {
-      els.trackingHistory.innerHTML = "";
-    }
-    if (els.trackingLastUpdated) {
-      els.trackingLastUpdated.textContent = "";
-    }
+    if (els.trackingSteps) els.trackingSteps.innerHTML = "";
+    if (els.trackingItems) els.trackingItems.innerHTML = "";
+    if (els.trackingHistory) els.trackingHistory.innerHTML = "";
+    if (els.trackingLastUpdated) els.trackingLastUpdated.textContent = "";
     return;
   }
 
-  els.trackingPanel?.classList.remove("hidden");
+  els.trackingPanel.classList.remove("hidden");
   renderTrackingState("Live tracking active. Status refreshes automatically.");
 
   if (els.trackingVendorName) {
     els.trackingVendorName.textContent = order.vendorName || "Vendor";
   }
-
   if (els.trackingOrderMeta) {
     const metaParts = [
       `Order: ${escapeHtml(order.orderNumber || "-")}`,
@@ -1121,11 +1264,8 @@ function renderTrackingPanel(order) {
       order.placedAt ? `Placed: ${escapeHtml(formatDateTimeSafe(order.placedAt))}` : ""
     ].filter(Boolean);
 
-    els.trackingOrderMeta.innerHTML = metaParts
-      .map((part) => `<span class="tracking-meta-pill">${part}</span>`)
-      .join("");
+    els.trackingOrderMeta.innerHTML = metaParts.map((part) => `<span class="tracking-meta-pill">${part}</span>`).join("");
   }
-
   if (els.trackingStatusBadge) {
     const normalizedStatus = String(order.status || "CREATED").toUpperCase();
     els.trackingStatusBadge.textContent = statusLabel(normalizedStatus);
@@ -1167,24 +1307,18 @@ function renderTrackingSteps(order) {
   }
 
   const currentIndex = flow.indexOf(currentStatus);
+  els.trackingSteps.innerHTML = flow.map((status, index) => {
+    let className = "tracking-step";
+    if (index < currentIndex) className += " done";
+    if (index === currentIndex) className += " active";
 
-  els.trackingSteps.innerHTML = flow
-    .map((status, index) => {
-      let className = "tracking-step";
-      if (index < currentIndex) {
-        className += " done";
-      } else if (index === currentIndex) {
-        className += " active";
-      }
-
-      return `
-        <div class="${className}">
-          <span class="tracking-step-dot"></span>
-          <span class="tracking-step-label">${statusLabel(status)}</span>
-        </div>
-      `;
-    })
-    .join("");
+    return `
+      <div class="${className}">
+        <span class="tracking-step-dot"></span>
+        <span class="tracking-step-label">${statusLabel(status)}</span>
+      </div>
+    `;
+  }).join("");
 }
 
 function renderTrackingItems(items) {
@@ -1195,24 +1329,16 @@ function renderTrackingItems(items) {
     return;
   }
 
-  els.trackingItems.innerHTML = items
-    .map((item) => `
-      <div class="tracking-item-card">
-        <div>
-          <strong>${escapeHtml(item.itemName || "-")}</strong>
-          <div class="muted">
-            Qty ${escapeHtml(item.quantity ?? "-")} • ${formatCurrency(item.unitPrice || 0)} each
-          </div>
-          ${
-            item.specialInstructions
-              ? `<div class="tracking-item-note">Note: ${escapeHtml(item.specialInstructions)}</div>`
-              : ""
-          }
-        </div>
-        <div class="tracking-item-total">${formatCurrency(item.lineTotal || 0)}</div>
+  els.trackingItems.innerHTML = items.map((item) => `
+    <div class="tracking-item-card">
+      <div>
+        <strong>${escapeHtml(item.itemName || "-")}</strong>
+        <div class="muted">Qty ${escapeHtml(item.quantity ?? "-")} • ${formatCurrency(item.unitPrice || 0)} each</div>
+        ${item.specialInstructions ? `<div class="tracking-item-note">Note: ${escapeHtml(item.specialInstructions)}</div>` : ""}
       </div>
-    `)
-    .join("");
+      <div class="tracking-item-total">${formatCurrency(item.lineTotal || 0)}</div>
+    </div>
+  `).join("");
 }
 
 function renderTrackingHistory(history) {
@@ -1223,18 +1349,16 @@ function renderTrackingHistory(history) {
     return;
   }
 
-  els.trackingHistory.innerHTML = history
-    .map((entry) => `
-      <div class="tracking-history-row">
-        <div class="tracking-history-dot"></div>
-        <div class="tracking-history-content">
-          <strong>${escapeHtml(statusLabel(entry.toStatus || "-"))}</strong>
-          <div class="muted">${escapeHtml(entry.remarks || "Status updated")}</div>
-          <div class="tracking-history-time">${escapeHtml(formatDateTimeSafe(entry.changedAt))}</div>
-        </div>
+  els.trackingHistory.innerHTML = history.map((entry) => `
+    <div class="tracking-history-row">
+      <div class="tracking-history-dot"></div>
+      <div class="tracking-history-content">
+        <strong>${escapeHtml(statusLabel(entry.toStatus || "-"))}</strong>
+        <div class="muted">${escapeHtml(entry.remarks || "Status updated")}</div>
+        <div class="tracking-last-updated">${escapeHtml(formatDateTimeSafe(entry.changedAt))}</div>
       </div>
-    `)
-    .join("");
+    </div>
+  `).join("");
 }
 
 function statusLabel(status) {
@@ -1260,11 +1384,8 @@ function statusLabel(status) {
 
 function formatDateTimeSafe(value) {
   if (!value) return "-";
-
   const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
+  if (Number.isNaN(date.getTime())) return String(value);
 
   return date.toLocaleString("en-IN", {
     day: "numeric",
@@ -1280,10 +1401,11 @@ function hideOrderResult() {
 }
 
 function showToast(message, type = "info") {
+  if (!els.toastContainer) return;
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   toast.textContent = message;
-  els.toastContainer?.appendChild(toast);
+  els.toastContainer.appendChild(toast);
 
   window.setTimeout(() => {
     toast.style.opacity = "0";
@@ -1293,12 +1415,9 @@ function showToast(message, type = "info") {
 }
 
 function calculateAveragePrep(items) {
-  const validTimes = items
-    .map((item) => Number(item.prepTimeMinutes))
-    .filter((value) => Number.isFinite(value) && value > 0);
-
-  if (!validTimes.length) return 0;
-  return Math.round(validTimes.reduce((sum, value) => sum + value, 0) / validTimes.length);
+  const values = (items || []).map((item) => Number(item.prepTimeMinutes)).filter((value) => Number.isFinite(value) && value > 0);
+  if (!values.length) return 0;
+  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
 }
 
 function formatCurrency(value) {
@@ -1308,15 +1427,6 @@ function formatCurrency(value) {
 
 function normalizeText(value) {
   return String(value || "").toLowerCase().trim().replace(/\s+/g, " ");
-}
-
-function getInitials(name) {
-  return String(name || "CA")
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() || "")
-    .join("") || "CA";
 }
 
 function escapeHtml(value) {
@@ -1331,3 +1441,31 @@ function escapeHtml(value) {
 function escapeAttribute(value) {
   return escapeHtml(value).replace(/`/g, "&#96;");
 }
+
+function getVendorDisplayRating(vendor, menu) {
+  const itemCount = menu?.items?.length || 0;
+  const categoryCount = menu?.categories?.length || 0;
+  const base = 3.9 + Math.min((itemCount * 0.03) + (categoryCount * 0.05), 0.9);
+  return base.toFixed(1);
+}
+
+function getVendorCoverImage(vendor, menu, fallbackText = "CampusAdda") {
+  const directImage = vendor?.coverImageUrl || vendor?.imageUrl || vendor?.primaryImageUrl || vendor?.bannerImageUrl || vendor?.photoUrl || vendor?.logoUrl;
+  if (directImage) return directImage;
+
+  const firstMenuImage = (menu?.items || []).map((item) => item.primaryImageUrl).find(Boolean);
+  if (firstMenuImage) return firstMenuImage;
+
+  const text = vendor?.name || fallbackText;
+  return `https://placehold.co/1200x800/ffedd5/9a3412?text=${encodeURIComponent(text)}`;
+}
+
+window.openCartDrawer = () => openLayer("cart");
+window.openAccountDrawer = () => openLayer("account");
+window.openTrackingDrawer = () => openLayer("tracking");
+window.closeUiLayers = closeActiveLayer;
+window.showToastMessage = showToast;
+window.renderTrackingPanel = renderTrackingPanel;
+window.renderTrackingState = renderTrackingState;
+window.trackCustomerOrder = trackOrder;
+window.statusLabel = statusLabel;

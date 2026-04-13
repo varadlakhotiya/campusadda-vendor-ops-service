@@ -1,6 +1,7 @@
 const CustomerAccountState = {
   me: null,
-  orders: []
+  orders: [],
+  activeOrders: []
 };
 
 const accountEls = {};
@@ -13,29 +14,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function cacheCustomerAccountElements() {
   [
-    "customerAccountCard",
     "customerAccountContent",
-    "customerLoginBtn",
-    "customerSignupBtn",
-    "customerLogoutBtn",
     "myOrdersCard",
-    "myOrdersList",
-    "myOrdersEmpty"
+    "myOrdersList"
   ].forEach((id) => {
     accountEls[id] = document.getElementById(id);
   });
 }
 
 function bindCustomerAccountEvents() {
-  accountEls.customerLogoutBtn?.addEventListener("click", async () => {
-    await CustomerAuth.logout();
-    window.location.reload();
+  accountEls.customerAccountContent?.addEventListener("click", async (event) => {
+    const actionEl = event.target.closest("[data-account-action]");
+    if (!actionEl) return;
+
+    const action = actionEl.getAttribute("data-account-action");
+
+    if (action === "switch-tab") {
+      renderGuestCustomerState(actionEl.getAttribute("data-tab") || "login");
+      return;
+    }
+
+    if (action === "open-tracking") {
+      if (typeof window.openTrackingDrawer === "function") {
+        window.openTrackingDrawer();
+      }
+      return;
+    }
+
+    if (action === "logout") {
+      await CustomerAuth.logout();
+      CustomerAccountState.me = null;
+      CustomerAccountState.orders = [];
+      CustomerAccountState.activeOrders = [];
+      renderGuestCustomerState("login");
+      if (accountEls.myOrdersCard) {
+        accountEls.myOrdersCard.classList.add("hidden");
+      }
+      if (typeof window.showToastMessage === "function") {
+        window.showToastMessage("Logged out successfully", "success");
+      }
+      return;
+    }
+  });
+
+  accountEls.customerAccountContent?.addEventListener("submit", async (event) => {
+    const form = event.target.closest("form[data-account-form]");
+    if (!form) return;
+
+    event.preventDefault();
+    const formType = form.getAttribute("data-account-form");
+
+    if (formType === "login") {
+      await submitLoginForm(form);
+      return;
+    }
+
+    if (formType === "signup") {
+      await submitSignupForm(form);
+    }
+  });
+
+  accountEls.myOrdersList?.addEventListener("click", async (event) => {
+    const orderCard = event.target.closest("[data-order-id]");
+    if (!orderCard) return;
+
+    const orderId = Number(orderCard.getAttribute("data-order-id"));
+    if (!orderId) return;
+
+    await openCustomerOrder(orderId, false);
   });
 }
 
 async function bootstrapCustomerAccount() {
   if (!CustomerAuth.hasSession()) {
-    renderGuestCustomerState();
+    renderGuestCustomerState("login");
     return;
   }
 
@@ -47,13 +99,13 @@ async function bootstrapCustomerAccount() {
   } catch (_) {
     CustomerAuth.clearSession();
     CustomerAccountState.me = null;
-    renderGuestCustomerState();
+    renderGuestCustomerState("login");
   }
 }
 
 async function refreshCustomerAccountData() {
   if (!CustomerAuth.hasSession()) {
-    renderGuestCustomerState();
+    renderGuestCustomerState("login");
     return;
   }
 
@@ -64,13 +116,17 @@ async function refreshCustomerAccountData() {
     ]);
 
     CustomerAccountState.orders = Array.isArray(ordersResponse.data) ? ordersResponse.data : [];
-    const activeOrders = Array.isArray(activeResponse.data) ? activeResponse.data : [];
+    CustomerAccountState.activeOrders = Array.isArray(activeResponse.data) ? activeResponse.data : [];
 
-    renderLoggedInCustomerState(CustomerAccountState.me, CustomerAccountState.orders.length, activeOrders.length);
+    renderLoggedInCustomerState(
+      CustomerAccountState.me,
+      CustomerAccountState.orders.length,
+      CustomerAccountState.activeOrders.length
+    );
     renderCustomerOrders(CustomerAccountState.orders);
 
-    if (activeOrders.length > 0) {
-      await openCustomerOrder(activeOrders[0].orderId, true);
+    if (CustomerAccountState.activeOrders.length > 0) {
+      await openCustomerOrder(CustomerAccountState.activeOrders[0].orderId, true);
     }
   } catch (error) {
     console.error("Failed to load customer account data", error);
@@ -79,23 +135,31 @@ async function refreshCustomerAccountData() {
 
 window.refreshCustomerAccountData = refreshCustomerAccountData;
 
-function renderGuestCustomerState() {
+function renderGuestCustomerState(activeTab = "login") {
+  if (!accountEls.customerAccountContent) return;
+
+  const isSignup = activeTab === "signup";
+
   accountEls.customerAccountContent.innerHTML = `
-    <div class="account-summary-shell">
-      <span class="account-mode-pill">Guest mode</span>
-      <div>
-        <strong>Order faster after login.</strong>
-        <p class="muted">Save older orders, fill checkout details automatically, and reopen tracking in one tap.</p>
+    <div class="account-shell">
+      <div class="account-summary-header">
+        <span class="account-mode-pill">Guest mode</span>
+        <h3>Login or create account only when needed</h3>
+        <p class="muted">Keep the main screen clean. Open this panel to login, sign up, see saved orders later, and reopen tracking faster.</p>
       </div>
-      <div class="account-benefits">
+
+      <div class="auth-benefit-row">
         <span class="account-benefit">Saved orders</span>
         <span class="account-benefit">Quick tracking</span>
         <span class="account-benefit">Faster checkout</span>
       </div>
-    </div>
-    <div class="account-actions">
-      <a class="btn-secondary btn-full" href="login.html">Login</a>
-      <a class="btn-primary btn-full" href="signup.html">Create Account</a>
+
+      <div class="account-auth-tabs">
+        <button type="button" class="form-tab-btn ${!isSignup ? "active" : ""}" data-account-action="switch-tab" data-tab="login">Login</button>
+        <button type="button" class="form-tab-btn ${isSignup ? "active" : ""}" data-account-action="switch-tab" data-tab="signup">Create Account</button>
+      </div>
+
+      ${isSignup ? renderSignupShell() : renderLoginShell()}
     </div>
   `;
 
@@ -104,43 +168,180 @@ function renderGuestCustomerState() {
   }
 }
 
+function renderLoginShell() {
+  return `
+    <div class="auth-form-shell">
+      <p class="auth-form-note">Login to fill checkout details automatically and reopen active orders in one tap.</p>
+      <form class="auth-form" data-account-form="login">
+        <div class="field-group">
+          <label for="drawerLoginEmail">Email</label>
+          <input id="drawerLoginEmail" name="email" type="email" required />
+        </div>
+        <div class="field-group">
+          <label for="drawerLoginPassword">Password</label>
+          <input id="drawerLoginPassword" name="password" type="password" required />
+        </div>
+        <button type="submit" class="primary-btn btn-full">Login</button>
+      </form>
+      <div id="accountInlineMessage" class="tracking-state"></div>
+    </div>
+  `;
+}
+
+function renderSignupShell() {
+  return `
+    <div class="auth-form-shell">
+      <p class="auth-form-note">Use the same phone number as older guest orders so those orders can appear inside your account later.</p>
+      <form class="auth-form" data-account-form="signup">
+        <div class="field-group">
+          <label for="drawerSignupName">Full name</label>
+          <input id="drawerSignupName" name="fullName" type="text" required />
+        </div>
+        <div class="field-group">
+          <label for="drawerSignupEmail">Email</label>
+          <input id="drawerSignupEmail" name="email" type="email" required />
+        </div>
+        <div class="field-group">
+          <label for="drawerSignupPhone">Phone number</label>
+          <input id="drawerSignupPhone" name="phone" type="text" required />
+        </div>
+        <div class="field-group">
+          <label for="drawerSignupPassword">Password</label>
+          <input id="drawerSignupPassword" name="password" type="password" required />
+        </div>
+        <div class="field-group">
+          <label for="drawerSignupConfirmPassword">Confirm password</label>
+          <input id="drawerSignupConfirmPassword" name="confirmPassword" type="password" required />
+        </div>
+        <button type="submit" class="primary-btn btn-full">Create Account</button>
+      </form>
+      <div id="accountInlineMessage" class="tracking-state"></div>
+    </div>
+  `;
+}
+
 function renderLoggedInCustomerState(me, orderCount = 0, activeOrderCount = 0) {
+  if (!accountEls.customerAccountContent) return;
+
   const initials = getInitialsSafe(me?.fullName || me?.email || "Customer");
 
   accountEls.customerAccountContent.innerHTML = `
-    <div class="account-summary-shell">
-      <div class="account-profile">
-        <div class="account-user-row">
+    <div class="account-shell">
+      <div class="account-split-row">
+        <div class="account-user-stack">
           <div class="account-avatar">${escapeHtmlSafe(initials)}</div>
-          <div class="account-profile-meta">
+          <div class="account-user-meta">
             <strong>${escapeHtmlSafe(me?.fullName || "Customer")}</strong>
             <span class="muted">${escapeHtmlSafe(me?.email || "")}</span>
             <span class="muted">${escapeHtmlSafe(me?.phone || "")}</span>
           </div>
         </div>
-        <button id="customerLogoutBtn" type="button" class="ghost-chip">Logout</button>
+        <button type="button" class="ghost-btn compact-btn" data-account-action="logout">Logout</button>
       </div>
 
-      <div class="account-mini-stats">
-        <div class="account-mini-stat">
+      <div class="account-stats-grid">
+        <div class="account-stat-card">
           <span>Saved orders</span>
           <strong>${escapeHtmlSafe(orderCount)}</strong>
         </div>
-        <div class="account-mini-stat">
+        <div class="account-stat-card">
           <span>Active now</span>
           <strong>${escapeHtmlSafe(activeOrderCount)}</strong>
         </div>
       </div>
+
+      <div class="account-quick-actions">
+        <button type="button" data-account-action="open-tracking">Open tracking</button>
+      </div>
     </div>
   `;
 
-  document.getElementById("customerLogoutBtn")?.addEventListener("click", async () => {
-    await CustomerAuth.logout();
-    window.location.reload();
-  });
-
   if (accountEls.myOrdersCard) {
     accountEls.myOrdersCard.classList.remove("hidden");
+  }
+}
+
+async function submitLoginForm(form) {
+  const messageEl = document.getElementById("accountInlineMessage");
+  if (messageEl) {
+    messageEl.textContent = "";
+  }
+
+  const submitButton = form.querySelector("button[type='submit']");
+  const originalLabel = submitButton?.textContent || "Login";
+
+  try {
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Logging in...";
+    }
+
+    const email = String(new FormData(form).get("email") || "").trim();
+    const password = String(new FormData(form).get("password") || "");
+
+    await CustomerAuth.login(email, password);
+    CustomerAccountState.me = await CustomerAuth.getCurrentUser();
+    renderLoggedInCustomerState(CustomerAccountState.me, 0, 0);
+    prefillCheckoutFields(CustomerAccountState.me);
+    await refreshCustomerAccountData();
+
+    if (typeof window.showToastMessage === "function") {
+      window.showToastMessage("Logged in successfully", "success");
+    }
+  } catch (error) {
+    if (messageEl) {
+      messageEl.textContent = error.message || "Login failed";
+    }
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalLabel;
+    }
+  }
+}
+
+async function submitSignupForm(form) {
+  const messageEl = document.getElementById("accountInlineMessage");
+  if (messageEl) {
+    messageEl.textContent = "";
+  }
+
+  const submitButton = form.querySelector("button[type='submit']");
+  const originalLabel = submitButton?.textContent || "Create Account";
+
+  try {
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Creating account...";
+    }
+
+    const formData = new FormData(form);
+    const payload = {
+      fullName: String(formData.get("fullName") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      phone: String(formData.get("phone") || "").trim(),
+      password: String(formData.get("password") || ""),
+      confirmPassword: String(formData.get("confirmPassword") || "")
+    };
+
+    await CustomerAuth.signup(payload);
+    CustomerAccountState.me = await CustomerAuth.getCurrentUser();
+    renderLoggedInCustomerState(CustomerAccountState.me, 0, 0);
+    prefillCheckoutFields(CustomerAccountState.me);
+    await refreshCustomerAccountData();
+
+    if (typeof window.showToastMessage === "function") {
+      window.showToastMessage("Account created successfully", "success");
+    }
+  } catch (error) {
+    if (messageEl) {
+      messageEl.textContent = error.message || "Signup failed";
+    }
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalLabel;
+    }
   }
 }
 
@@ -161,7 +362,7 @@ function renderCustomerOrders(orders) {
   if (!accountEls.myOrdersList) return;
 
   if (!orders.length) {
-    accountEls.myOrdersList.innerHTML = `<div class="tracking-empty-row">No previous orders found.</div>`;
+    accountEls.myOrdersList.innerHTML = `<div class="account-empty-row">No previous orders found.</div>`;
     return;
   }
 
@@ -184,22 +385,13 @@ function renderCustomerOrders(orders) {
       </button>
     `)
     .join("");
-
-  accountEls.myOrdersList.querySelectorAll("[data-order-id]").forEach((button) => {
-    button.addEventListener("click", async () => {
-      const orderId = Number(button.getAttribute("data-order-id"));
-      if (!orderId) return;
-      await openCustomerOrder(orderId, false);
-    });
-  });
 }
 
 async function openCustomerOrder(orderId, silent) {
   try {
-    const response = await CustomerApi.get(
-      `/orders/${orderId}`,
-      { baseUrl: window.CUSTOMER_APP_CONFIG.CUSTOMER_BASE_URL }
-    );
+    const response = await CustomerApi.get(`/orders/${orderId}`, {
+      baseUrl: window.CUSTOMER_APP_CONFIG.CUSTOMER_BASE_URL
+    });
     const detail = response.data;
 
     const trackingOrderNumber = document.getElementById("trackingOrderNumber");
@@ -212,25 +404,20 @@ async function openCustomerOrder(orderId, silent) {
       trackingPhone.value = detail.customerPhone || CustomerAccountState.me?.phone || "";
     }
 
-    if (typeof renderTrackingPanel === "function") {
-      renderTrackingPanel(detail);
+    if (typeof window.renderTrackingPanel === "function") {
+      window.renderTrackingPanel(detail);
+    }
+    if (typeof window.renderTrackingState === "function") {
+      window.renderTrackingState("Showing your saved order details.");
     }
 
-    if (typeof renderTrackingState === "function") {
-      renderTrackingState("Showing your saved order details.");
-    }
-
-    if (!silent) {
-      document.getElementById("trackingPanel")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+    if (!silent && typeof window.openTrackingDrawer === "function") {
+      window.openTrackingDrawer();
     }
   } catch (error) {
     console.error("Failed to open customer order", error);
   }
 }
-
 
 function getInitialsSafe(value) {
   return String(value || "CA")

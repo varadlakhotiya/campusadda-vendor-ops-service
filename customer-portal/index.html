@@ -10,12 +10,14 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <div class="page-glow glow-one"></div>
-  <div class="page-glow glow-two"></div>
+  <div class="page-shell"></div>
+  <div class="page-orb orb-one"></div>
+  <div class="page-orb orb-two"></div>
+  <div class="page-orb orb-three"></div>
 
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <a href="#" class="brand">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand">
         <span class="brand-mark">CA</span>
         <span class="brand-copy">
           <span class="eyebrow">Campus food marketplace</span>
@@ -23,175 +25,253 @@
         </span>
       </a>
 
-      <nav class="topbar-nav" aria-label="Quick sections">
-        <a class="nav-pill" href="#vendorsSection">Explore</a>
-        <a class="nav-pill" href="#trackingSection">Track order</a>
-        <a class="nav-pill" href="#customerAccountCard">Account</a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="#vendorsDiscoverSection">Vendors</a>
+        <a href="#experienceSection">Experience</a>
+        <a href="#siteFooter">Contact</a>
       </nav>
 
-      <button id="scrollToCartBtn" class="topbar-cart-btn" type="button">
-        View Cart
-        <span id="cartCountBadge" class="count-pill">0</span>
-      </button>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-copy animate-up">
-        <div class="hero-kicker-row">
-          <span class="eyebrow accent">Student-first ordering flow</span>
-          <span class="soft-badge hero-soft-badge">Pickup ready</span>
-        </div>
-
-        <h1>Order campus favourites with a cleaner, faster, more premium food-app feel.</h1>
-        <p>
-          Search dishes instantly, compare vendors quickly, build your cart without confusion,
-          and track pickup orders in one polished student-friendly experience.
-        </p>
-
-        <div class="search-field hero-search">
-          <span class="search-icon">⌕</span>
+      <div class="header-actions">
+        <div class="header-search shell-input">
+          <span class="shell-input-icon">⌕</span>
           <input id="globalSearchInput" type="text" placeholder="Search vendors, cuisines, or dishes" />
         </div>
 
-        <div class="hero-pills">
-          <span class="hero-pill">Live vendor menus</span>
-          <span class="hero-pill">Fast pickup flow</span>
-          <span class="hero-pill">Simple order tracking</span>
-          <span class="hero-pill">Modern student UI</span>
-        </div>
+        <button id="openTrackingBtn" type="button" class="header-action-btn ghost-btn">
+          Track
+        </button>
 
-        <div class="hero-cta-row">
-          <a class="btn-primary hero-link-btn" href="#vendorsSection">Browse vendors</a>
-          <a class="btn-secondary hero-link-btn" href="#trackingSection">Track an order</a>
-        </div>
+        <button id="openAccountBtn" type="button" class="header-action-btn ghost-btn">
+          Account
+        </button>
 
-        <div class="hero-stats">
-          <div class="stat-card">
-            <span>Vendors</span>
-            <strong id="heroVendorCount">0</strong>
-          </div>
-          <div class="stat-card">
-            <span>Menu items</span>
-            <strong id="heroItemCount">0</strong>
-          </div>
-          <div class="stat-card">
-            <span>Avg. prep</span>
-            <strong id="heroAvgPrep">0 min</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-showcase animate-up delay-1">
-        <div class="glass-card">
-          <div class="showcase-header-row">
-            <span class="live-pill">Live menu preview</span>
-            <span id="heroFeaturedMeta" class="muted">Choose a vendor to preview menu highlights</span>
-          </div>
-
-          <h2 id="heroFeaturedVendorName">CampusAdda Preview</h2>
-          <p id="heroFeaturedDescription" class="showcase-description">
-            Richer hierarchy, stronger vendor cards, clearer pricing, and a checkout flow that feels closer to a real food app.
-          </p>
-
-          <div id="heroFeaturedTags" class="hero-showcase-tags"></div>
-          <div id="heroFeaturedItems" class="mini-menu-list"></div>
-        </div>
+        <button id="scrollToCartBtn" type="button" class="header-action-btn primary-btn cart-btn">
+          Cart
+          <span id="cartCountBadge" class="count-badge">0</span>
+        </button>
       </div>
     </div>
-  </section>
+  </header>
 
-  <main class="container layout-grid">
-    <aside id="vendorsSection" class="panel side-panel">
-      <div class="panel-head">
-        <div>
-          <span class="section-kicker">Discover</span>
-          <h2>Vendors</h2>
-        </div>
-        <span id="vendorsCountLabel" class="soft-badge">0 vendors</span>
-      </div>
-
-      <p class="side-panel-intro muted">
-        Pick a vendor to unlock categories, dish cards, pricing, and a cleaner food-ordering journey.
-      </p>
-
-      <div class="search-field compact-search">
-        <span class="search-icon">⌕</span>
-        <input id="vendorSearchInput" type="text" placeholder="Search vendor or location" />
-      </div>
-
-      <div id="vendorsList" class="vendors-list"></div>
-    </aside>
-
-    <section id="menuPanel" class="panel menu-panel">
-      <div class="vendor-banner">
-        <div class="vendor-banner-copy">
-          <span class="section-kicker">Now serving</span>
-          <h2 id="vendorTitle">Select a vendor</h2>
-          <p id="vendorSubtitle" class="muted"></p>
-          <p id="vendorDescription" class="vendor-description">
-            Pick a vendor from the left to see a redesigned menu experience.
+  <main>
+    <section id="top" class="hero-section">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal-up">
+          <span class="eyebrow eyebrow-accent">Designed for faster campus ordering</span>
+          <h1>Make your ordering flow feel premium, modern, and easy to use.</h1>
+          <p>
+            Explore vendors with a warmer food-app feel, open menus in a focused full-screen panel,
+            add dishes quietly to cart, and keep account and tracking inside smooth slide-over drawers.
           </p>
-          <div id="selectedVendorMeta" class="meta-pills"></div>
+
+          <div class="hero-cta-row">
+            <a href="#vendorsDiscoverSection" class="primary-btn hero-link-btn">Browse Vendors</a>
+            <button id="heroTrackBtn" type="button" class="ghost-btn hero-link-btn">Track an Order</button>
+          </div>
+
+          <div class="hero-stat-grid">
+            <div class="hero-stat-card">
+              <span>Vendors</span>
+              <strong id="heroVendorCount">0</strong>
+            </div>
+            <div class="hero-stat-card">
+              <span>Menu items</span>
+              <strong id="heroItemCount">0</strong>
+            </div>
+            <div class="hero-stat-card">
+              <span>Average prep</span>
+              <strong id="heroAvgPrep">0 min</strong>
+            </div>
+          </div>
         </div>
 
-        <div class="vendor-banner-metrics">
-          <div class="metric-card">
-            <span>Items</span>
-            <strong id="selectedVendorItemsCount">0</strong>
-          </div>
-          <div class="metric-card">
-            <span>Categories</span>
-            <strong id="selectedVendorCategoriesCount">0</strong>
-          </div>
-          <div class="metric-card">
-            <span>Avg prep</span>
-            <strong id="selectedVendorAvgPrep">0 min</strong>
+        <div class="hero-showcase reveal-up delay-1">
+          <div class="hero-showcase-card">
+            <div class="hero-showcase-head">
+              <span class="live-pill">Live preview</span>
+              <span id="heroFeaturedMeta" class="muted">Choose a vendor to preview menu highlights</span>
+            </div>
+
+            <div class="hero-showcase-media">
+              <img id="heroFeaturedImage" src="https://placehold.co/1200x800/ffedd5/9a3412?text=CampusAdda+Preview" alt="CampusAdda preview" />
+              <div class="hero-showcase-overlay"></div>
+              <div class="hero-showcase-content">
+                <h2 id="heroFeaturedVendorName">CampusAdda Preview</h2>
+                <p id="heroFeaturedDescription">
+                  Premium cards, better spacing, smoother interactions, and a cleaner ordering journey.
+                </p>
+                <div id="heroFeaturedTags" class="hero-tag-row"></div>
+              </div>
+            </div>
+
+            <div id="heroFeaturedItems" class="mini-preview-list"></div>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="menu-toolbar">
+    <section id="vendorsDiscoverSection" class="discover-section">
+      <div class="container">
+        <div class="section-head reveal-up">
+          <div>
+            <span class="eyebrow eyebrow-accent">Discover best campus food spots</span>
+            <h2>Vendors that look like real restaurant cards</h2>
+          </div>
+          <div class="section-head-actions">
+            <span id="vendorsCountLabel" class="soft-badge">0 vendors</span>
+            <button id="prevVendorsBtn" type="button" class="round-nav-btn" aria-label="Scroll vendors left">←</button>
+            <button id="nextVendorsBtn" type="button" class="round-nav-btn" aria-label="Scroll vendors right">→</button>
+          </div>
+        </div>
+
+        <div class="section-subcopy reveal-up delay-1">
+          Browse restaurants in a horizontal strip, click a card, and open the full menu in a polished full-screen overlay.
+        </div>
+
+        <div id="vendorsCarousel" class="vendors-carousel reveal-up delay-2">
+          <div id="vendorsList" class="vendors-track"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experienceSection" class="experience-section">
+      <div class="container experience-grid">
+        <article class="experience-card reveal-up">
+          <span class="eyebrow eyebrow-accent">Account flow</span>
+          <h3>Login and signup open only when needed</h3>
+          <p>Keep the main screen clean. Open account from the header and use a slide-over panel for login, signup, saved orders, and logout.</p>
+        </article>
+
+        <article class="experience-card reveal-up delay-1">
+          <span class="eyebrow eyebrow-accent">Cart flow</span>
+          <h3>Items go into cart quietly</h3>
+          <p>Add dishes instantly from menu cards. The cart count updates in the header, and the full cart opens as a drawer only when the user clicks it.</p>
+        </article>
+
+        <article class="experience-card reveal-up delay-2">
+          <span class="eyebrow eyebrow-accent">Tracking flow</span>
+          <h3>Tracking feels like a separate premium panel</h3>
+          <p>Order status, steps, item summary, and timeline appear in a dedicated drawer instead of being fixed on the main page layout.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer id="siteFooter" class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand-block">
+        <div class="footer-brand-row">
+          <span class="brand-mark footer-brand-mark">CA</span>
+          <div>
+            <strong>CampusAdda</strong>
+            <p>Made for student-friendly pickup ordering.</p>
+          </div>
+        </div>
+        <p class="footer-muted">Create a cleaner food-ordering UI without copying any existing brand colors.</p>
+      </div>
+
+      <div>
+        <h4>Platform</h4>
+        <a href="#vendorsDiscoverSection">Explore vendors</a>
+        <a href="#experienceSection">Ordering experience</a>
+        <a href="javascript:void(0)" id="footerTrackLink">Track order</a>
+      </div>
+
+      <div>
+        <h4>Customer</h4>
+        <a href="javascript:void(0)" id="footerAccountLink">Login or signup</a>
+        <a href="javascript:void(0)" id="footerCartLink">View cart</a>
+        <a href="javascript:void(0)" id="footerSavedOrdersLink">Saved orders</a>
+      </div>
+
+      <div>
+        <h4>Campus ideas</h4>
+        <span>Late-night pickup flow</span>
+        <span>Hostel-friendly menus</span>
+        <span>Live order status</span>
+        <span>Fast repeat orders</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="backdrop" class="ui-backdrop hidden"></div>
+
+  <section id="vendorModal" class="overlay-shell hidden" aria-hidden="true">
+    <div class="overlay-panel vendor-overlay-panel">
+      <button id="closeVendorModalBtn" type="button" class="overlay-close-btn" aria-label="Close vendor menu">×</button>
+
+      <div class="vendor-overlay-hero">
+        <div class="vendor-overlay-media">
+          <img id="vendorHeroImage" src="https://placehold.co/1400x900/ffedd5/9a3412?text=Vendor+Menu" alt="Vendor cover" />
+          <div class="vendor-overlay-media-shade"></div>
+          <div class="vendor-overlay-floating-badges">
+            <span id="vendorHeroStatus" class="floating-chip">Campus pickup</span>
+            <span id="vendorHeroLocation" class="floating-chip muted-chip">Choose a vendor to begin</span>
+          </div>
+        </div>
+
+        <div class="vendor-overlay-copy">
+          <div class="vendor-title-stack">
+            <span class="eyebrow eyebrow-accent">Now serving</span>
+            <h2 id="vendorTitle">Select a vendor</h2>
+            <p id="vendorSubtitle" class="muted"></p>
+            <p id="vendorDescription" class="vendor-description">Pick a vendor card to open a full menu experience.</p>
+          </div>
+
+          <div class="vendor-overlay-summary">
+            <div class="overlay-metric-card">
+              <span>Items</span>
+              <strong id="selectedVendorItemsCount">0</strong>
+            </div>
+            <div class="overlay-metric-card">
+              <span>Categories</span>
+              <strong id="selectedVendorCategoriesCount">0</strong>
+            </div>
+            <div class="overlay-metric-card">
+              <span>Avg prep</span>
+              <strong id="selectedVendorAvgPrep">0 min</strong>
+            </div>
+          </div>
+
+          <div id="selectedVendorMeta" class="vendor-meta-row"></div>
+        </div>
+      </div>
+
+      <div class="vendor-overlay-toolbar">
         <div id="categoriesRow" class="categories-row"></div>
 
-        <div class="menu-toolbar-right">
-          <div class="search-field menu-search">
-            <span class="search-icon">⌕</span>
-            <input id="itemSearchInput" type="text" placeholder="Search dishes" />
+        <div class="vendor-overlay-toolbar-right">
+          <div class="shell-input menu-search">
+            <span class="shell-input-icon">⌕</span>
+            <input id="itemSearchInput" type="text" placeholder="Search dishes inside this vendor" />
           </div>
-          <button id="clearItemSearchBtn" type="button" class="ghost-chip">Clear</button>
+          <button id="clearItemSearchBtn" type="button" class="ghost-btn compact-btn">Clear</button>
         </div>
       </div>
 
-      <div class="results-row">
+      <div class="vendor-overlay-results-row">
         <span id="resultCountLabel" class="muted">No vendor selected.</span>
       </div>
 
       <div id="menuGrid" class="menu-grid"></div>
-    </section>
+    </div>
+  </section>
 
-    <aside id="cartPanel" class="panel cart-panel">
-      <section id="customerAccountCard" class="account-card">
-        <div class="panel-head tracking-head">
-          <div>
-            <span class="section-kicker">Customer account</span>
-            <h2>Account</h2>
-          </div>
-        </div>
-
-        <div id="customerAccountContent"></div>
-      </section>
-
-      <div class="panel-head cart-panel-head">
+  <aside id="cartDrawer" class="drawer-shell hidden" aria-hidden="true">
+    <div class="drawer-panel">
+      <div class="drawer-head">
         <div>
-          <span class="section-kicker">Checkout</span>
+          <span class="eyebrow eyebrow-accent">Checkout</span>
           <h2>Your Cart</h2>
         </div>
-        <span id="cartItemsBadge" class="soft-badge">0 items</span>
+        <button id="closeCartBtn" type="button" class="overlay-close-btn" aria-label="Close cart">×</button>
       </div>
 
-      <div id="cartVendorInfo" class="cart-vendor-info muted"></div>
+      <div class="drawer-summary-bar">
+        <span id="cartItemsBadge" class="soft-badge">0 items</span>
+        <span id="cartVendorInfo" class="muted">Your cart is empty.</span>
+      </div>
+
       <div id="cartItems" class="cart-items"></div>
       <div id="cartSummaryMeta" class="cart-summary-meta"></div>
 
@@ -200,7 +280,7 @@
           <span>To pay</span>
           <strong id="cartTotal">₹0.00</strong>
         </div>
-        <p class="muted">Keep pickup simple now. Payment or deeper backend checkout can stay connected later.</p>
+        <p class="muted">Keep ordering simple now. Payment and deeper checkout can stay connected later.</p>
       </div>
 
       <form id="checkoutForm" class="checkout-form">
@@ -219,76 +299,93 @@
           <textarea id="customerNotes" placeholder="Extra spicy, less oil, no onion, etc."></textarea>
         </div>
 
-        <button type="submit" class="btn-primary btn-full">Place Order</button>
+        <button type="submit" class="primary-btn btn-full">Place Order</button>
       </form>
 
       <div id="orderResult" class="order-result hidden"></div>
+    </div>
+  </aside>
 
-      <section id="trackingSection" class="tracking-card">
-        <div class="panel-head tracking-head">
-          <div>
-            <span class="section-kicker">Live tracking</span>
-            <h2>Track your order</h2>
-          </div>
-          <button id="refreshTrackingBtn" type="button" class="ghost-chip">Refresh</button>
+  <aside id="accountDrawer" class="drawer-shell hidden" aria-hidden="true">
+    <div class="drawer-panel account-drawer-panel">
+      <div class="drawer-head">
+        <div>
+          <span class="eyebrow eyebrow-accent">Customer account</span>
+          <h2>Account</h2>
         </div>
+        <button id="closeAccountBtn" type="button" class="overlay-close-btn" aria-label="Close account">×</button>
+      </div>
 
-        <form id="trackingForm" class="tracking-form">
-          <div class="field-group">
-            <label for="trackingOrderNumber">Order number</label>
-            <input id="trackingOrderNumber" type="text" placeholder="WEB-20260412003003-783A29" />
-          </div>
+      <div id="customerAccountContent"></div>
 
-          <div class="field-group">
-            <label for="trackingPhone">Phone number</label>
-            <input id="trackingPhone" type="text" placeholder="Enter the same phone number used while ordering" />
-          </div>
-
-          <button id="trackOrderBtn" type="submit" class="btn-primary btn-full">Track Order</button>
-        </form>
-
-        <div id="trackingState" class="tracking-state">
-          Enter your order number and phone number to see live status updates.
+      <section id="myOrdersCard" class="drawer-subsection hidden">
+        <div class="drawer-subsection-head">
+          <h3>Previous Orders</h3>
+          <span class="muted">Tap any order to reopen tracking</span>
         </div>
-
-        <div id="trackingPanel" class="tracking-panel hidden">
-          <div class="tracking-summary">
-            <div>
-              <span id="trackingVendorName" class="tracking-vendor-name">Vendor</span>
-              <div id="trackingOrderMeta" class="tracking-meta"></div>
-            </div>
-            <span id="trackingStatusBadge" class="tracking-status-badge">CREATED</span>
-          </div>
-
-          <div id="trackingSteps" class="tracking-steps"></div>
-
-          <div class="tracking-section">
-            <h3>Items</h3>
-            <div id="trackingItems" class="tracking-items"></div>
-          </div>
-
-          <div class="tracking-section">
-            <div class="tracking-history-head">
-              <h3>Status timeline</h3>
-              <span id="trackingLastUpdated" class="tracking-last-updated"></span>
-            </div>
-            <div id="trackingHistory" class="tracking-history"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="myOrdersCard" class="tracking-card hidden">
-        <div class="panel-head tracking-head">
-          <div>
-            <span class="section-kicker">My orders</span>
-            <h2>Previous Orders</h2>
-          </div>
-        </div>
-
         <div id="myOrdersList"></div>
       </section>
-    </aside>
-  </main>
+    </div>
+  </aside>
+
+  <aside id="trackingDrawer" class="drawer-shell hidden" aria-hidden="true">
+    <div class="drawer-panel tracking-drawer-panel">
+      <div class="drawer-head">
+        <div>
+          <span class="eyebrow eyebrow-accent">Live tracking</span>
+          <h2>Track your order</h2>
+        </div>
+        <div class="drawer-head-actions">
+          <button id="refreshTrackingBtn" type="button" class="ghost-btn compact-btn">Refresh</button>
+          <button id="closeTrackingBtn" type="button" class="overlay-close-btn" aria-label="Close tracking">×</button>
+        </div>
+      </div>
+
+      <form id="trackingForm" class="tracking-form">
+        <div class="field-group">
+          <label for="trackingOrderNumber">Order number</label>
+          <input id="trackingOrderNumber" type="text" placeholder="WEB-20260412003003-783A29" />
+        </div>
+
+        <div class="field-group">
+          <label for="trackingPhone">Phone number</label>
+          <input id="trackingPhone" type="text" placeholder="Enter your phone number" />
+        </div>
+
+        <button id="trackOrderBtn" type="submit" class="primary-btn btn-full">Track Order</button>
+      </form>
+
+      <div id="trackingState" class="tracking-state">Enter your order number and phone number to see live status updates.</div>
+
+      <div id="trackingPanel" class="tracking-panel hidden">
+        <div class="tracking-summary">
+          <div>
+            <span class="eyebrow">Vendor</span>
+            <h3 id="trackingVendorName">Vendor</h3>
+          </div>
+          <span id="trackingStatusBadge" class="tracking-status-badge">Tracking</span>
+        </div>
+
+        <div id="trackingOrderMeta" class="tracking-order-meta"></div>
+        <div id="trackingSteps" class="tracking-steps"></div>
+
+        <section class="tracking-section">
+          <div class="drawer-subsection-head">
+            <h3>Items</h3>
+          </div>
+          <div id="trackingItems" class="tracking-items"></div>
+        </section>
+
+        <section class="tracking-section">
+          <div class="tracking-history-head">
+            <h3>Status timeline</h3>
+            <span id="trackingLastUpdated" class="tracking-last-updated"></span>
+          </div>
+          <div id="trackingHistory" class="tracking-history"></div>
+        </section>
+      </div>
+    </div>
+  </aside>
 
   <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
