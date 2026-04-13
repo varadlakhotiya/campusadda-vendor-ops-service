@@ -2,54 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Orders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orders - Vendor Ops</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages.css">
 </head>
 <body>
-<div class="app-shell">
-  <aside id="sidebar" class="sidebar"></aside>
-  <main class="main">
-    <div class="topbar"><h2>Orders</h2></div>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="page-kicker">CampusAdda Vendor Ops</div>
+          <h2>Orders</h2>
+          <p class="page-subtitle">Track live orders, update statuses, cancel orders, inspect items, and preview stock consumption.</p>
+        </div>
+        <div>
+          <button id="refreshOrdersBtn" class="btn-secondary" type="button">Refresh Board</button>
+        </div>
+      </div>
 
-    <div class="section">
-      <label>Select Vendor</label>
-      <select id="vendorSelect"></select>
-    </div>
+      <div class="section">
+        <label for="vendorSelect">Select Vendor</label>
+        <select id="vendorSelect"></select>
+      </div>
 
-    <div class="board">
-      <div class="board-column">
-        <h3>Created</h3>
-        <div id="createdOrders"></div>
+      <div class="board">
+        <div class="board-column">
+          <h3>Created</h3>
+          <div id="createdOrders"></div>
+        </div>
+        <div class="board-column">
+          <h3>Accepted</h3>
+          <div id="acceptedOrders"></div>
+        </div>
+        <div class="board-column">
+          <h3>Preparing</h3>
+          <div id="preparingOrders"></div>
+        </div>
+        <div class="board-column">
+          <h3>Ready</h3>
+          <div id="readyOrders"></div>
+        </div>
+        <div class="board-column">
+          <h3>Completed</h3>
+          <div id="completedOrders"></div>
+        </div>
       </div>
-      <div class="board-column">
-        <h3>Accepted</h3>
-        <div id="acceptedOrders"></div>
-      </div>
-      <div class="board-column">
-        <h3>Preparing</h3>
-        <div id="preparingOrders"></div>
-      </div>
-      <div class="board-column">
-        <h3>Ready</h3>
-        <div id="readyOrders"></div>
-      </div>
-      <div class="board-column">
-        <h3>Completed</h3>
-        <div id="completedOrders"></div>
-      </div>
-    </div>
-  </main>
-</div>
 
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/api.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/guards.js"></script>
-<script src="js/layout.js"></script>
-<script src="js/orders.js"></script>
+      <div class="order-detail-grid">
+        <section class="section detail-card">
+          <div class="detail-card-head">
+            <div>
+              <div class="page-kicker">Selected order</div>
+              <h3 id="selectedOrderTitle">No order selected</h3>
+            </div>
+            <span id="selectedOrderStatus" class="badge">Details</span>
+          </div>
+
+          <div id="selectedOrderSummary" class="detail-summary empty-detail">
+            Select any order card to view customer details, notes, items, and status history.
+          </div>
+
+          <div class="detail-split">
+            <div>
+              <h4>Items</h4>
+              <div id="selectedOrderItems" class="detail-list empty-detail">No items to show.</div>
+            </div>
+
+            <div>
+              <h4>Status History</h4>
+              <div id="selectedOrderHistory" class="history-list empty-detail">No status history to show.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section detail-card">
+          <div class="detail-card-head">
+            <div>
+              <div class="page-kicker">Inventory impact</div>
+              <h3>Stock Preview</h3>
+            </div>
+          </div>
+          <pre id="orderInsightBox">Click "Preview Stock" on an order card to inspect stock impact.</pre>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/guards.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/portal.js"></script>
+  <script src="js/vendor-scope.js"></script>
 </body>
 </html>

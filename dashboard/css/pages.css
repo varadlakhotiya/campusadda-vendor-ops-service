@@ -1,34 +1,91 @@
 .login-wrapper {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top, rgba(37, 99, 235, 0.12), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.10), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
 }
 
 .login-card {
-  width: 380px;
-  background: white;
-  padding: 24px;
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  width: min(520px, 100%);
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(219, 227, 239, 0.95);
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.10);
+  backdrop-filter: blur(14px);
 }
 
-.board {
+.login-card[style*="width: 520px"] {
+  width: min(640px, 100%) !important;
+}
+
+.login-card h2 {
+  margin-bottom: 18px;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.login-card form {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
-.board-column {
-  background: white;
-  border-radius: 12px;
-  padding: 12px;
-  min-height: 300px;
+.login-card form > div {
+  margin-top: 0 !important;
 }
 
-.order-card {
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
+.login-card input,
+.login-card select,
+.login-card textarea {
+  width: 100%;
 }
+
+.login-card textarea {
+  min-height: 120px;
+}
+
+.login-card button {
+  width: 100%;
+}
+
+.login-card a {
+  font-weight: 600;
+}
+
+.login-card a:hover {
+  text-decoration: underline;
+}
+
+#recipeValidationBox {
+  padding: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.20);
+}
+
+@media (max-width: 640px) {
+  .login-wrapper {
+    padding: 16px;
+  }
+
+  .login-card {
+    padding: 22px;
+    border-radius: 22px;
+  }
+}
+
+.login-card .page-kicker {
+  margin-bottom: 8px;
+}
+
+.login-card .page-subtitle {
+  margin-bottom: 18px;
+}
+

@@ -39,14 +39,31 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/v1/auth/login",
-                                "/api/v1/auth/refresh",
-                                "/api/v1/health",
-                                "/api/v1/health/**"
-                        ).permitAll()
+                        .requestMatchers("/api/v1/health").permitAll()
+                        .requestMatchers("/api/v1/health/**").permitAll()
+                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/refresh").permitAll()
+                        .requestMatchers("/api/v1/auth/signup/customer").permitAll()
+
+                        .requestMatchers("/api/v1/public/vendor-signup-requests").permitAll()
+                        .requestMatchers("/api/v1/public/vendors/**").permitAll()
+                        .requestMatchers("/api/v1/public/orders/**").permitAll()
+
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/error").permitAll()
+
+                        .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/v1/customer/**").hasAuthority("ROLE_CUSTOMER")
+
+                        .requestMatchers("/api/v1/orders/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_VENDOR_MANAGER", "ROLE_VENDOR_STAFF")
+
+                        .requestMatchers("/api/v1/vendors/*/orders")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_VENDOR_MANAGER", "ROLE_VENDOR_STAFF")
+
+                        .requestMatchers("/api/v1/vendors/*/orders/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_VENDOR_MANAGER", "ROLE_VENDOR_STAFF")
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

@@ -2,46 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Alerts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alerts - Vendor Ops</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-<div class="app-shell">
-  <aside id="sidebar" class="sidebar"></aside>
-  <main class="main">
-    <div class="topbar"><h2>Alerts</h2></div>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="page-kicker">CampusAdda Vendor Ops</div>
+          <h2>Alerts</h2>
+          <p class="page-subtitle">Review vendor alerts, acknowledge issues, and resolve them quickly.</p>
+        </div>
+      </div>
 
-    <div class="section">
-      <label>Select Vendor</label>
-      <select id="vendorSelect"></select>
-    </div>
+      <div class="section">
+        <label for="vendorSelect">Select Vendor</label>
+        <select id="vendorSelect"></select>
+      </div>
 
-    <div class="section">
-      <table>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Severity</th>
-            <th>Triggered At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="alertsBody"></tbody>
-      </table>
-    </div>
-  </main>
-</div>
+      <div class="section">
+        <h3>Alert List</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Severity</th>
+              <th>Triggered At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="alertsBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
 
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/api.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/guards.js"></script>
-<script src="js/layout.js"></script>
-<script src="js/alerts.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/guards.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/alerts.js"></script>
+  <script src="js/portal.js"></script>
+  <script src="js/vendor-scope.js"></script>
 </body>
 </html>

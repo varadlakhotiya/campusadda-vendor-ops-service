@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vendor Signup - CampusAdda Vendor Ops</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-card" style="width: 520px;">
+      <div class="page-kicker">Restaurant Access</div>
+      <h2>Request portal access</h2>
+      <p class="page-subtitle">Submit your restaurant details for review by the CampusAdda admin team.</p>
+
+      <form id="signupForm" class="form-grid">
+        <input id="restaurantName" placeholder="Restaurant Name" required>
+        <input id="contactPersonName" placeholder="Owner / Manager Name" required>
+        <input id="contactEmail" type="email" placeholder="Email" required>
+        <input id="contactPhone" placeholder="Phone" required>
+        <input id="campusArea" placeholder="Campus Area">
+        <input id="locationLabel" placeholder="Location Label">
+        <input id="password" type="password" placeholder="Preferred Password" required>
+        <textarea id="notes" placeholder="Anything we should know?"></textarea>
+        <button class="btn-primary" type="submit">Submit Access Request</button>
+      </form>
+
+      <div style="margin-top:12px; text-align:center;">
+        <a href="login.html">Back to login</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/signup.js"></script>
+</body>
+</html>

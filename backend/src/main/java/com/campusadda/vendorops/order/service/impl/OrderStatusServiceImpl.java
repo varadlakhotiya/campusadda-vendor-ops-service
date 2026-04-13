@@ -15,8 +15,9 @@ import com.campusadda.vendorops.order.service.OrderStatusService;
 import com.campusadda.vendorops.order.service.OrderStockConsumptionService;
 import com.campusadda.vendorops.order.validator.OrderStatusTransitionValidator;
 import com.campusadda.vendorops.order.validator.OrderValidator;
-import com.campusadda.vendorops.outbox.service.OutboxService; // ✅ NEW
+import com.campusadda.vendorops.outbox.service.OutboxService;
 import com.campusadda.vendorops.security.SecurityUtils;
+import com.campusadda.vendorops.security.VendorAccessService;
 import com.campusadda.vendorops.user.entity.User;
 import com.campusadda.vendorops.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,12 +40,13 @@ public class OrderStatusServiceImpl implements OrderStatusService {
     private final OrderMapper orderMapper;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
-
-    private final OutboxService outboxService; // ✅ NEW
+    private final OutboxService outboxService;
+    private final VendorAccessService vendorAccessService;
 
     @Override
     public OrderResponse updateStatus(Long orderId, UpdateOrderStatusRequest request) {
         Order order = orderValidator.validateOrderExists(orderId);
+        vendorAccessService.validateVendorManageAccess(order.getVendor().getId());
 
         String fromStatus = order.getStatus();
         String toStatus = request.getStatus();
@@ -65,7 +67,6 @@ public class OrderStatusServiceImpl implements OrderStatusService {
         order.setStatus(toStatus);
         Order saved = orderRepository.save(order);
 
-        // ✅ OUTBOX EVENT ADDED HERE
         outboxService.saveEvent(
                 "ORDER",
                 saved.getId(),
@@ -90,6 +91,7 @@ public class OrderStatusServiceImpl implements OrderStatusService {
     @Override
     public OrderResponse cancelOrder(Long orderId, CancelOrderRequest request) {
         Order order = orderValidator.validateOrderExists(orderId);
+        vendorAccessService.validateVendorManageAccess(order.getVendor().getId());
 
         String fromStatus = order.getStatus();
         transitionValidator.validateTransition(fromStatus, OrderStatus.CANCELLED.name());
@@ -101,6 +103,15 @@ public class OrderStatusServiceImpl implements OrderStatusService {
         order.setStatus(OrderStatus.CANCELLED.name());
         order.setCancelledAt(LocalDateTime.now());
         Order saved = orderRepository.save(order);
+
+        outboxService.saveEvent(
+                "ORDER",
+                saved.getId(),
+                "ORDER_CANCELLED",
+                saved.getOrderNumber(),
+                "{\"orderId\":" + saved.getId() +
+                        ",\"status\":\"" + saved.getStatus() + "\"}"
+        );
 
         OrderStatusHistory history = new OrderStatusHistory();
         history.setOrder(saved);
@@ -117,7 +128,8 @@ public class OrderStatusServiceImpl implements OrderStatusService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderStatusHistoryResponse> getStatusHistory(Long orderId) {
-        orderValidator.validateOrderExists(orderId);
+        Order order = orderValidator.validateOrderExists(orderId);
+        vendorAccessService.validateVendorViewAccess(order.getVendor().getId());
 
         return statusHistoryRepository.findByOrder_IdOrderByChangedAtAsc(orderId)
                 .stream()

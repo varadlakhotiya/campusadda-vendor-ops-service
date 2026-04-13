@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Signup - CampusAdda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <span class="section-kicker">Customer Access</span>
+      <h1>Create Account</h1>
+      <p class="muted">Use the same phone number you used for older guest orders so those orders become visible too.</p>
+
+      <form id="signupForm" class="auth-form">
+        <div class="field-group">
+          <label for="signupName">Full name</label>
+          <input id="signupName" type="text" required />
+        </div>
+
+        <div class="field-group">
+          <label for="signupEmail">Email</label>
+          <input id="signupEmail" type="email" required />
+        </div>
+
+        <div class="field-group">
+          <label for="signupPhone">Phone number</label>
+          <input id="signupPhone" type="text" required />
+        </div>
+
+        <div class="field-group">
+          <label for="signupPassword">Password</label>
+          <input id="signupPassword" type="password" required />
+        </div>
+
+        <div class="field-group">
+          <label for="signupConfirmPassword">Confirm password</label>
+          <input id="signupConfirmPassword" type="password" required />
+        </div>
+
+        <button type="submit" class="btn-primary btn-full">Create Account</button>
+      </form>
+
+      <div id="signupMessage" class="tracking-state hidden"></div>
+
+      <div class="auth-links">
+        <a href="login.html">Already have an account?</a>
+        <a href="index.html">Back to ordering</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/customer-auth.js"></script>
+  <script>
+    const form = document.getElementById("signupForm");
+    const message = document.getElementById("signupMessage");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      message.classList.add("hidden");
+
+      const payload = {
+        fullName: document.getElementById("signupName").value.trim(),
+        email: document.getElementById("signupEmail").value.trim(),
+        phone: document.getElementById("signupPhone").value.trim(),
+        password: document.getElementById("signupPassword").value,
+        confirmPassword: document.getElementById("signupConfirmPassword").value
+      };
+
+      try {
+        await CustomerAuth.signup(payload);
+        window.location.href = "index.html";
+      } catch (error) {
+        message.textContent = error.message || "Signup failed";
+        message.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>

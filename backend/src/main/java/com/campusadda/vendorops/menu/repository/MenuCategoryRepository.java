@@ -10,4 +10,5 @@ public interface MenuCategoryRepository extends JpaRepository<MenuCategory, Long
     List<MenuCategory> findByVendor_IdOrderByDisplayOrderAsc(Long vendorId);
     boolean existsByVendor_IdAndCategoryName(Long vendorId, String categoryName);
     Optional<MenuCategory> findByIdAndVendor_Id(Long id, Long vendorId);
+    List<MenuCategory> findByVendor_IdAndIsActiveTrueOrderByDisplayOrderAsc(Long vendorId);
 }

@@ -50,7 +50,10 @@ public class HourlySalesEtlServiceImpl implements HourlySalesEtlService {
             HourlyVendorSales row = existingOpt.orElseGet(HourlyVendorSales::new);
             row.setSalesDate(order.getPlacedAt().toLocalDate());
             row.setVendor(order.getVendor());
-            row.setSalesHour(hour);
+
+            // ✅ FIXED: int → Byte
+            row.setSalesHour((byte) hour);
+
             row.setTotalOrders((row.getTotalOrders() == null ? 0 : row.getTotalOrders()) + 1);
 
             List<OrderItem> items = orderItemRepository.findByOrder_Id(order.getId());

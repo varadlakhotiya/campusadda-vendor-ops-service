@@ -9,6 +9,7 @@ import com.campusadda.vendorops.vendor.entity.VendorUserAssignment;
 import com.campusadda.vendorops.vendor.repository.VendorUserAssignmentRepository;
 import com.campusadda.vendorops.vendor.service.VendorUserAssignmentService;
 import com.campusadda.vendorops.vendor.validator.VendorValidator;
+import com.campusadda.vendorops.security.VendorAccessService; // ✅ ADDED
 import com.campusadda.vendorops.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,13 @@ public class VendorUserAssignmentServiceImpl implements VendorUserAssignmentServ
 
     private final VendorUserAssignmentRepository vendorUserAssignmentRepository;
     private final VendorValidator vendorValidator;
+    private final VendorAccessService vendorAccessService; // ✅ ADDED
 
     @Override
     public VendorUserAssignmentResponse assignUserToVendor(Long vendorId, AssignVendorUserRequest request) {
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         Vendor vendor = vendorValidator.validateVendorExists(vendorId);
         User user = vendorValidator.validateUserExists(request.getUserId());
         vendorValidator.validateVendorUserNotAlreadyAssigned(vendorId, user.getId());
@@ -42,6 +47,9 @@ public class VendorUserAssignmentServiceImpl implements VendorUserAssignmentServ
     @Override
     @Transactional(readOnly = true)
     public List<VendorUserAssignmentResponse> getVendorUsers(Long vendorId) {
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         vendorValidator.validateVendorExists(vendorId);
 
         return vendorUserAssignmentRepository.findByVendor_Id(vendorId)
@@ -63,6 +71,9 @@ public class VendorUserAssignmentServiceImpl implements VendorUserAssignmentServ
 
     @Override
     public void removeUserFromVendor(Long vendorId, Long userId) {
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         vendorValidator.validateVendorExists(vendorId);
         vendorValidator.validateUserExists(userId);
         vendorValidator.validateAssignmentExists(vendorId, userId);

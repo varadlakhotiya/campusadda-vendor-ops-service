@@ -13,6 +13,7 @@ import com.campusadda.vendorops.menu.repository.MenuItemIngredientRepository;
 import com.campusadda.vendorops.menu.service.RecipeService;
 import com.campusadda.vendorops.menu.validator.MenuItemValidator;
 import com.campusadda.vendorops.menu.validator.RecipeValidator;
+import com.campusadda.vendorops.security.VendorAccessService; // ✅ ADDED
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +32,14 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeValidator recipeValidator;
     private final MenuItemIngredientRepository ingredientRepository;
     private final RecipeMapper recipeMapper;
+    private final VendorAccessService vendorAccessService; // ✅ ADDED
 
     @Override
     public IngredientResponse addIngredient(Long vendorId, Long menuItemId, CreateIngredientRequest request) {
+
+        // 🔐 Vendor access validation
+        vendorAccessService.validateVendorAccess(vendorId);
+
         MenuItem menuItem = menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
         InventoryItem inventoryItem = inventoryValidator.validateInventoryItemExists(vendorId, request.getInventoryItemId());
 
@@ -53,6 +59,10 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional(readOnly = true)
     public List<IngredientResponse> getIngredients(Long vendorId, Long menuItemId) {
+
+        // 🔐 Vendor access validation
+        vendorAccessService.validateVendorAccess(vendorId);
+
         menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
 
         return ingredientRepository.findByMenuItem_Id(menuItemId)
@@ -63,6 +73,10 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public IngredientResponse updateIngredient(Long vendorId, Long menuItemId, Long ingredientId, UpdateIngredientRequest request) {
+
+        // 🔐 Vendor access validation
+        vendorAccessService.validateVendorAccess(vendorId);
+
         menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
         MenuItemIngredient ingredient = recipeValidator.validateIngredientExists(menuItemId, ingredientId);
 
@@ -76,6 +90,10 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public void deleteIngredient(Long vendorId, Long menuItemId, Long ingredientId) {
+
+        // 🔐 Vendor access validation
+        vendorAccessService.validateVendorAccess(vendorId);
+
         menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
         MenuItemIngredient ingredient = recipeValidator.validateIngredientExists(menuItemId, ingredientId);
         ingredientRepository.delete(ingredient);
@@ -84,6 +102,10 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional(readOnly = true)
     public RecipeValidationResponse validateRecipe(Long vendorId, Long menuItemId) {
+
+        // 🔐 Vendor access validation
+        vendorAccessService.validateVendorAccess(vendorId);
+
         MenuItem menuItem = menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
         List<MenuItemIngredient> ingredients = ingredientRepository.findByMenuItem_Id(menuItemId);
 

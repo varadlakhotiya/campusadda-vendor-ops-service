@@ -11,6 +11,7 @@ import com.campusadda.vendorops.menu.repository.MenuItemRepository;
 import com.campusadda.vendorops.menu.service.MenuItemService;
 import com.campusadda.vendorops.menu.validator.MenuCategoryValidator;
 import com.campusadda.vendorops.menu.validator.MenuItemValidator;
+import com.campusadda.vendorops.security.VendorAccessService;
 import com.campusadda.vendorops.vendor.entity.Vendor;
 import com.campusadda.vendorops.vendor.validator.VendorValidator;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,12 @@ public class MenuItemServiceImpl implements MenuItemService {
     private final MenuCategoryValidator menuCategoryValidator;
     private final MenuItemMapper menuItemMapper;
     private final VendorValidator vendorValidator;
+    private final VendorAccessService vendorAccessService;
 
     @Override
     public MenuItemResponse createMenuItem(Long vendorId, CreateMenuItemRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         Vendor vendor = vendorValidator.validateVendorExists(vendorId);
         menuItemValidator.validateUniqueItemCode(vendorId, request.getItemCode());
 
@@ -48,10 +52,22 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MenuItemResponse> getMenuItems(Long vendorId) {
+    public List<MenuItemResponse> getMenuItems(Long vendorId, Long categoryId) {
+        vendorAccessService.validateVendorAccess(vendorId);
         vendorValidator.validateVendorExists(vendorId);
-        return menuItemRepository.findByVendor_IdOrderByDisplayOrderAsc(vendorId)
-                .stream()
+
+        List<MenuItem> items;
+
+        if (categoryId != null) {
+            menuCategoryValidator.validateCategoryExists(vendorId, categoryId);
+            items = menuItemRepository
+                    .findByVendor_IdAndCategory_IdAndIsActiveTrueOrderByDisplayOrderAscIdAsc(vendorId, categoryId);
+        } else {
+            items = menuItemRepository
+                    .findByVendor_IdAndIsActiveTrueOrderByDisplayOrderAscIdAsc(vendorId);
+        }
+
+        return items.stream()
                 .map(menuItemMapper::toResponse)
                 .toList();
     }
@@ -59,11 +75,17 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     @Transactional(readOnly = true)
     public MenuItemResponse getMenuItemById(Long vendorId, Long menuItemId) {
-        return menuItemMapper.toResponse(menuItemValidator.validateMenuItemExists(vendorId, menuItemId));
+        vendorAccessService.validateVendorAccess(vendorId);
+
+        return menuItemMapper.toResponse(
+                menuItemValidator.validateMenuItemExists(vendorId, menuItemId)
+        );
     }
 
     @Override
     public MenuItemResponse updateMenuItem(Long vendorId, Long menuItemId, UpdateMenuItemRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         MenuItem item = menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
 
         if (request.getCategoryId() != null) {
@@ -77,6 +99,8 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public MenuItemResponse updateAvailability(Long vendorId, Long menuItemId, UpdateMenuItemAvailabilityRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         MenuItem item = menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
         item.setIsAvailable(request.getIsAvailable());
         return menuItemMapper.toResponse(menuItemRepository.save(item));
@@ -84,6 +108,8 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public void deleteMenuItem(Long vendorId, Long menuItemId) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         MenuItem item = menuItemValidator.validateMenuItemExists(vendorId, menuItemId);
         item.setIsActive(Boolean.FALSE);
         menuItemRepository.save(item);

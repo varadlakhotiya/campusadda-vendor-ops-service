@@ -14,8 +14,10 @@ import com.campusadda.vendorops.order.dto.response.StockConsumptionPreviewRespon
 import com.campusadda.vendorops.order.entity.Order;
 import com.campusadda.vendorops.order.entity.OrderItem;
 import com.campusadda.vendorops.order.repository.OrderItemRepository;
+import com.campusadda.vendorops.order.repository.OrderRepository;
 import com.campusadda.vendorops.order.service.OrderStockConsumptionService;
 import com.campusadda.vendorops.security.SecurityUtils;
+import com.campusadda.vendorops.security.VendorAccessService;
 import com.campusadda.vendorops.user.entity.User;
 import com.campusadda.vendorops.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,31 +35,43 @@ import java.util.List;
 public class OrderStockConsumptionServiceImpl implements OrderStockConsumptionService {
 
     private final OrderItemRepository orderItemRepository;
+    private final OrderRepository orderRepository;
     private final MenuItemIngredientRepository ingredientRepository;
     private final InventoryItemRepository inventoryItemRepository;
     private final StockMovementRepository stockMovementRepository;
     private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
     private final LowStockAlertService lowStockAlertService;
+    private final VendorAccessService vendorAccessService;
 
     @Override
     @Transactional(readOnly = true)
     public StockConsumptionPreviewResponse previewStockConsumption(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        vendorAccessService.validateVendorAccess(order.getVendor().getId());
+
         List<String> issues = new ArrayList<>();
         List<OrderItem> orderItems = orderItemRepository.findByOrder_Id(orderId);
 
         for (OrderItem orderItem : orderItems) {
-            if (orderItem.getMenuItem() == null) continue;
+            if (orderItem.getMenuItem() == null || !Boolean.TRUE.equals(orderItem.getMenuItem().getTrackInventory())) {
+                continue;
+            }
 
-            List<MenuItemIngredient> ingredients = ingredientRepository.findByMenuItem_Id(orderItem.getMenuItem().getId());
+            List<MenuItemIngredient> ingredients = getConsumableIngredients(orderItem.getMenuItem().getId());
 
             for (MenuItemIngredient ingredient : ingredients) {
-                if (!Boolean.TRUE.equals(ingredient.getIsActive())) continue;
-                if (Boolean.TRUE.equals(ingredient.getIsOptional())) continue;
+                BigDecimal perUnitRequired = safe(ingredient.getQuantityRequired());
 
-                BigDecimal required = ingredient.getQuantityRequired()
-                        .multiply(BigDecimal.valueOf(orderItem.getQuantity()));
-                BigDecimal current = ingredient.getInventoryItem().getCurrentQuantity();
+                if (perUnitRequired.compareTo(BigDecimal.ZERO) <= 0) {
+                    issues.add("Invalid recipe quantity for " + ingredient.getInventoryItem().getItemName());
+                    continue;
+                }
+
+                BigDecimal required = perUnitRequired.multiply(BigDecimal.valueOf(orderItem.getQuantity()));
+                BigDecimal current = safe(ingredient.getInventoryItem().getCurrentQuantity());
 
                 if (current.compareTo(required) < 0) {
                     issues.add("Insufficient stock for " + ingredient.getInventoryItem().getItemName());
@@ -74,6 +88,8 @@ public class OrderStockConsumptionServiceImpl implements OrderStockConsumptionSe
 
     @Override
     public void consumeStock(Order order) {
+        vendorAccessService.validateVendorAccess(order.getVendor().getId());
+
         List<OrderItem> orderItems = orderItemRepository.findByOrder_Id(order.getId());
         User currentUser = resolveCurrentUser();
 
@@ -82,24 +98,22 @@ public class OrderStockConsumptionServiceImpl implements OrderStockConsumptionSe
                 continue;
             }
 
-            List<MenuItemIngredient> ingredients = ingredientRepository.findByMenuItem_Id(orderItem.getMenuItem().getId());
+            List<MenuItemIngredient> ingredients = getConsumableIngredients(orderItem.getMenuItem().getId());
 
             for (MenuItemIngredient ingredient : ingredients) {
-                if (!Boolean.TRUE.equals(ingredient.getIsActive())) continue;
-
                 InventoryItem inventoryItem = ingredient.getInventoryItem();
-                BigDecimal required = ingredient.getQuantityRequired()
-                        .multiply(BigDecimal.valueOf(orderItem.getQuantity()));
 
-                BigDecimal before = inventoryItem.getCurrentQuantity();
-                BigDecimal after = before.subtract(required);
-
-                if (after.compareTo(BigDecimal.ZERO) < 0 && !Boolean.TRUE.equals(ingredient.getIsOptional())) {
-                    throw new BusinessException("Insufficient stock for " + inventoryItem.getItemName());
+                BigDecimal perUnitRequired = safe(ingredient.getQuantityRequired());
+                if (perUnitRequired.compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new BusinessException("Invalid recipe quantity for " + inventoryItem.getItemName());
                 }
 
-                if (after.compareTo(BigDecimal.ZERO) < 0 && Boolean.TRUE.equals(ingredient.getIsOptional())) {
-                    continue;
+                BigDecimal required = perUnitRequired.multiply(BigDecimal.valueOf(orderItem.getQuantity()));
+                BigDecimal before = safe(inventoryItem.getCurrentQuantity());
+                BigDecimal after = before.subtract(required);
+
+                if (after.compareTo(BigDecimal.ZERO) < 0) {
+                    throw new BusinessException("Insufficient stock for " + inventoryItem.getItemName());
                 }
 
                 inventoryItem.setCurrentQuantity(after);
@@ -127,6 +141,8 @@ public class OrderStockConsumptionServiceImpl implements OrderStockConsumptionSe
 
     @Override
     public void reverseStock(Order order) {
+        vendorAccessService.validateVendorAccess(order.getVendor().getId());
+
         List<OrderItem> orderItems = orderItemRepository.findByOrder_Id(order.getId());
         User currentUser = resolveCurrentUser();
 
@@ -135,16 +151,18 @@ public class OrderStockConsumptionServiceImpl implements OrderStockConsumptionSe
                 continue;
             }
 
-            List<MenuItemIngredient> ingredients = ingredientRepository.findByMenuItem_Id(orderItem.getMenuItem().getId());
+            List<MenuItemIngredient> ingredients = getConsumableIngredients(orderItem.getMenuItem().getId());
 
             for (MenuItemIngredient ingredient : ingredients) {
-                if (!Boolean.TRUE.equals(ingredient.getIsActive())) continue;
-
                 InventoryItem inventoryItem = ingredient.getInventoryItem();
-                BigDecimal restore = ingredient.getQuantityRequired()
-                        .multiply(BigDecimal.valueOf(orderItem.getQuantity()));
 
-                BigDecimal before = inventoryItem.getCurrentQuantity();
+                BigDecimal perUnitRequired = safe(ingredient.getQuantityRequired());
+                if (perUnitRequired.compareTo(BigDecimal.ZERO) <= 0) {
+                    continue;
+                }
+
+                BigDecimal restore = perUnitRequired.multiply(BigDecimal.valueOf(orderItem.getQuantity()));
+                BigDecimal before = safe(inventoryItem.getCurrentQuantity());
                 BigDecimal after = before.add(restore);
 
                 inventoryItem.setCurrentQuantity(after);
@@ -166,6 +184,18 @@ public class OrderStockConsumptionServiceImpl implements OrderStockConsumptionSe
                 stockMovementRepository.save(movement);
             }
         }
+    }
+
+    private List<MenuItemIngredient> getConsumableIngredients(Long menuItemId) {
+        return ingredientRepository.findByMenuItem_Id(menuItemId)
+                .stream()
+                .filter(i -> Boolean.TRUE.equals(i.getIsActive()))
+                .filter(i -> !Boolean.TRUE.equals(i.getIsOptional()))
+                .toList();
+    }
+
+    private BigDecimal safe(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 
     private User resolveCurrentUser() {

@@ -20,8 +20,9 @@ import com.campusadda.vendorops.order.repository.OrderStatusHistoryRepository;
 import com.campusadda.vendorops.order.service.OrderPricingService;
 import com.campusadda.vendorops.order.service.OrderService;
 import com.campusadda.vendorops.order.service.OrderValidationService;
-import com.campusadda.vendorops.outbox.service.OutboxService; // ✅ NEW IMPORT
+import com.campusadda.vendorops.outbox.service.OutboxService;
 import com.campusadda.vendorops.security.SecurityUtils;
+import com.campusadda.vendorops.security.VendorAccessService;
 import com.campusadda.vendorops.user.entity.User;
 import com.campusadda.vendorops.user.repository.UserRepository;
 import com.campusadda.vendorops.vendor.entity.Vendor;
@@ -49,11 +50,13 @@ public class OrderServiceImpl implements OrderService {
     private final VendorValidator vendorValidator;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
-
-    private final OutboxService outboxService; // ✅ NEW DEPENDENCY
+    private final OutboxService outboxService;
+    private final VendorAccessService vendorAccessService;
 
     @Override
     public OrderResponse createOrder(CreateOrderRequest request) {
+        vendorAccessService.validateVendorManageAccess(request.getVendorId());
+
         Vendor vendor = vendorValidator.validateVendorExists(request.getVendorId());
         Map<Long, MenuItem> menuItemsById = orderValidationService.validateAndLoadMenuItems(request);
 
@@ -72,7 +75,11 @@ public class OrderServiceImpl implements OrderService {
         order.setExternalCustomerId(request.getExternalCustomerId());
         order.setOrderSource(request.getOrderSource() != null ? request.getOrderSource() : "APP");
         order.setStatus(OrderStatus.CREATED.name());
-        order.setPaymentStatus(request.getPaymentStatus() != null ? request.getPaymentStatus() : PaymentStatus.PENDING.name());
+        order.setPaymentStatus(
+                request.getPaymentStatus() != null
+                        ? request.getPaymentStatus()
+                        : PaymentStatus.PENDING.name()
+        );
         order.setPaymentMethod(request.getPaymentMethod());
         order.setCustomerName(request.getCustomerName());
         order.setCustomerPhone(request.getCustomerPhone());
@@ -86,7 +93,6 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // ✅ OUTBOX EVENT (IMPORTANT ADDITION)
         outboxService.saveEvent(
                 "ORDER",
                 savedOrder.getId(),
@@ -105,7 +111,9 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setItemNameSnapshot(menuItem.getItemName());
             orderItem.setUnitPrice(menuItem.getPrice());
             orderItem.setQuantity(itemRequest.getQuantity());
-            orderItem.setLineTotal(menuItem.getPrice().multiply(BigDecimal.valueOf(itemRequest.getQuantity())));
+            orderItem.setLineTotal(
+                    menuItem.getPrice().multiply(BigDecimal.valueOf(itemRequest.getQuantity()))
+            );
             orderItem.setSpecialInstructions(itemRequest.getSpecialInstructions());
             orderItem.setRecipeSnapshotJson(null);
 
@@ -125,10 +133,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse createManualOrder(Long vendorId, CreateManualOrderRequest request) {
+        vendorAccessService.validateVendorManageAccess(vendorId);
+
         request.setVendorId(vendorId);
         if (request.getOrderSource() == null) {
             request.setOrderSource("MANUAL");
         }
+
         return createOrder(request);
     }
 
@@ -137,6 +148,8 @@ public class OrderServiceImpl implements OrderService {
     public OrderDetailResponse getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        vendorAccessService.validateVendorViewAccess(order.getVendor().getId());
 
         List<OrderItem> items = orderItemRepository.findByOrder_Id(orderId);
         List<OrderStatusHistory> history = orderStatusHistoryRepository.findByOrder_IdOrderByChangedAtAsc(orderId);
@@ -147,6 +160,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrders(Long vendorId) {
+        vendorAccessService.validateVendorViewAccess(vendorId);
         vendorValidator.validateVendorExists(vendorId);
 
         return orderRepository.findByVendor_IdOrderByPlacedAtDesc(vendorId)
@@ -158,6 +172,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public OrderBoardResponse getOrderBoard(Long vendorId) {
+        vendorAccessService.validateVendorViewAccess(vendorId);
         vendorValidator.validateVendorExists(vendorId);
 
         return OrderBoardResponse.builder()

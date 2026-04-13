@@ -28,7 +28,14 @@ public class CalendarEventServiceImpl implements CalendarEventService {
         event.setEventType(request.getEventType());
         event.setTitle(request.getTitle());
         event.setDescription(request.getDescription());
-        event.setImpactLevel(request.getImpactLevel() != null ? request.getImpactLevel() : 1);
+
+        // ✅ FIXED: Integer → Byte conversion
+        event.setImpactLevel(
+                request.getImpactLevel() != null
+                        ? request.getImpactLevel().byteValue()
+                        : (byte) 1
+        );
+
         event.setCampusArea(request.getCampusArea());
         event.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
 
@@ -57,7 +64,10 @@ public class CalendarEventServiceImpl implements CalendarEventService {
                 .eventType(event.getEventType())
                 .title(event.getTitle())
                 .description(event.getDescription())
-                .impactLevel(event.getImpactLevel())
+
+                // ✅ FIXED: Byte → Integer conversion
+                .impactLevel(event.getImpactLevel() != null ? event.getImpactLevel().intValue() : null)
+
                 .campusArea(event.getCampusArea())
                 .vendorId(event.getVendor() != null ? event.getVendor().getId() : null)
                 .isActive(event.getIsActive())

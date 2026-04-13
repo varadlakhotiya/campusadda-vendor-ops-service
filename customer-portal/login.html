@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Login - CampusAdda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <span class="section-kicker">Customer Access</span>
+      <h1>Login</h1>
+      <p class="muted">Login to see your active and previous orders.</p>
+
+      <form id="loginForm" class="auth-form">
+        <div class="field-group">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" required />
+        </div>
+
+        <div class="field-group">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" required />
+        </div>
+
+        <button type="submit" class="btn-primary btn-full">Login</button>
+      </form>
+
+      <div id="loginMessage" class="tracking-state hidden"></div>
+
+      <div class="auth-links">
+        <a href="signup.html">Create account</a>
+        <a href="index.html">Back to ordering</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/customer-auth.js"></script>
+  <script>
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("loginMessage");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      message.classList.add("hidden");
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      try {
+        await CustomerAuth.login(email, password);
+        window.location.href = "index.html";
+      } catch (error) {
+        message.textContent = error.message || "Login failed";
+        message.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>

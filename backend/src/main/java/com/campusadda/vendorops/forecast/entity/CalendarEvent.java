@@ -29,7 +29,7 @@ public class CalendarEvent extends AuditableEntity {
     private String description;
 
     @Column(name = "impact_level", nullable = false)
-    private Integer impactLevel = 1;
+    private Byte impactLevel = 1;
 
     @Column(name = "campus_area", length = 100)
     private String campusArea;

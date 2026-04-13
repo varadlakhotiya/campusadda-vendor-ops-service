@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard - Vendor Ops</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -10,24 +11,41 @@
 <body>
   <div class="app-shell">
     <aside id="sidebar" class="sidebar"></aside>
+
     <main class="main">
       <div class="topbar">
-        <h2>Dashboard</h2>
+        <div>
+          <div class="page-kicker">CampusAdda Vendor Ops</div>
+          <h2>Dashboard</h2>
+          <p class="page-subtitle">Monitor vendor activity, inventory health, order flow and recent alerts.</p>
+        </div>
       </div>
 
       <div class="section">
-        <label>Select Vendor</label>
+        <label for="vendorSelect">Select Vendor</label>
         <select id="vendorSelect"></select>
       </div>
 
       <div class="card-grid">
-        <div class="card"><h3>Assigned Users</h3><p id="assignedUserCount">0</p></div>
-        <div class="card"><h3>Menu Items</h3><p id="activeMenuItemCount">0</p></div>
-        <div class="card"><h3>Low Stock</h3><p id="lowStockItemCount">0</p></div>
-        <div class="card"><h3>Today Orders</h3><p id="todayOrderCount">0</p></div>
+        <div class="card">
+          <h3>Assigned Users</h3>
+          <p id="assignedUserCount">0</p>
+        </div>
+        <div class="card">
+          <h3>Menu Items</h3>
+          <p id="activeMenuItemCount">0</p>
+        </div>
+        <div class="card">
+          <h3>Low Stock</h3>
+          <p id="lowStockItemCount">0</p>
+        </div>
+        <div class="card">
+          <h3>Today Orders</h3>
+          <p id="todayOrderCount">0</p>
+        </div>
       </div>
 
-      <div class="section" style="margin-top:20px;">
+      <div class="section">
         <h3>Recent Alerts</h3>
         <table>
           <thead>
@@ -50,5 +68,7 @@
   <script src="js/guards.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="js/portal.js"></script>
+  <script src="js/vendor-scope.js"></script>
 </body>
 </html>

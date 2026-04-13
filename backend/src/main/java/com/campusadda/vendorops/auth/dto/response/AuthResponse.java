@@ -1,8 +1,9 @@
 package com.campusadda.vendorops.auth.dto.response;
 
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -19,6 +20,7 @@ public class AuthResponse {
         private Long id;
         private String fullName;
         private String email;
+        private String phone;
         private List<String> roles;
     }
 }

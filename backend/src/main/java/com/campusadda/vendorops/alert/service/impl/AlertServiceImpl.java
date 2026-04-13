@@ -7,6 +7,7 @@ import com.campusadda.vendorops.alert.repository.AlertRepository;
 import com.campusadda.vendorops.alert.service.AlertService;
 import com.campusadda.vendorops.alert.validator.AlertValidator;
 import com.campusadda.vendorops.common.enums.AlertStatus;
+import com.campusadda.vendorops.security.VendorAccessService; // ✅ ADD THIS
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +23,13 @@ public class AlertServiceImpl implements AlertService {
     private final AlertRepository alertRepository;
     private final AlertValidator alertValidator;
     private final AlertMapper alertMapper;
+    private final VendorAccessService vendorAccessService; // ✅ ADD THIS
 
     @Override
     @Transactional(readOnly = true)
     public List<AlertResponse> getAlerts(Long vendorId) {
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD HERE
+
         return alertRepository.findByVendor_IdOrderByTriggeredAtDesc(vendorId)
                 .stream()
                 .map(alertMapper::toResponse)
@@ -34,6 +38,8 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public AlertResponse acknowledgeAlert(Long vendorId, Long alertId) {
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD HERE
+
         Alert alert = alertValidator.validateAlertExists(vendorId, alertId);
         alert.setStatus(AlertStatus.ACKNOWLEDGED.name());
         alert.setAcknowledgedAt(LocalDateTime.now());
@@ -42,6 +48,8 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public AlertResponse resolveAlert(Long vendorId, Long alertId) {
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD HERE
+
         Alert alert = alertValidator.validateAlertExists(vendorId, alertId);
         alert.setStatus(AlertStatus.RESOLVED.name());
         alert.setResolvedAt(LocalDateTime.now());

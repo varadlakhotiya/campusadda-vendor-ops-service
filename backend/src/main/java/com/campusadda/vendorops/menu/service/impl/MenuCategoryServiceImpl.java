@@ -8,6 +8,7 @@ import com.campusadda.vendorops.menu.mapper.MenuCategoryMapper;
 import com.campusadda.vendorops.menu.repository.MenuCategoryRepository;
 import com.campusadda.vendorops.menu.service.MenuCategoryService;
 import com.campusadda.vendorops.menu.validator.MenuCategoryValidator;
+import com.campusadda.vendorops.security.VendorAccessService; // ✅ ADDED
 import com.campusadda.vendorops.vendor.entity.Vendor;
 import com.campusadda.vendorops.vendor.validator.VendorValidator;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,13 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     private final MenuCategoryValidator menuCategoryValidator;
     private final MenuCategoryMapper menuCategoryMapper;
     private final VendorValidator vendorValidator;
+    private final VendorAccessService vendorAccessService; // ✅ ADDED
 
     @Override
     public MenuCategoryResponse createCategory(Long vendorId, CreateMenuCategoryRequest request) {
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         Vendor vendor = vendorValidator.validateVendorExists(vendorId);
         menuCategoryValidator.validateUniqueCategoryName(vendorId, request.getCategoryName());
 
@@ -40,6 +45,9 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     @Override
     @Transactional(readOnly = true)
     public List<MenuCategoryResponse> getCategories(Long vendorId) {
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         vendorValidator.validateVendorExists(vendorId);
         return menuCategoryRepository.findByVendor_IdOrderByDisplayOrderAsc(vendorId)
                 .stream()
@@ -50,11 +58,19 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
     @Override
     @Transactional(readOnly = true)
     public MenuCategoryResponse getCategoryById(Long vendorId, Long categoryId) {
-        return menuCategoryMapper.toResponse(menuCategoryValidator.validateCategoryExists(vendorId, categoryId));
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
+        return menuCategoryMapper.toResponse(
+                menuCategoryValidator.validateCategoryExists(vendorId, categoryId)
+        );
     }
 
     @Override
     public MenuCategoryResponse updateCategory(Long vendorId, Long categoryId, UpdateMenuCategoryRequest request) {
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         MenuCategory category = menuCategoryValidator.validateCategoryExists(vendorId, categoryId);
         menuCategoryMapper.updateEntity(category, request);
         return menuCategoryMapper.toResponse(menuCategoryRepository.save(category));
@@ -62,6 +78,9 @@ public class MenuCategoryServiceImpl implements MenuCategoryService {
 
     @Override
     public void deleteCategory(Long vendorId, Long categoryId) {
+
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         MenuCategory category = menuCategoryValidator.validateCategoryExists(vendorId, categoryId);
         category.setIsActive(Boolean.FALSE);
         menuCategoryRepository.save(category);

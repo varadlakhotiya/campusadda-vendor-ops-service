@@ -26,22 +26,30 @@ public class MenuItemController {
             @PathVariable Long vendorId,
             @Valid @RequestBody CreateMenuItemRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Menu item created successfully",
-                        menuItemService.createMenuItem(vendorId, request)));
+                .body(ApiResponse.success(
+                        "Menu item created successfully",
+                        menuItemService.createMenuItem(vendorId, request)
+                ));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<MenuItemResponse>>> list(@PathVariable Long vendorId) {
-        return ResponseEntity.ok(ApiResponse.success("Menu items fetched successfully",
-                menuItemService.getMenuItems(vendorId)));
+    public ResponseEntity<ApiResponse<List<MenuItemResponse>>> list(
+            @PathVariable Long vendorId,
+            @RequestParam(required = false) Long categoryId) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Menu items fetched successfully",
+                menuItemService.getMenuItems(vendorId, categoryId)
+        ));
     }
 
     @GetMapping("/{menuItemId}")
     public ResponseEntity<ApiResponse<MenuItemResponse>> get(
             @PathVariable Long vendorId,
             @PathVariable Long menuItemId) {
-        return ResponseEntity.ok(ApiResponse.success("Menu item fetched successfully",
-                menuItemService.getMenuItemById(vendorId, menuItemId)));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Menu item fetched successfully",
+                menuItemService.getMenuItemById(vendorId, menuItemId)
+        ));
     }
 
     @PutMapping("/{menuItemId}")
@@ -49,8 +57,10 @@ public class MenuItemController {
             @PathVariable Long vendorId,
             @PathVariable Long menuItemId,
             @Valid @RequestBody UpdateMenuItemRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("Menu item updated successfully",
-                menuItemService.updateMenuItem(vendorId, menuItemId, request)));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Menu item updated successfully",
+                menuItemService.updateMenuItem(vendorId, menuItemId, request)
+        ));
     }
 
     @PatchMapping("/{menuItemId}/availability")
@@ -58,8 +68,10 @@ public class MenuItemController {
             @PathVariable Long vendorId,
             @PathVariable Long menuItemId,
             @Valid @RequestBody UpdateMenuItemAvailabilityRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("Menu item availability updated successfully",
-                menuItemService.updateAvailability(vendorId, menuItemId, request)));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Menu item availability updated successfully",
+                menuItemService.updateAvailability(vendorId, menuItemId, request)
+        ));
     }
 
     @DeleteMapping("/{menuItemId}")

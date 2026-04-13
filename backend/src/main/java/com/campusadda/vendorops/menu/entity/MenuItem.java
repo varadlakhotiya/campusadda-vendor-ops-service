@@ -40,7 +40,7 @@ public class MenuItem extends AuditableEntity {
     private BigDecimal costPrice;
 
     @Column(name = "prep_time_minutes")
-    private Integer prepTimeMinutes;
+    private Short prepTimeMinutes;
 
     @Column(name = "is_available", nullable = false)
     private Boolean isAvailable = Boolean.TRUE;

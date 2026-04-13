@@ -26,7 +26,7 @@ public class HourlyVendorSales extends AuditableEntity {
     private Vendor vendor;
 
     @Column(name = "sales_hour", nullable = false)
-    private Integer salesHour;
+    private Byte salesHour;
 
     @Column(name = "total_orders", nullable = false)
     private Integer totalOrders = 0;

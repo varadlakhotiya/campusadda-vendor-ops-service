@@ -1,6 +1,7 @@
 package com.campusadda.vendorops.auth.controller;
 
 import com.campusadda.vendorops.auth.dto.request.ChangePasswordRequest;
+import com.campusadda.vendorops.auth.dto.request.CustomerSignupRequest;
 import com.campusadda.vendorops.auth.dto.request.LoginRequest;
 import com.campusadda.vendorops.auth.dto.request.RefreshTokenRequest;
 import com.campusadda.vendorops.auth.dto.response.AuthResponse;
@@ -19,6 +20,15 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+
+    @PostMapping("/signup/customer")
+    public ResponseEntity<ApiResponse<AuthResponse>> signupCustomer(
+            @Valid @RequestBody CustomerSignupRequest request) {
+
+        AuthResponse response = authService.signupCustomer(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Customer signup successful", response));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(

@@ -2,7 +2,12 @@ package com.campusadda.vendorops.inventory.service.impl;
 
 import com.campusadda.vendorops.common.enums.MovementType;
 import com.campusadda.vendorops.common.exception.ResourceNotFoundException;
-import com.campusadda.vendorops.inventory.dto.request.*;
+import com.campusadda.vendorops.inventory.dto.request.CreateInventoryItemRequest;
+import com.campusadda.vendorops.inventory.dto.request.StockAdjustmentRequest;
+import com.campusadda.vendorops.inventory.dto.request.StockInRequest;
+import com.campusadda.vendorops.inventory.dto.request.StockOutRequest;
+import com.campusadda.vendorops.inventory.dto.request.UpdateInventoryItemRequest;
+import com.campusadda.vendorops.inventory.dto.request.UpdateInventoryItemStatusRequest;
 import com.campusadda.vendorops.inventory.dto.response.InventoryItemResponse;
 import com.campusadda.vendorops.inventory.dto.response.LowStockItemResponse;
 import com.campusadda.vendorops.inventory.entity.InventoryItem;
@@ -13,8 +18,9 @@ import com.campusadda.vendorops.inventory.repository.StockMovementRepository;
 import com.campusadda.vendorops.inventory.service.InventoryService;
 import com.campusadda.vendorops.inventory.validator.InventoryValidator;
 import com.campusadda.vendorops.inventory.validator.StockOperationValidator;
-import com.campusadda.vendorops.outbox.service.OutboxService; // ✅ NEW
+import com.campusadda.vendorops.outbox.service.OutboxService;
 import com.campusadda.vendorops.security.SecurityUtils;
+import com.campusadda.vendorops.security.VendorAccessService;
 import com.campusadda.vendorops.user.entity.User;
 import com.campusadda.vendorops.user.repository.UserRepository;
 import com.campusadda.vendorops.vendor.entity.Vendor;
@@ -40,16 +46,30 @@ public class InventoryServiceImpl implements InventoryService {
     private final VendorValidator vendorValidator;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
-
-    private final OutboxService outboxService; // ✅ NEW
+    private final OutboxService outboxService;
+    private final VendorAccessService vendorAccessService;
 
     @Override
     public InventoryItemResponse createInventoryItem(Long vendorId, CreateInventoryItemRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         Vendor vendor = vendorValidator.validateVendorExists(vendorId);
         inventoryValidator.validateUniqueItemCode(vendorId, request.getItemCode());
 
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getCurrentQuantity(), "Current quantity");
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getReservedQuantity(), "Reserved quantity");
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getLowStockThreshold(), "Low stock threshold");
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getMaxStockLevel(), "Max stock level");
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getUnitCost(), "Unit cost");
+
         InventoryItem item = inventoryMapper.toEntity(request);
         item.setVendor(vendor);
+
+        if (item.getCurrentQuantity() == null) item.setCurrentQuantity(BigDecimal.ZERO);
+        if (item.getReservedQuantity() == null) item.setReservedQuantity(BigDecimal.ZERO);
+        if (item.getLowStockThreshold() == null) item.setLowStockThreshold(BigDecimal.ZERO);
+        if (item.getStatus() == null || item.getStatus().isBlank()) item.setStatus("ACTIVE");
+        if (item.getSourceSystem() == null || item.getSourceSystem().isBlank()) item.setSourceSystem("VENDOR_OPS");
 
         return inventoryMapper.toResponse(inventoryItemRepository.save(item));
     }
@@ -57,6 +77,8 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(readOnly = true)
     public List<InventoryItemResponse> getInventoryItems(Long vendorId) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         vendorValidator.validateVendorExists(vendorId);
         return inventoryItemRepository.findByVendor_IdOrderByItemNameAsc(vendorId)
                 .stream()
@@ -67,11 +89,22 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(readOnly = true)
     public InventoryItemResponse getInventoryItemById(Long vendorId, Long inventoryItemId) {
-        return inventoryMapper.toResponse(inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId));
+        vendorAccessService.validateVendorAccess(vendorId);
+
+        return inventoryMapper.toResponse(
+                inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId)
+        );
     }
 
     @Override
     public InventoryItemResponse updateInventoryItem(Long vendorId, Long inventoryItemId, UpdateInventoryItemRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getReservedQuantity(), "Reserved quantity");
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getLowStockThreshold(), "Low stock threshold");
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getMaxStockLevel(), "Max stock level");
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getUnitCost(), "Unit cost");
+
         InventoryItem item = inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId);
         inventoryMapper.updateEntity(item, request);
         return inventoryMapper.toResponse(inventoryItemRepository.save(item));
@@ -79,6 +112,8 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryItemResponse updateInventoryItemStatus(Long vendorId, Long inventoryItemId, UpdateInventoryItemStatusRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         InventoryItem item = inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId);
         item.setStatus(request.getStatus());
         return inventoryMapper.toResponse(inventoryItemRepository.save(item));
@@ -86,10 +121,13 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryItemResponse stockIn(Long vendorId, Long inventoryItemId, StockInRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         InventoryItem item = inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId);
         stockOperationValidator.validatePositiveQuantity(request.getQuantity());
+        stockOperationValidator.validateOptionalZeroOrPositiveQuantity(request.getUnitCost(), "Unit cost");
 
-        BigDecimal before = item.getCurrentQuantity();
+        BigDecimal before = safe(item.getCurrentQuantity());
         BigDecimal after = before.add(request.getQuantity());
 
         item.setCurrentQuantity(after);
@@ -107,11 +145,14 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryItemResponse stockOut(Long vendorId, Long inventoryItemId, StockOutRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         InventoryItem item = inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId);
         stockOperationValidator.validatePositiveQuantity(request.getQuantity());
-        stockOperationValidator.validateStockOutAllowed(item.getCurrentQuantity(), request.getQuantity());
 
-        BigDecimal before = item.getCurrentQuantity();
+        BigDecimal before = safe(item.getCurrentQuantity());
+        stockOperationValidator.validateStockOutAllowed(before, request.getQuantity());
+
         BigDecimal after = before.subtract(request.getQuantity());
 
         item.setCurrentQuantity(after);
@@ -123,9 +164,13 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryItemResponse adjustStock(Long vendorId, Long inventoryItemId, StockAdjustmentRequest request) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
+        stockOperationValidator.validateZeroOrPositiveQuantity(request.getAdjustedQuantity(), "Adjusted quantity");
+
         InventoryItem item = inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId);
 
-        BigDecimal before = item.getCurrentQuantity();
+        BigDecimal before = safe(item.getCurrentQuantity());
         BigDecimal after = request.getAdjustedQuantity();
         BigDecimal delta = after.subtract(before);
 
@@ -139,13 +184,19 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(readOnly = true)
     public List<LowStockItemResponse> getLowStockItems(Long vendorId) {
+        vendorAccessService.validateVendorAccess(vendorId);
+
         vendorValidator.validateVendorExists(vendorId);
 
         return inventoryItemRepository.findByVendor_IdOrderByItemNameAsc(vendorId)
                 .stream()
-                .filter(item -> item.getCurrentQuantity().compareTo(item.getLowStockThreshold()) <= 0)
+                .filter(item -> safe(item.getCurrentQuantity()).compareTo(safe(item.getLowStockThreshold())) <= 0)
                 .map(inventoryMapper::toLowStockResponse)
                 .toList();
+    }
+
+    private BigDecimal safe(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 
     private void saveMovement(
@@ -175,7 +226,6 @@ public class InventoryServiceImpl implements InventoryService {
 
         stockMovementRepository.save(movement);
 
-        // ✅ OUTBOX EVENT (ADDED)
         outboxService.saveEvent(
                 "INVENTORY",
                 item.getId(),

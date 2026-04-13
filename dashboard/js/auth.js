@@ -24,6 +24,9 @@ const Auth = {
 
   logout() {
     this.clearSession();
+    if (window.Portal && typeof Portal.clear === "function") {
+      Portal.clear();
+    }
     window.location.href = "login.html";
   }
 };

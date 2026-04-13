@@ -2,53 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Recipe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe - Vendor Ops</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
 </head>
 <body>
-<div class="app-shell">
-  <aside id="sidebar" class="sidebar"></aside>
-  <main class="main">
-    <div class="topbar"><h2>Recipe / BOM</h2></div>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="page-kicker">CampusAdda Vendor Ops</div>
+          <h2>Recipe / BOM</h2>
+          <p class="page-subtitle">
+            Map menu items to ingredients, validate the saved recipe, and check real stock-based sellability.
+          </p>
+        </div>
+      </div>
 
-    <div class="section form-grid">
-      <select id="vendorSelect"></select>
-      <select id="menuItemSelect"></select>
-      <select id="inventoryItemSelect"></select>
-      <input id="quantityRequired" type="number" step="0.001" placeholder="Quantity Required">
-      <button class="btn-primary" id="addIngredientBtn">Add Ingredient</button>
-      <button class="btn-secondary" id="validateRecipeBtn">Validate Recipe</button>
-    </div>
+      <div class="section">
+        <p class="page-subtitle" style="margin: 0;">
+          <strong>Add Ingredient</strong> saves the selected inventory item into the recipe of the selected menu item.
+          <strong>Validate Saved Recipe</strong> checks whether the stored recipe is structurally correct.
+          <strong>Check Sellability</strong> checks whether the menu item can currently be sold based on stock and availability.
+        </p>
+      </div>
 
-    <div class="section">
-      <h3>Ingredients</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Inventory Item</th>
-            <th>Quantity</th>
-            <th>Unit</th>
-          </tr>
-        </thead>
-        <tbody id="ingredientsBody"></tbody>
-      </table>
-    </div>
+      <div class="section form-grid">
+        <div>
+          <label for="vendorSelect">Select Vendor</label>
+          <select id="vendorSelect"></select>
+        </div>
+        <div>
+          <label for="menuItemSelect">Select Menu Item</label>
+          <select id="menuItemSelect"></select>
+        </div>
+        <div>
+          <label for="inventoryItemSelect">Select Inventory Item</label>
+          <select id="inventoryItemSelect"></select>
+        </div>
+        <div>
+          <label for="quantityRequired">Quantity Required</label>
+          <input id="quantityRequired" type="number" step="0.001" placeholder="Quantity Required">
+        </div>
 
-    <div class="section">
-      <h3>Recipe Validation</h3>
-      <pre id="recipeValidationBox"></pre>
-    </div>
-  </main>
-</div>
+        <button class="btn-primary" id="addIngredientBtn" type="button">Add Ingredient</button>
+        <button class="btn-secondary" id="validateRecipeBtn" type="button">Validate Saved Recipe</button>
+        <button class="btn-secondary" id="checkAvailabilityBtn" type="button">Check Sellability</button>
+      </div>
 
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/api.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/guards.js"></script>
-<script src="js/layout.js"></script>
-<script src="js/recipe.js"></script>
+      <div class="section">
+        <h3>Saved Ingredients</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Inventory Item</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ingredientsBody"></tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h3>Recipe Validation</h3>
+        <pre id="recipeValidationBox">Select a menu item and click "Validate Saved Recipe".</pre>
+      </div>
+
+      <div class="section">
+        <h3>Sellability Check</h3>
+        <pre id="availabilityCheckBox">Select a menu item and click "Check Sellability".</pre>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/guards.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/recipe.js"></script>
+  <script src="js/portal.js"></script>
+  <script src="js/vendor-scope.js"></script>
 </body>
 </html>

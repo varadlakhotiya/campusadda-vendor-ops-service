@@ -8,6 +8,7 @@ import com.campusadda.vendorops.inventory.mapper.InventoryMapper;
 import com.campusadda.vendorops.inventory.repository.InventoryPolicyRepository;
 import com.campusadda.vendorops.inventory.service.InventoryPolicyService;
 import com.campusadda.vendorops.inventory.validator.InventoryValidator;
+import com.campusadda.vendorops.security.VendorAccessService; // ✅ ADDED
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +21,14 @@ public class InventoryPolicyServiceImpl implements InventoryPolicyService {
     private final InventoryPolicyRepository inventoryPolicyRepository;
     private final InventoryValidator inventoryValidator;
     private final InventoryMapper inventoryMapper;
+    private final VendorAccessService vendorAccessService; // ✅ ADDED
 
     @Override
     public InventoryPolicyResponse upsertPolicy(Long vendorId, Long inventoryItemId, UpsertInventoryPolicyRequest request) {
+
+        // 🔐 Vendor access validation
+        vendorAccessService.validateVendorAccess(vendorId);
+
         InventoryItem item = inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId);
 
         InventoryPolicy policy = inventoryPolicyRepository.findByInventoryItem_Id(item.getId())
@@ -48,9 +54,16 @@ public class InventoryPolicyServiceImpl implements InventoryPolicyService {
     @Override
     @Transactional(readOnly = true)
     public InventoryPolicyResponse getPolicy(Long vendorId, Long inventoryItemId) {
+
+        // 🔐 Vendor access validation
+        vendorAccessService.validateVendorAccess(vendorId);
+
         InventoryItem item = inventoryValidator.validateInventoryItemExists(vendorId, inventoryItemId);
+
         InventoryPolicy policy = inventoryPolicyRepository.findByInventoryItem_Id(item.getId())
-                .orElseThrow(() -> new com.campusadda.vendorops.common.exception.ResourceNotFoundException("Inventory policy not found"));
+                .orElseThrow(() ->
+                        new com.campusadda.vendorops.common.exception.ResourceNotFoundException("Inventory policy not found")
+                );
 
         return inventoryMapper.toPolicyResponse(policy);
     }

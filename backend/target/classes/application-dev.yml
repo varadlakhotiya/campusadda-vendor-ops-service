@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/campusadda_vendor_ops?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: root
+    password: Varad@2004
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+logging:
+  level:
+    org.hibernate.SQL: debug

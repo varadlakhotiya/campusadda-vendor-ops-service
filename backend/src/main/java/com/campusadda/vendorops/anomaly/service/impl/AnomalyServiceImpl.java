@@ -7,6 +7,7 @@ import com.campusadda.vendorops.anomaly.service.AnomalyService;
 import com.campusadda.vendorops.analytics.repository.DailyItemSalesRepository;
 import com.campusadda.vendorops.common.exception.ResourceNotFoundException;
 import com.campusadda.vendorops.vendor.validator.VendorValidator;
+import com.campusadda.vendorops.security.VendorAccessService; // ✅ ADD
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +26,11 @@ public class AnomalyServiceImpl implements AnomalyService {
     private final VendorValidator vendorValidator;
     private final DailyItemSalesRepository dailyItemSalesRepository;
     private final AnomalyRecordRepository anomalyRecordRepository;
+    private final VendorAccessService vendorAccessService; // ✅ ADD
 
     @Override
     public List<AnomalyResponse> scan(Long vendorId) {
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
         vendorValidator.validateVendorExists(vendorId);
 
         LocalDate from = LocalDate.now().minusDays(30);
@@ -75,6 +78,8 @@ public class AnomalyServiceImpl implements AnomalyService {
     @Override
     @Transactional(readOnly = true)
     public List<AnomalyResponse> getAnomalies(Long vendorId) {
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         return anomalyRecordRepository.findByVendor_IdOrderByAnomalyDateDesc(vendorId)
                 .stream()
                 .map(this::map)
@@ -83,6 +88,8 @@ public class AnomalyServiceImpl implements AnomalyService {
 
     @Override
     public AnomalyResponse resolve(Long vendorId, Long anomalyId) {
+        vendorAccessService.validateVendorAccess(vendorId); // 🔐 ADD
+
         AnomalyRecord record = anomalyRecordRepository.findById(anomalyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Anomaly not found"));
 
