@@ -573,7 +573,7 @@ function renderMenuItems() {
 
   items.forEach((item, index) => {
     const isUnavailable = item.isAvailable === false;
-    const imageUrl = item.primaryImageUrl || getVendorCoverImage(state.selectedVendor, state.menu, item.itemName || "Dish");
+    const imageUrl = getMenuItemImage(item);
     const foodBadge = item.isVeg ? "Veg" : "Non-Veg";
     const prepLabel = item.prepTimeMinutes ? `${item.prepTimeMinutes} min prep` : "Freshly prepared";
     const category = getCategoryName(item.categoryId);
@@ -755,7 +755,7 @@ function renderHeroPreview() {
     els.heroFeaturedDescription.textContent = vendor?.description || "A warmer food-app style with cleaner hierarchy, quieter drawers, and a smoother ordering flow for students.";
   }
   if (els.heroFeaturedImage) {
-    els.heroFeaturedImage.src = vendor ? getVendorCoverImage(vendor, menu) : "https://placehold.co/1200x800/ffedd5/9a3412?text=CampusAdda+Preview";
+    els.heroFeaturedImage.src = vendor ? getVendorCoverImage(vendor, menu) : "images/campusadda-hero.png";
   }
 
   if (els.heroFeaturedTags) {
@@ -1458,6 +1458,15 @@ function getVendorCoverImage(vendor, menu, fallbackText = "CampusAdda") {
 
   const text = vendor?.name || fallbackText;
   return `https://placehold.co/1200x800/ffedd5/9a3412?text=${encodeURIComponent(text)}`;
+}
+
+function getMenuItemImage(item) {
+  if (item?.primaryImageUrl) {
+    return item.primaryImageUrl;
+  }
+
+  const text = item?.itemName || "Dish";
+  return `https://placehold.co/800x600/fff7ed/f97316?text=${encodeURIComponent(text)}`;
 }
 
 window.openCartDrawer = () => openLayer("cart");
