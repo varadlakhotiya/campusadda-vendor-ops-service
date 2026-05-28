@@ -30,6 +30,7 @@ app:
       - http://localhost:5600
       - http://127.0.0.1:5600
       - https://campusadda-vendor-ops-service-dashbaord.onrender.com
+      - https://campusadda-vendor-ops-service-customer.onrender.com
 
   seed:
     default-admin:
