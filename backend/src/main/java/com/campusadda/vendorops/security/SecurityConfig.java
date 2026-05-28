@@ -45,10 +45,12 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/css/**",
                                 "/js/**",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/actuator/**"
                         ).permitAll()
 
-                        // PUBLIC API
+                        // PUBLIC API\
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/v1/health").permitAll()
                         .requestMatchers("/api/v1/health/**").permitAll()
                         .requestMatchers("/api/v1/auth/login").permitAll()
