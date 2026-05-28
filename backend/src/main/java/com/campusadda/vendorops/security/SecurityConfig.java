@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // PUBLIC STATIC RESOURCES
                         .requestMatchers(
+                                "/Images/**",
                                 "/images/**",
                                 "/css/**",
                                 "/js/**",
