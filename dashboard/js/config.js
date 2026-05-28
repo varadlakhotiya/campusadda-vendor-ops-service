@@ -3,3 +3,6 @@ window.APP_CONFIG = {
   TOKEN_KEY: "vendor_ops_access_token",
   USER_KEY: "vendor_ops_current_user"
 };
+
+fetch("https://campusadda-vendor-ops-service.onrender.com/actuator/health")
+  .catch(() => {});

@@ -32,6 +32,10 @@ app:
       - https://campusadda-vendor-ops-service-dashbaord.onrender.com
       - https://campusadda-vendor-ops-service-customer.onrender.com
 
+       # NEW CLOUDFLARE FRONTENDS
+      - https://campusadda-dashboard.pages.dev
+      - https://campusadda-customerportal.pages.dev
+
   seed:
     default-admin:
       enabled: false

@@ -3,3 +3,6 @@ window.CUSTOMER_APP_CONFIG = {
   AUTH_BASE_URL: "https://campusadda-vendor-ops-service.onrender.com/api/v1/auth",
   CUSTOMER_BASE_URL: "https://campusadda-vendor-ops-service.onrender.com/api/v1/customer"
 };
+
+fetch("https://campusadda-vendor-ops-service.onrender.com/actuator/health")
+  .catch(() => {});
