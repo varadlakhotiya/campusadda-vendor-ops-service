@@ -10,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
+@Profile("dev")
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
@@ -42,6 +44,7 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
+
         log.info("Starting application seed process");
 
         Role adminRole = createRoleIfNotExists(
@@ -70,48 +73,78 @@ public class DataSeeder implements CommandLineRunner {
         log.info("Application seed process completed");
     }
 
-    private Role createRoleIfNotExists(String roleCode, String roleName, String description) {
+    private Role createRoleIfNotExists(
+            String roleCode,
+            String roleName,
+            String description
+    ) {
+
         return roleRepository.findByRoleCode(roleCode)
                 .orElseGet(() -> {
+
                     Role role = new Role();
+
                     role.setRoleCode(roleCode);
                     role.setRoleName(roleName);
                     role.setDescription(description);
 
                     Role savedRole = roleRepository.save(role);
+
                     log.info("Seeded role: {}", roleCode);
+
                     return savedRole;
                 });
     }
 
     private User createDefaultAdminIfNotExists() {
+
         return userRepository.findByEmail(defaultAdminEmail)
                 .orElseGet(() -> {
+
                     User user = new User();
+
                     user.setFullName(defaultAdminFullName);
                     user.setEmail(defaultAdminEmail);
                     user.setPhone(defaultAdminPhone);
-                    user.setPasswordHash(passwordEncoder.encode(defaultAdminPassword));
+                    user.setPasswordHash(
+                            passwordEncoder.encode(defaultAdminPassword)
+                    );
                     user.setStatus("ACTIVE");
 
                     User savedUser = userRepository.save(user);
-                    log.info("Seeded default admin user: {}", defaultAdminEmail);
+
+                    log.info(
+                            "Seeded default admin user: {}",
+                            defaultAdminEmail
+                    );
+
                     return savedUser;
                 });
     }
 
     private void assignRoleIfNotAssigned(User user, Role role) {
-        boolean alreadyAssigned = userRoleRepository.existsByUser_IdAndRole_Id(user.getId(), role.getId());
+
+        boolean alreadyAssigned =
+                userRoleRepository.existsByUser_IdAndRole_Id(
+                        user.getId(),
+                        role.getId()
+                );
 
         if (alreadyAssigned) {
             return;
         }
 
         UserRole userRole = new UserRole();
+
         userRole.setUser(user);
         userRole.setRole(role);
+
         userRoleRepository.save(userRole);
 
-        log.info("Assigned role {} to user {}", role.getRoleCode(), user.getEmail());
+        log.info(
+                "Assigned role {} to user {}",
+                role.getRoleCode(),
+                user.getEmail()
+        );
     }
 }

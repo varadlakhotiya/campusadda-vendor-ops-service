@@ -1,4 +1,3 @@
-
 # application-prod.yml
 
 spring:
@@ -13,12 +12,15 @@ spring:
       idle-timeout: 30000
       max-lifetime: 1800000
       connection-timeout: 20000
+      initialization-fail-timeout: 0
+      auto-commit: false
+      pool-name: CampusAddaHikariPool
 
   jpa:
     open-in-view: false
 
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
 
     show-sql: false
 
@@ -28,11 +30,13 @@ spring:
 
         jdbc:
           time_zone: UTC
-
-        jdbc.batch_size: 20
+          batch_size: 20
 
         order_inserts: true
         order_updates: true
+
+        temp:
+          use_jdbc_metadata_defaults: false
 
   flyway:
     enabled: true
@@ -43,7 +47,12 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
 
+  main:
+    lazy-initialization: true
+
 server:
+  port: ${PORT:8081}
+
   tomcat:
     threads:
       max: 20
@@ -53,8 +62,8 @@ logging:
   level:
     root: info
     org.hibernate.SQL: warn
+    org.springframework: warn
 
 app:
   kafka:
     enabled: false
-
