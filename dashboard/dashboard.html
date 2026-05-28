@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Vendor Ops</title>
+  <link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/layout.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <div class="topbar">
+        <div><div class="page-kicker">CampusAdda Vendor Ops</div><h2>Dashboard</h2><p class="page-subtitle">Monitor vendor activity, demand outlook, reorder risk, and anomaly signals from one place.</p></div>
+        <div class="topbar-actions">
+          <select id="rangeDaysSelect" class="compact-control">
+            <option value="7">Last 7 days</option><option value="14">Last 14 days</option><option value="30" selected>Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="custom">Custom range</option>
+          </select>
+          <div id="customRangeGroup" class="custom-range-group" style="display:none;">
+            <input id="fromDateInput" type="date" class="compact-control"><input id="toDateInput" type="date" class="compact-control">
+          </div>
+          <button id="refreshDashboardBtn" class="btn-secondary" type="button">Refresh Insights</button>
+          <button id="generateRecommendationsBtn" class="btn-secondary" type="button">Generate Reorders</button>
+          <button id="scanAnomaliesBtn" class="btn-primary" type="button">Scan Anomalies</button>
+        </div>
+      </div>
+
+      <div class="section analytics-card"><label for="vendorSelect">Select Vendor</label><select id="vendorSelect"></select></div>
+
+      <div class="card-grid card-grid-4 metrics-grid">
+        <div class="card metric-card"><h3>Assigned Users</h3><p id="assignedUserCount">0</p><span class="metric-subtext">Current mapped users</span></div>
+        <div class="card metric-card"><h3>Menu Items</h3><p id="activeMenuItemCount">0</p><span class="metric-subtext">Active menu coverage</span></div>
+        <div class="card metric-card"><h3>Low Stock</h3><p id="lowStockItemCount">0</p><span class="metric-subtext">Current low-stock items</span></div>
+        <div class="card metric-card"><h3>Today Orders</h3><p id="todayOrderCount">0</p><span class="metric-subtext">Live day activity</span></div>
+        <div class="card metric-card metric-card-accent"><h3>Total Orders</h3><p id="analyticsTotalOrders">0</p><span id="analyticsRangeLabel" class="metric-subtext">Selected range</span></div>
+        <div class="card metric-card"><h3>Gross Revenue</h3><p id="grossRevenue">₹0.00</p><span class="metric-subtext">Range revenue</span></div>
+        <div class="card metric-card"><h3>Average Order</h3><p id="avgOrderValue">₹0.00</p><span class="metric-subtext">Average order value</span></div>
+        <div class="card metric-card"><h3>Open Reorders</h3><p id="openReorderCount">0</p><span class="metric-subtext">Actionable stock suggestions</span></div>
+      </div>
+
+      <div class="analytics-grid"><div id="dailySalesChart" class="chart-list empty-state">
+  No sales analytics available yet.
+</div>
+        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Analytics</div><h3>Daily Sales Trend</h3></div><span id="dailySalesMeta" class="subtle-badge">No data yet</span></div></div>
+        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Forecast</div><h3>Predicted Items</h3></div><span id="forecastMeta" class="subtle-badge">Forecast coverage</span></div><div id="forecastCards" class="mini-card-grid empty-state">
+  No forecast predictions available.
+</div></div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Operations</div><h3>Reorder Recommendations</h3></div><span id="reorderMeta" class="subtle-badge">Inventory planning</span></div>
+          <div class="table-wrapper">
+  <table><thead><tr><th>Item</th><th>Current Stock</th><th>Reorder Point</th><th>Suggested Qty</th><th>Status</th></tr></thead><tbody id="dashboardReorderBody"></tbody></table></div>
+        </div>
+        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Monitoring</div><h3>Anomaly Watchlist</h3></div><span id="anomalyMeta" class="subtle-badge">ML scan results</span></div>
+          <div class="table-wrapper">
+  <table><thead><tr><th>Item</th><th>Type</th><th>Observed</th><th>Expected</th><th>Severity</th></tr></thead><tbody id="dashboardAnomalyBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <div class="card analytics-card">
+        <div class="section-head"><div><div class="page-kicker">Alerts</div><h3>Recent Alerts</h3></div><span id="alertsMeta" class="subtle-badge">System + ML signals</span></div>
+        <div class="table-wrapper">
+  <table><thead><tr><th>Source</th><th>Type</th><th>Title</th><th>Status</th><th>Severity</th></tr></thead><tbody id="recentAlertsBody"></tbody></table></div>
+      </div>
+    </main>
+  </div>
+  <script src="js/config.js"></script><script src="js/auth.js"></script><script src="js/api.js"></script><script src="js/utils.js"></script><script src="js/guards.js"></script><script src="js/layout.js"></script><script src="js/portal.js"></script><script src="js/vendor-scope.js"></script><script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+backend/.env
+backend/target/
+
+backend/src/main/resources/application-dev.yml
+backend/src/main/resources/application-prod.yml
+backend/src/main/resources/application-ml.yml
+
+.idea/
+.vscode/
+*.log

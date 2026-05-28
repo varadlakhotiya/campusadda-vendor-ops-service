@@ -1,0 +1,1303 @@
+{
+  "item_xgboost_model_path": "artifacts\\models\\xgboost\\global_item_xgb.joblib",
+  "category_xgboost_model_path": "artifacts\\models\\xgboost\\global_category_xgb.joblib",
+  "allocation_policy": "recent_28d_share",
+  "selections": [
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4019,
+      "category_id": 1004,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 182.4056,
+      "wmape": 66.0411
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4008,
+      "category_id": 1002,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 181.0122,
+      "wmape": 88.1518
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4002,
+      "category_id": 1001,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 167.7763,
+      "wmape": 52.4265
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4020,
+      "category_id": 1004,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 166.9996,
+      "wmape": 65.9535
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4001,
+      "category_id": 1001,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 140.0743,
+      "wmape": 45.3117
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4007,
+      "category_id": 1002,
+      "series_type": "medium",
+      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
+      "smape": 0.0,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4015,
+      "category_id": 1003,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 184.928,
+      "wmape": 51.2608
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4021,
+      "category_id": 1004,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 145.0407,
+      "wmape": 124.2424
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4004,
+      "category_id": 1001,
+      "series_type": "medium",
+      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
+      "smape": 47.619,
+      "wmape": 100.0
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4014,
+      "category_id": 1003,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 161.7156,
+      "wmape": 69.7785
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4023,
+      "category_id": 1004,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 177.343,
+      "wmape": 71.7952
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4012,
+      "category_id": 1002,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 175.2424,
+      "wmape": 73.8742
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4013,
+      "category_id": 1003,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 179.3319,
+      "wmape": 112.9418
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4003,
+      "category_id": 1001,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 178.5049,
+      "wmape": 110.9804
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4005,
+      "category_id": 1001,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 172.7091,
+      "wmape": 90.0469
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4011,
+      "category_id": 1002,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 182.8281,
+      "wmape": 113.9695
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4017,
+      "category_id": 1003,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 101,
+      "menu_item_id": 4009,
+      "category_id": 1002,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 84.7724,
+      "wmape": 106.6667
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4025,
+      "category_id": 1006,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 102.2715,
+      "wmape": 74.7748
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4026,
+      "category_id": 1006,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 170.9757,
+      "wmape": 92.145
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4039,
+      "category_id": 1008,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 142.5089,
+      "wmape": 44.1967
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4037,
+      "category_id": 1008,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 177.1598,
+      "wmape": 99.667
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4047,
+      "category_id": 1009,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 163.9593,
+      "wmape": 46.8453
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4033,
+      "category_id": 1007,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 156.3836,
+      "wmape": 68.5828
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4045,
+      "category_id": 1009,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 174.0597,
+      "wmape": 53.5706
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4036,
+      "category_id": 1007,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 180.106,
+      "wmape": 123.2255
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4028,
+      "category_id": 1006,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 90.243,
+      "wmape": 68.6486
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4043,
+      "category_id": 1009,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 172.5456,
+      "wmape": 49.4203
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4038,
+      "category_id": 1008,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 117.8082,
+      "wmape": 119.5122
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4029,
+      "category_id": 1006,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 175.9298,
+      "wmape": 107.7194
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4031,
+      "category_id": 1007,
+      "series_type": "medium",
+      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
+      "smape": 9.5238,
+      "wmape": 100.0
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4041,
+      "category_id": 1008,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 138.961,
+      "wmape": 151.2195
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4046,
+      "category_id": 1009,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 137.8151,
+      "wmape": 158.0645
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4040,
+      "category_id": 1008,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4032,
+      "category_id": 1007,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 61.2454,
+      "wmape": 100.0
+    },
+    {
+      "vendor_id": 102,
+      "menu_item_id": 4042,
+      "category_id": 1008,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 133.5277,
+      "wmape": 104.878
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4089,
+      "category_id": 1017,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 166.7446,
+      "wmape": 69.981
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4085,
+      "category_id": 1017,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4081,
+      "category_id": 1016,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 101.2245,
+      "wmape": 92.5926
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4086,
+      "category_id": 1017,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 179.3625,
+      "wmape": 121.3551
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4093,
+      "category_id": 1018,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 171.4286,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4098,
+      "category_id": 1019,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 178.4231,
+      "wmape": 118.2333
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4092,
+      "category_id": 1018,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 147.3684,
+      "wmape": 136.3636
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4094,
+      "category_id": 1018,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 178.5162,
+      "wmape": 102.7765
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4097,
+      "category_id": 1019,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 173.0484,
+      "wmape": 101.7985
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4099,
+      "category_id": 1019,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 77.3759,
+      "wmape": 86.9565
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4080,
+      "category_id": 1016,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 150.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4084,
+      "category_id": 1016,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4088,
+      "category_id": 1017,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4090,
+      "category_id": 1017,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 74.0525,
+      "wmape": 100.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4100,
+      "category_id": 1019,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4087,
+      "category_id": 1017,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4082,
+      "category_id": 1016,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 75.0
+    },
+    {
+      "vendor_id": 104,
+      "menu_item_id": 4079,
+      "category_id": 1016,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4142,
+      "category_id": 1028,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 165.3239,
+      "wmape": 62.6476
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4133,
+      "category_id": 1027,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 164.8143,
+      "wmape": 58.5843
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4145,
+      "category_id": 1029,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 180.4518,
+      "wmape": 99.7896
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4151,
+      "category_id": 1030,
+      "series_type": "medium",
+      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
+      "smape": 38.0952,
+      "wmape": 125.0
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4155,
+      "category_id": 1030,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 182.6943,
+      "wmape": 119.3022
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4156,
+      "category_id": 1030,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 132.6926,
+      "wmape": 153.3333
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4154,
+      "category_id": 1030,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 170.5962,
+      "wmape": 88.179
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4140,
+      "category_id": 1028,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 69.2177,
+      "wmape": 65.9091
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4147,
+      "category_id": 1029,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 106.9124,
+      "wmape": 103.7037
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4139,
+      "category_id": 1028,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 102.0408,
+      "wmape": 106.8182
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4146,
+      "category_id": 1029,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 161.4282,
+      "wmape": 46.3738
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4148,
+      "category_id": 1029,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 101.3825,
+      "wmape": 129.1667
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4152,
+      "category_id": 1030,
+      "series_type": "medium",
+      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
+      "smape": 38.0952,
+      "wmape": 133.3333
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4150,
+      "category_id": 1029,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4149,
+      "category_id": 1029,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 107.3171,
+      "wmape": 197.2222
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4136,
+      "category_id": 1027,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 158.0952,
+      "wmape": 465.2174
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4153,
+      "category_id": 1030,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 153.8462,
+      "wmape": 211.1111
+    },
+    {
+      "vendor_id": 106,
+      "menu_item_id": 4141,
+      "category_id": 1028,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 94.2857,
+      "wmape": 95.4545
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4157,
+      "category_id": 1033,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 8.9896,
+      "wmape": 50.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4171,
+      "category_id": 1035,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 100.4329,
+      "wmape": 116.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4165,
+      "category_id": 1034,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 77.8325,
+      "wmape": 196.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4164,
+      "category_id": 1034,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4181,
+      "category_id": 1037,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 68.0065,
+      "wmape": 52.9412
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4169,
+      "category_id": 1035,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 100.4329,
+      "wmape": 116.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4173,
+      "category_id": 1035,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 106.4039,
+      "wmape": 148.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4180,
+      "category_id": 1036,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4163,
+      "category_id": 1034,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4166,
+      "category_id": 1034,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 46.5306,
+      "wmape": 52.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4184,
+      "category_id": 1037,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 77.3998,
+      "wmape": 72.549
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4172,
+      "category_id": 1035,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4177,
+      "category_id": 1036,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 91.4286,
+      "wmape": 200.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4178,
+      "category_id": 1036,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 97.479,
+      "wmape": 113.8889
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4185,
+      "category_id": 1037,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4160,
+      "category_id": 1033,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 30.4762,
+      "wmape": 275.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4174,
+      "category_id": 1035,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 101.7857,
+      "wmape": 184.0
+    },
+    {
+      "vendor_id": 107,
+      "menu_item_id": 4170,
+      "category_id": 1035,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 108.1633,
+      "wmape": 136.0
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4196,
+      "category_id": 1040,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 184.7916,
+      "wmape": 68.0155
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4205,
+      "category_id": 1042,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 178.2191,
+      "wmape": 100.0581
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4199,
+      "category_id": 1041,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 9.8522,
+      "wmape": 29.4118
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4201,
+      "category_id": 1041,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 180.671,
+      "wmape": 91.9959
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4188,
+      "category_id": 1039,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 136.0792,
+      "wmape": 83.7398
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4193,
+      "category_id": 1040,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 150.6494,
+      "wmape": 138.8889
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4195,
+      "category_id": 1040,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 157.1429,
+      "wmape": 200.0
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4194,
+      "category_id": 1040,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 112.5688,
+      "wmape": 88.3333
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4191,
+      "category_id": 1039,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 143.2014,
+      "wmape": 104.878
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4197,
+      "category_id": 1040,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 184.6782,
+      "wmape": 99.4457
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4198,
+      "category_id": 1040,
+      "series_type": "medium",
+      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
+      "smape": 38.0952,
+      "wmape": 133.3333
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4190,
+      "category_id": 1039,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 135.4071,
+      "wmape": 79.5122
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4189,
+      "category_id": 1039,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 151.038,
+      "wmape": 66.8533
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4208,
+      "category_id": 1042,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 137.4727,
+      "wmape": 158.3333
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4209,
+      "category_id": 1042,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 165.0794,
+      "wmape": 137.5
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4192,
+      "category_id": 1039,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 165.2174,
+      "wmape": 221.9512
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4202,
+      "category_id": 1041,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 57.1429,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 108,
+      "menu_item_id": 4206,
+      "category_id": 1042,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 160.0,
+      "wmape": 133.3333
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4241,
+      "category_id": 1053,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 164.5892,
+      "wmape": 82.4225
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4251,
+      "category_id": 1054,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 172.9443,
+      "wmape": 85.4719
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4252,
+      "category_id": 1054,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4247,
+      "category_id": 1054,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 179.317,
+      "wmape": 60.5236
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4248,
+      "category_id": 1054,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 76.1905,
+      "wmape": 92.0
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4243,
+      "category_id": 1053,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 174.0548,
+      "wmape": 66.4376
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4244,
+      "category_id": 1053,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 167.0348,
+      "wmape": 78.9526
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4253,
+      "category_id": 1055,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 180.5529,
+      "wmape": 115.0972
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4263,
+      "category_id": 1056,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 181.6017,
+      "wmape": 83.4309
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4257,
+      "category_id": 1055,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 174.754,
+      "wmape": 88.1227
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4242,
+      "category_id": 1053,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 159.2587,
+      "wmape": 80.4021
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4264,
+      "category_id": 1056,
+      "series_type": "medium",
+      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
+      "smape": 60.3175,
+      "wmape": 116.6667
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4259,
+      "category_id": 1056,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 119.7791,
+      "wmape": 115.3061
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4260,
+      "category_id": 1056,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 99.3191,
+      "wmape": 77.551
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4261,
+      "category_id": 1056,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4262,
+      "category_id": 1056,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 117.1691,
+      "wmape": 218.3673
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4246,
+      "category_id": 1053,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 71.8894,
+      "wmape": 93.617
+    },
+    {
+      "vendor_id": 110,
+      "menu_item_id": 4250,
+      "category_id": 1054,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4282,
+      "category_id": 1059,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 161.6308,
+      "wmape": 55.2478
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4278,
+      "category_id": 1059,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 161.489,
+      "wmape": 65.7333
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4280,
+      "category_id": 1059,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 175.4508,
+      "wmape": 128.9795
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4274,
+      "category_id": 1058,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 156.3234,
+      "wmape": 55.5944
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4272,
+      "category_id": 1058,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 180.2633,
+      "wmape": 121.6849
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4267,
+      "category_id": 1057,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 170.3364,
+      "wmape": 84.1822
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4271,
+      "category_id": 1058,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 171.1386,
+      "wmape": 91.4006
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4279,
+      "category_id": 1059,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 160.3431,
+      "wmape": 96.0664
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4281,
+      "category_id": 1059,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 162.4612,
+      "wmape": 75.2121
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4266,
+      "category_id": 1057,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4265,
+      "category_id": 1057,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 177.6686,
+      "wmape": 91.5873
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4268,
+      "category_id": 1057,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 187.792,
+      "wmape": 100.235
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4277,
+      "category_id": 1059,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 173.0491,
+      "wmape": 107.1819
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4273,
+      "category_id": 1058,
+      "series_type": "medium",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 67.559,
+      "wmape": 95.7265
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4269,
+      "category_id": 1057,
+      "series_type": "medium",
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 184.8512,
+      "wmape": 138.2131
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4270,
+      "category_id": 1057,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4276,
+      "category_id": 1058,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
+    },
+    {
+      "vendor_id": 111,
+      "menu_item_id": 4275,
+      "category_id": 1058,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 70.6199,
+      "wmape": 153.8462
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vendors - Vendor Ops</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="page-kicker">CampusAdda Vendor Ops</div>
+          <h2>Vendors</h2>
+          <p class="page-subtitle">Create and manage vendor profiles, and monitor vendor-level intelligence in one place.</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="refreshVendorIntelBtn" class="btn-secondary" type="button">Refresh Intelligence</button>
+        </div>
+      </div>
+
+      <div class="card-grid card-grid-4">
+        <div class="card metric-card">
+          <h3>Total Vendors</h3>
+          <p id="totalVendorCount">0</p>
+          <span class="metric-subtext">Registered vendor profiles</span>
+        </div>
+        <div class="card metric-card">
+          <h3>Active Vendors</h3>
+          <p id="activeVendorCount">0</p>
+          <span class="metric-subtext">Operational vendors</span>
+        </div>
+        <div class="card metric-card metric-card-accent">
+          <h3>Vendors with Reorders</h3>
+          <p id="vendorsWithReorders">0</p>
+          <span class="metric-subtext">Need procurement review</span>
+        </div>
+        <div class="card metric-card">
+          <h3>Vendors with Anomalies</h3>
+          <p id="vendorsWithAnomalies">0</p>
+          <span class="metric-subtext">Need anomaly follow-up</span>
+        </div>
+      </div>
+
+      <div class="section" id="createVendorSection">
+        <h3>Create Vendor</h3>
+        <form id="vendorForm" class="form-grid">
+          <input id="vendorCode" placeholder="Vendor Code" required>
+          <input id="name" placeholder="Vendor Name" required>
+          <input id="contactName" placeholder="Contact Name">
+          <input id="contactPhone" placeholder="Contact Phone">
+          <input id="contactEmail" placeholder="Contact Email">
+          <input id="locationLabel" placeholder="Location Label">
+          <input id="campusArea" placeholder="Campus Area">
+          <input id="status" value="ACTIVE" placeholder="Status">
+          <input id="sourceSystem" value="VENDOR_OPS" placeholder="Source System">
+          <input id="externalVendorId" placeholder="External Vendor ID">
+          <textarea id="description" placeholder="Description"></textarea>
+          <button class="btn-primary" type="submit">Create Vendor</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="page-kicker">Admin View</div>
+            <h3>Vendor Intelligence</h3>
+          </div>
+          <span class="badge subtle-badge">Last 30 days</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Area</th>
+              <th>Total Orders</th>
+              <th>Revenue</th>
+              <th>Low Stock</th>
+              <th>Reorders</th>
+              <th>Anomalies</th>
+              <th>Top Item</th>
+              <th>Signal</th>
+            </tr>
+          </thead>
+          <tbody id="vendorIntelBody"></tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h3>Vendor List</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Campus Area</th>
+            </tr>
+          </thead>
+          <tbody id="vendorsTableBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/guards.js"></script>
+  <script src="js/portal.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/vendors.js"></script>
+  <script src="js/vendor-scope.js"></script>
+</body>
+</html>
