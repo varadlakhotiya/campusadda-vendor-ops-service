@@ -1,4 +1,5 @@
 package com.campusadda.vendorops.outbox.service.impl;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import com.campusadda.vendorops.outbox.entity.OutboxEvent;
 import com.campusadda.vendorops.outbox.producer.KafkaEventProducer;
@@ -15,6 +16,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@ConditionalOnProperty(
+    name = "app.kafka.enabled",
+    havingValue = "true"
+)
+
 public class OutboxPublisherServiceImpl implements OutboxPublisherService {
 
     private final OutboxEventRepository outboxEventRepository;
