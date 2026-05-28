@@ -54,3 +54,7 @@ logging:
     root: info
     org.hibernate.SQL: warn
 
+app:
+  kafka:
+    enabled: false
+
