@@ -1,5 +1,7 @@
 package com.campusadda.vendorops.etl.scheduler;
 
+import com.campusadda.vendorops.etl.entity.EtlJobRun;
+import com.campusadda.vendorops.etl.repository.EtlJobRunRepository;
 import com.campusadda.vendorops.etl.service.EtlOrchestratorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,46 +10,86 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class EtlScheduler {
 
+    private static final String DAILY_VENDOR_JOB =
+            "DAILY_VENDOR_SALES_ETL";
+
     private final EtlOrchestratorService etlOrchestratorService;
+    private final EtlJobRunRepository etlJobRunRepository;
 
-    @Scheduled(cron = "${app.scheduler.daily-etl-cron:0 5 0 * * *}")
-    public void runDailyEtl() {
-
-        log.info("========== ETL SCHEDULER STARTED ==========");
+    @Scheduled(cron = "0 5 0 * * *")
+    public void runNightlyAggregations() {
 
         try {
 
+            LocalDate startDate = determineBackfillStartDate();
             LocalDate today = LocalDate.now();
-            LocalDate yesterday = today.minusDays(1);
 
-            LocalDateTime start = yesterday.atStartOfDay();
-            LocalDateTime endExclusive = today.atStartOfDay();
+            while (startDate.isBefore(today)) {
 
-            log.info("Running ETL for window {} -> {}", start, endExclusive);
+                LocalDateTime windowStart =
+                        startDate.atStartOfDay();
 
-            etlOrchestratorService.runDailyItemSales(start, endExclusive);
+                LocalDateTime windowEnd =
+                        startDate.plusDays(1).atStartOfDay();
 
-            log.info("Daily Item ETL completed");
+                log.info(
+                        "Running ETL for window {} -> {}",
+                        windowStart,
+                        windowEnd
+                );
 
-            etlOrchestratorService.runDailyVendorSales(start, endExclusive);
+                etlOrchestratorService.runDailyItemSales(
+                        windowStart,
+                        windowEnd
+                );
 
-            log.info("Daily Vendor ETL completed");
+                etlOrchestratorService.runDailyVendorSales(
+                        windowStart,
+                        windowEnd
+                );
 
-            etlOrchestratorService.runHourlySales(start, endExclusive);
+                etlOrchestratorService.runHourlySales(
+                        windowStart,
+                        windowEnd
+                );
 
-            log.info("Hourly Sales ETL completed");
-
-            log.info("========== ETL SCHEDULER FINISHED ==========");
+                startDate = startDate.plusDays(1);
+            }
 
         } catch (Exception ex) {
 
-            log.error("ETL Scheduler failed", ex);
+            log.error(
+                    "Nightly ETL execution failed",
+                    ex
+            );
         }
+    }
+
+    private LocalDate determineBackfillStartDate() {
+
+        Optional<EtlJobRun> latestRun =
+                etlJobRunRepository
+                        .findTopByJobNameAndStatusOrderByWindowEndDesc(
+                                DAILY_VENDOR_JOB,
+                                "SUCCESS"
+                        );
+
+        if (latestRun.isPresent()) {
+
+            return latestRun.get()
+                    .getWindowEnd()
+                    .toLocalDate();
+        }
+
+        
+
+        return LocalDate.now().minusDays(1);
     }
 }

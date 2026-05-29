@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.campusadda.vendorops.etl.dto.request.BackfillEtlRequest;
+import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 @RestController
@@ -57,4 +60,112 @@ public class EtlController {
         }
         return LocalDateTime.parse(value);
     }
-}
+
+    @PostMapping("/backfill")
+
+    public ResponseEntity<ApiResponse<String>> backfill(
+
+
+        @Valid @RequestBody BackfillEtlRequest request
+
+    ) {
+
+
+    
+        LocalDate from = LocalDate.parse(request.getFromDate());
+
+    
+        LocalDate to = LocalDate.parse(request.getToDate());
+
+    
+        LocalDate lastCompletedDay = LocalDate.now().minusDays(1);
+
+    
+        if (from.isAfter(to)) {
+    
+            throw new IllegalArgumentException(
+    
+                "fromDate cannot be after toDate"
+    
+            );
+    
+        }
+
+    
+        if (to.isAfter(lastCompletedDay)) {
+    
+            throw new IllegalArgumentException(
+    
+                "Backfill can only run for completed days. Maximum allowed date is "
+    
+                + lastCompletedDay
+    
+            );
+    
+        }
+
+    
+        LocalDate current = from;
+
+    
+        while (!current.isAfter(to)) {
+
+    
+            LocalDateTime start = current.atStartOfDay();
+
+
+        
+            LocalDateTime end = current.plusDays(1).atStartOfDay();
+
+        
+            etlOrchestratorService.runDailyItemSales(
+        
+                start,
+        
+                end
+        
+            );
+
+        
+            etlOrchestratorService.runDailyVendorSales(
+        
+                start,
+        
+                end
+        
+            );
+
+        
+            etlOrchestratorService.runHourlySales(
+        
+                start,
+        
+                end
+        
+            );
+
+        
+            current = current.plusDays(1);
+    
+        }
+
+    
+        return ResponseEntity.ok(
+    
+            ApiResponse.success(
+    
+                "Backfill completed",
+    
+                "Processed ETL from "
+    
+                + request.getFromDate()
+    
+                + " to "
+    
+                + request.getToDate()
+    
+            )
+    
+        );
+    }
+    }

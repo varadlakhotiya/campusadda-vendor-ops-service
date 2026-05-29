@@ -35,11 +35,11 @@ public class DailyVendorSalesEtlServiceImpl implements DailyVendorSalesEtlServic
 
     @Override
     public int aggregate(LocalDateTime windowStart, LocalDateTime windowEnd, EtlJobRun etlJobRun) {
-        List<Order> sourceOrders = orderRepository.findAll().stream()
-                .filter(order -> order.getPlacedAt() != null)
-                .filter(order -> !order.getPlacedAt().isBefore(windowStart))
-                .filter(order -> order.getPlacedAt().isBefore(windowEnd))
-                .toList();
+        List<Order> sourceOrders =
+        orderRepository.findByPlacedAtBetween(
+                windowStart,
+                windowEnd
+        );
 
         Map<String, VendorAgg> aggregates = new LinkedHashMap<>();
 

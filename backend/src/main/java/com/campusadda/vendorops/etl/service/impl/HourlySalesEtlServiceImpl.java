@@ -32,12 +32,14 @@ public class HourlySalesEtlServiceImpl implements HourlySalesEtlService {
 
     @Override
     public int aggregate(LocalDateTime windowStart, LocalDateTime windowEnd, EtlJobRun etlJobRun) {
-        List<Order> sourceOrders = orderRepository.findAll().stream()
-                .filter(order -> order.getPlacedAt() != null)
-                .filter(order -> !order.getPlacedAt().isBefore(windowStart))
-                .filter(order -> order.getPlacedAt().isBefore(windowEnd))
-                .filter(order -> isCompleted(order.getStatus()))
-                .toList();
+        List<Order> sourceOrders =
+        orderRepository.findByPlacedAtBetween(
+                windowStart,
+                windowEnd
+        )
+        .stream()
+        .filter(order -> isCompleted(order.getStatus()))
+        .toList();
 
         Map<String, HourlyAgg> aggregates = new LinkedHashMap<>();
 

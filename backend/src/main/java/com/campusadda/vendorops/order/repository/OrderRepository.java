@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
 
 
 
@@ -44,6 +44,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             LocalDateTime start,
             LocalDateTime end
     );
+
+    List<Order> findByPlacedAtBetween(
+        LocalDateTime start,
+        LocalDateTime end
+);
 
     @Query("""
 SELECT COUNT(o)
