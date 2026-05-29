@@ -20,28 +20,41 @@ public class EtlController {
 
     @PostMapping("/daily-item-sales/run")
     public ResponseEntity<ApiResponse<EtlJobRunResponse>> runDailyItemSales(@Valid @RequestBody RunEtlRequest request) {
-        LocalDateTime start = LocalDateTime.parse(request.getWindowStart());
-        LocalDateTime end = LocalDateTime.parse(request.getWindowEnd());
+        LocalDateTime start = parseDateTime(request.getWindowStart());
+        LocalDateTime end = parseDateTime(request.getWindowEnd());
 
-        return ResponseEntity.ok(ApiResponse.success("Daily item sales ETL completed",
-                etlOrchestratorService.runDailyItemSales(start, end)));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Daily item sales ETL completed",
+                etlOrchestratorService.runDailyItemSales(start, end)
+        ));
     }
 
     @PostMapping("/daily-vendor-sales/run")
     public ResponseEntity<ApiResponse<EtlJobRunResponse>> runDailyVendorSales(@Valid @RequestBody RunEtlRequest request) {
-        LocalDateTime start = LocalDateTime.parse(request.getWindowStart());
-        LocalDateTime end = LocalDateTime.parse(request.getWindowEnd());
+        LocalDateTime start = parseDateTime(request.getWindowStart());
+        LocalDateTime end = parseDateTime(request.getWindowEnd());
 
-        return ResponseEntity.ok(ApiResponse.success("Daily vendor sales ETL completed",
-                etlOrchestratorService.runDailyVendorSales(start, end)));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Daily vendor sales ETL completed",
+                etlOrchestratorService.runDailyVendorSales(start, end)
+        ));
     }
 
     @PostMapping("/hourly-sales/run")
     public ResponseEntity<ApiResponse<EtlJobRunResponse>> runHourlySales(@Valid @RequestBody RunEtlRequest request) {
-        LocalDateTime start = LocalDateTime.parse(request.getWindowStart());
-        LocalDateTime end = LocalDateTime.parse(request.getWindowEnd());
+        LocalDateTime start = parseDateTime(request.getWindowStart());
+        LocalDateTime end = parseDateTime(request.getWindowEnd());
 
-        return ResponseEntity.ok(ApiResponse.success("Hourly sales ETL completed",
-                etlOrchestratorService.runHourlySales(start, end)));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Hourly sales ETL completed",
+                etlOrchestratorService.runHourlySales(start, end)
+        ));
+    }
+
+    private LocalDateTime parseDateTime(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("windowStart/windowEnd must not be blank");
+        }
+        return LocalDateTime.parse(value);
     }
 }

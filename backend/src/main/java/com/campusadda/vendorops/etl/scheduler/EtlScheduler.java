@@ -16,13 +16,15 @@ public class EtlScheduler {
 
     @Scheduled(cron = "${app.scheduler.daily-etl-cron:0 5 0 * * *}")
     public void runDailyEtl() {
-        LocalDate yesterday = LocalDate.now().minusDays(1);
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
 
+        // Use an exclusive end boundary to avoid missing records in the last second.
         LocalDateTime start = yesterday.atStartOfDay();
-        LocalDateTime end = yesterday.atTime(23, 59, 59);
+        LocalDateTime endExclusive = today.atStartOfDay();
 
-        etlOrchestratorService.runDailyItemSales(start, end);
-        etlOrchestratorService.runDailyVendorSales(start, end);
-        etlOrchestratorService.runHourlySales(start, end);
+        etlOrchestratorService.runDailyItemSales(start, endExclusive);
+        etlOrchestratorService.runDailyVendorSales(start, endExclusive);
+        etlOrchestratorService.runHourlySales(start, endExclusive);
     }
 }

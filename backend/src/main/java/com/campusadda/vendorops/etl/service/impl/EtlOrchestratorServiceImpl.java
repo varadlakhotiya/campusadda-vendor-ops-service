@@ -66,6 +66,7 @@ public class EtlOrchestratorServiceImpl implements EtlOrchestratorService {
         run.setWindowStart(start);
         run.setWindowEnd(end);
         run.setStatus("RUNNING");
+        run.setRecordsProcessed(0);
         run.setStartedAt(LocalDateTime.now());
         return etlJobRunRepository.save(run);
     }
