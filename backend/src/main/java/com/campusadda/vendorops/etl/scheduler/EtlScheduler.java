@@ -28,9 +28,24 @@ public class EtlScheduler {
     private final EtlJobRunRepository etlJobRunRepository;
 
     @PostConstruct
-    public void init() {
-        log.info("ETL Scheduler initialized");
-     }
+public void init() {
+
+    log.info("ETL Scheduler initialized");
+
+    try {
+
+        log.info("Running startup ETL catchup");
+
+        runNightlyAggregations();
+
+    } catch (Exception ex) {
+
+        log.error(
+            "Startup ETL catchup failed",
+            ex
+        );
+    }
+}
 
     @Scheduled(
         cron = "0 5 0 * * *",
