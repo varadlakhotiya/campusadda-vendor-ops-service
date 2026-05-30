@@ -3,6 +3,8 @@ package com.campusadda.vendorops.etl.scheduler;
 import com.campusadda.vendorops.etl.entity.EtlJobRun;
 import com.campusadda.vendorops.etl.repository.EtlJobRunRepository;
 import com.campusadda.vendorops.etl.service.EtlOrchestratorService;
+
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,6 +17,8 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+
+
 public class EtlScheduler {
 
     private static final String DAILY_VENDOR_JOB =
@@ -23,7 +27,14 @@ public class EtlScheduler {
     private final EtlOrchestratorService etlOrchestratorService;
     private final EtlJobRunRepository etlJobRunRepository;
 
-    @Scheduled(cron = "0 5 0 * * *")
+    @PostConstruct
+    public void init() {
+        log.info("ETL Scheduler initialized");
+     }
+
+    @Scheduled(
+        cron = "0 5 0 * * *",
+        zone = "Asia/Kolkata")
     public void runNightlyAggregations() {
 
         try {
@@ -93,3 +104,4 @@ public class EtlScheduler {
         return LocalDate.now().minusDays(1);
     }
 }
+
