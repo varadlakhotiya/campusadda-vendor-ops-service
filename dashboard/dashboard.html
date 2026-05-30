@@ -37,14 +37,51 @@
         <div class="card metric-card"><h3>Open Reorders</h3><p id="openReorderCount">0</p><span class="metric-subtext">Actionable stock suggestions</span></div>
       </div>
 
-      <div class="analytics-grid"><div id="dailySalesChart" class="chart-list empty-state">
-  No sales analytics available yet.
+      <div class="analytics-grid">
+
+    <!-- DAILY SALES TREND -->
+
+    <div class="card analytics-card">
+
+        <div class="section-head">
+            <div>
+                <div class="page-kicker">Analytics</div>
+                <h3>Daily Sales Trend</h3>
+            </div>
+
+            <span id="dailySalesMeta" class="subtle-badge">
+                No data yet
+            </span>
+        </div>
+
+        <div id="dailySalesChart" class="chart-list empty-state">
+            No sales analytics available yet.
+        </div>
+
+    </div>
+
+    <!-- FORECAST -->
+
+    <div class="card analytics-card">
+
+        <div class="section-head">
+            <div>
+                <div class="page-kicker">Forecast</div>
+                <h3>Predicted Items</h3>
+            </div>
+
+            <span id="forecastMeta" class="subtle-badge">
+                Forecast coverage
+            </span>
+        </div>
+
+        <div id="forecastCards" class="mini-card-grid empty-state">
+            No forecast predictions available.
+        </div>
+
+    </div>
+
 </div>
-        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Analytics</div><h3>Daily Sales Trend</h3></div><span id="dailySalesMeta" class="subtle-badge">No data yet</span></div></div>
-        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Forecast</div><h3>Predicted Items</h3></div><span id="forecastMeta" class="subtle-badge">Forecast coverage</span></div><div id="forecastCards" class="mini-card-grid empty-state">
-  No forecast predictions available.
-</div></div>
-      </div>
 
       <div class="analytics-grid">
         <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Operations</div><h3>Reorder Recommendations</h3></div><span id="reorderMeta" class="subtle-badge">Inventory planning</span></div>
