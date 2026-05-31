@@ -19,7 +19,21 @@ app = FastAPI(title="CampusAdda Strong ML Service", version="3.1")
 
 def _load_config(path: str | None) -> dict:
     file_path = Path(path or APP_DEFAULT_CONFIG)
-    return json.loads(file_path.read_text(encoding="utf-8"))
+
+    content = file_path.read_text(encoding="utf-8")
+
+    replacements = {
+        "${MYSQL_HOST}": os.getenv("MYSQL_HOST", ""),
+        "${MYSQL_PORT}": os.getenv("MYSQL_PORT", "3306"),
+        "${MYSQL_USER}": os.getenv("MYSQL_USER", ""),
+        "${MYSQL_PASSWORD}": os.getenv("MYSQL_PASSWORD", ""),
+        "${MYSQL_DATABASE}": os.getenv("MYSQL_DATABASE", "")
+    }
+
+    for placeholder, value in replacements.items():
+        content = content.replace(placeholder, str(value))
+
+    return json.loads(content)
 
 
 @app.get("/health")
