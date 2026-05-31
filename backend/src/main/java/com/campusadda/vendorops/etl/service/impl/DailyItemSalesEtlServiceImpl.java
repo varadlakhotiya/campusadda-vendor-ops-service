@@ -94,7 +94,7 @@ public class DailyItemSalesEtlServiceImpl implements DailyItemSalesEtlService {
                     : agg.grossRevenue.divide(BigDecimal.valueOf(agg.quantitySold), 2, RoundingMode.HALF_UP));
             row.setFirstOrderAt(agg.firstOrderAt);
             row.setLastOrderAt(agg.lastOrderAt);
-            row.setEtlRun(etlJobRun);
+            row.setEtlRunId(etlJobRun.getId());
 
             dailyItemSalesRepository.save(row);
         }

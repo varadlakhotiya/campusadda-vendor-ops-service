@@ -1,7 +1,6 @@
 package com.campusadda.vendorops.analytics.entity;
 
 import com.campusadda.vendorops.common.entity.AuditableEntity;
-import com.campusadda.vendorops.etl.entity.EtlJobRun;
 import com.campusadda.vendorops.vendor.entity.Vendor;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -46,7 +45,6 @@ public class DailyVendorSales extends AuditableEntity {
     @Column(name = "avg_order_value", precision = 10, scale = 2)
     private BigDecimal avgOrderValue;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "etl_run_id")
-    private EtlJobRun etlRun;
+    @Column(name = "etl_run_id")
+    private Long etlRunId;
 }

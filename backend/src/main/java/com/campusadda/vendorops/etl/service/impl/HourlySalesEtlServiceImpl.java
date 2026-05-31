@@ -81,7 +81,7 @@ public class HourlySalesEtlServiceImpl implements HourlySalesEtlService {
             row.setTotalOrders(agg.totalOrders);
             row.setItemsSoldQty(agg.itemsSoldQty);
             row.setRevenue(agg.revenue);
-            row.setEtlRun(etlJobRun);
+            row.setEtlRunId(etlJobRun.getId());
 
             hourlyVendorSalesRepository.save(row);
         }

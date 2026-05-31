@@ -1,7 +1,7 @@
 package com.campusadda.vendorops.analytics.entity;
 
 import com.campusadda.vendorops.common.entity.AuditableEntity;
-import com.campusadda.vendorops.etl.entity.EtlJobRun;
+
 import com.campusadda.vendorops.menu.entity.MenuItem;
 import com.campusadda.vendorops.vendor.entity.Vendor;
 import jakarta.persistence.*;
@@ -52,7 +52,6 @@ public class DailyItemSales extends AuditableEntity {
     @Column(name = "last_order_at")
     private LocalDateTime lastOrderAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "etl_run_id")
-    private EtlJobRun etlRun;
+    @Column(name = "etl_run_id")
+    private Long etlRunId;
 }

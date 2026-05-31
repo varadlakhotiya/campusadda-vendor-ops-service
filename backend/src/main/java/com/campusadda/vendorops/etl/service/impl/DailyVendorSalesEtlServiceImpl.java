@@ -91,7 +91,7 @@ public class DailyVendorSalesEtlServiceImpl implements DailyVendorSalesEtlServic
             row.setAvgOrderValue(agg.completedOrders == 0
                     ? BigDecimal.ZERO
                     : agg.grossRevenue.divide(BigDecimal.valueOf(agg.completedOrders), 2, RoundingMode.HALF_UP));
-            row.setEtlRun(etlJobRun);
+            row.setEtlRunId(etlJobRun.getId());
 
             dailyVendorSalesRepository.save(row);
         }
