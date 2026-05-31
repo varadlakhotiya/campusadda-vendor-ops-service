@@ -1,10 +1,10 @@
 {
   "mysql": {
-    "host": "localhost",
-    "port": 3306,
-    "user": "root",
-    "password": "Varad@2004",
-    "database": "campusadda_vendor_ops_ml"
+    "host": "${MYSQL_HOST}",
+    "port": "${MYSQL_PORT}",
+    "user": "${MYSQL_USER}",
+    "password": "${MYSQL_PASSWORD}",
+    "database": "${MYSQL_DATABASE}"
   },
   "training": {
     "item_history_days": 110,
