@@ -2,7 +2,7 @@ package com.campusadda.vendorops.anomaly.service.impl;
 
 import com.campusadda.vendorops.anomaly.dto.response.AnomalyResponse;
 import com.campusadda.vendorops.anomaly.entity.AnomalyRecord;
-import com.campusadda.vendorops.anomaly.repository.AnomalyRecordRepository;
+import com.campusadda.vendorops.ml.repository.MlAnomalyRecordRepository;
 import com.campusadda.vendorops.anomaly.service.AnomalyService;
 import com.campusadda.vendorops.common.exception.ResourceNotFoundException;
 import com.campusadda.vendorops.forecast.client.request.MlGenerateAnomaliesRequest;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional("mlTransactionManager")
 public class AnomalyServiceImpl implements AnomalyService {
 
     private final VendorValidator vendorValidator;
     private final VendorAccessService vendorAccessService;
-    private final AnomalyRecordRepository anomalyRecordRepository;
+    private final MlAnomalyRecordRepository anomalyRecordRepository;
     private final MlClientService mlClientService;
 
     @Override
