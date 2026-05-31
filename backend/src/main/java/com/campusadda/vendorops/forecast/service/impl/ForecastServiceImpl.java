@@ -1,6 +1,4 @@
 package com.campusadda.vendorops.forecast.service.impl;
-
-import com.campusadda.vendorops.analytics.repository.DailyItemSalesRepository;
 import com.campusadda.vendorops.forecast.client.request.MlForecastRequest;
 import com.campusadda.vendorops.forecast.client.response.MlForecastResponse;
 import com.campusadda.vendorops.forecast.dto.request.BulkRunForecastRequest;
@@ -8,15 +6,18 @@ import com.campusadda.vendorops.forecast.dto.request.RunForecastRequest;
 import com.campusadda.vendorops.forecast.dto.response.ForecastRunResponse;
 import com.campusadda.vendorops.forecast.entity.ForecastRun;
 import com.campusadda.vendorops.forecast.entity.ForecastValue;
-import com.campusadda.vendorops.forecast.repository.CalendarEventRepository;
-import com.campusadda.vendorops.forecast.repository.ForecastRunRepository;
-import com.campusadda.vendorops.forecast.repository.ForecastValueRepository;
 import com.campusadda.vendorops.forecast.service.ForecastService;
 import com.campusadda.vendorops.forecast.service.MlClientService;
 import com.campusadda.vendorops.menu.entity.MenuItem;
-import com.campusadda.vendorops.menu.repository.MenuItemRepository;
+import com.campusadda.vendorops.ml.repository.MlCalendarEventRepository;
+import com.campusadda.vendorops.ml.repository.MlDailyItemSalesRepository;
+import com.campusadda.vendorops.ml.repository.MlForecastRunRepository;
+import com.campusadda.vendorops.ml.repository.MlForecastValueRepository;
+import com.campusadda.vendorops.ml.repository.MlMenuItemRepository;
 import com.campusadda.vendorops.vendor.entity.Vendor;
-import com.campusadda.vendorops.vendor.validator.VendorValidator;
+// ForecastServiceImpl.java
+import com.campusadda.vendorops.vendor.validator.VendorValidator;   // add this
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,15 +29,15 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(transactionManager = "mlTransactionManager")
 public class ForecastServiceImpl implements ForecastService {
 
     private final VendorValidator vendorValidator;
-    private final MenuItemRepository menuItemRepository;
-    private final ForecastRunRepository forecastRunRepository;
-    private final ForecastValueRepository forecastValueRepository;
-    private final DailyItemSalesRepository dailyItemSalesRepository;
-    private final CalendarEventRepository calendarEventRepository;
+    private final MlMenuItemRepository menuItemRepository;
+    private final MlForecastRunRepository forecastRunRepository;
+    private final MlForecastValueRepository forecastValueRepository;
+    private final MlDailyItemSalesRepository dailyItemSalesRepository;
+    private final MlCalendarEventRepository calendarEventRepository;
     private final MlClientService mlClientService;
 
     @Override

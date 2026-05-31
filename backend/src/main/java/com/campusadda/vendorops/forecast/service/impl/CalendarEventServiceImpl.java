@@ -3,8 +3,8 @@ package com.campusadda.vendorops.forecast.service.impl;
 import com.campusadda.vendorops.forecast.dto.request.CreateCalendarEventRequest;
 import com.campusadda.vendorops.forecast.dto.response.CalendarEventResponse;
 import com.campusadda.vendorops.forecast.entity.CalendarEvent;
-import com.campusadda.vendorops.forecast.repository.CalendarEventRepository;
 import com.campusadda.vendorops.forecast.service.CalendarEventService;
+import com.campusadda.vendorops.ml.repository.MlCalendarEventRepository;
 import com.campusadda.vendorops.vendor.entity.Vendor;
 import com.campusadda.vendorops.vendor.validator.VendorValidator;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +15,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(transactionManager = "mlTransactionManager")
 public class CalendarEventServiceImpl implements CalendarEventService {
 
-    private final CalendarEventRepository calendarEventRepository;
+    private final MlCalendarEventRepository calendarEventRepository;
     private final VendorValidator vendorValidator;
 
     @Override
@@ -29,7 +29,6 @@ public class CalendarEventServiceImpl implements CalendarEventService {
         event.setTitle(request.getTitle());
         event.setDescription(request.getDescription());
 
-        // ✅ FIXED: Integer → Byte conversion
         event.setImpactLevel(
                 request.getImpactLevel() != null
                         ? request.getImpactLevel().byteValue()
@@ -49,7 +48,7 @@ public class CalendarEventServiceImpl implements CalendarEventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "mlTransactionManager")
     public List<CalendarEventResponse> list() {
         return calendarEventRepository.findAll()
                 .stream()
@@ -64,10 +63,7 @@ public class CalendarEventServiceImpl implements CalendarEventService {
                 .eventType(event.getEventType())
                 .title(event.getTitle())
                 .description(event.getDescription())
-
-                // ✅ FIXED: Byte → Integer conversion
                 .impactLevel(event.getImpactLevel() != null ? event.getImpactLevel().intValue() : null)
-
                 .campusArea(event.getCampusArea())
                 .vendorId(event.getVendor() != null ? event.getVendor().getId() : null)
                 .isActive(event.getIsActive())

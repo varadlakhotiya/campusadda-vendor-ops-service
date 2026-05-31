@@ -6,17 +6,17 @@ import com.campusadda.vendorops.forecast.dto.request.UpdateRecommendationStatusR
 import com.campusadda.vendorops.forecast.dto.response.ReorderRecommendationResponse;
 import com.campusadda.vendorops.forecast.entity.ForecastRun;
 import com.campusadda.vendorops.forecast.entity.ReorderRecommendation;
-import com.campusadda.vendorops.forecast.repository.ForecastRunRepository;
-import com.campusadda.vendorops.forecast.repository.ForecastValueRepository;
-import com.campusadda.vendorops.forecast.repository.ReorderRecommendationRepository;
 import com.campusadda.vendorops.forecast.service.MlClientService;
 import com.campusadda.vendorops.forecast.service.ReorderRecommendationService;
 import com.campusadda.vendorops.inventory.entity.InventoryItem;
 import com.campusadda.vendorops.inventory.entity.InventoryPolicy;
-import com.campusadda.vendorops.inventory.repository.InventoryItemRepository;
-import com.campusadda.vendorops.inventory.repository.InventoryPolicyRepository;
+import com.campusadda.vendorops.ml.repository.MlForecastRunRepository;
+import com.campusadda.vendorops.ml.repository.MlForecastValueRepository;
+import com.campusadda.vendorops.ml.repository.MlInventoryItemRepository;
+import com.campusadda.vendorops.ml.repository.MlInventoryPolicyRepository;
+import com.campusadda.vendorops.ml.repository.MlReorderRecommendationRepository;
 import com.campusadda.vendorops.security.VendorAccessService;
-import com.campusadda.vendorops.vendor.validator.VendorValidator;
+import com.campusadda.vendorops.vendor.validator.VendorValidator;   // add this
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,16 +29,16 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(transactionManager = "mlTransactionManager")
 public class ReorderRecommendationServiceImpl implements ReorderRecommendationService {
 
     private final VendorValidator vendorValidator;
     private final VendorAccessService vendorAccessService;
-    private final InventoryItemRepository inventoryItemRepository;
-    private final InventoryPolicyRepository inventoryPolicyRepository;
-    private final ForecastRunRepository forecastRunRepository;
-    private final ForecastValueRepository forecastValueRepository;
-    private final ReorderRecommendationRepository reorderRecommendationRepository;
+    private final MlInventoryItemRepository inventoryItemRepository;
+    private final MlInventoryPolicyRepository inventoryPolicyRepository;
+    private final MlForecastRunRepository forecastRunRepository;
+    private final MlForecastValueRepository forecastValueRepository;
+    private final MlReorderRecommendationRepository reorderRecommendationRepository;
     private final MlClientService mlClientService;
 
     @Override
@@ -124,7 +124,7 @@ public class ReorderRecommendationServiceImpl implements ReorderRecommendationSe
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "mlTransactionManager")
     public List<ReorderRecommendationResponse> getRecommendations(Long vendorId) {
         vendorAccessService.validateVendorAccess(vendorId);
         return reorderRecommendationRepository.findByVendor_IdOrderByRecommendationDateDesc(vendorId)

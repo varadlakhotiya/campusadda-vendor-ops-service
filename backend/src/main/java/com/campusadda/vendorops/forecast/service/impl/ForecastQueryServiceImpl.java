@@ -1,24 +1,27 @@
 package com.campusadda.vendorops.forecast.service.impl;
 
 import com.campusadda.vendorops.common.exception.ResourceNotFoundException;
-import com.campusadda.vendorops.forecast.dto.response.*;
+import com.campusadda.vendorops.forecast.dto.response.ForecastRunResponse;
+import com.campusadda.vendorops.forecast.dto.response.ForecastValueResponse;
+import com.campusadda.vendorops.forecast.dto.response.LatestForecastResponse;
 import com.campusadda.vendorops.forecast.entity.ForecastRun;
-import com.campusadda.vendorops.forecast.repository.ForecastRunRepository;
-import com.campusadda.vendorops.forecast.repository.ForecastValueRepository;
 import com.campusadda.vendorops.forecast.service.ForecastQueryService;
+import com.campusadda.vendorops.ml.repository.MlForecastRunRepository;
+import com.campusadda.vendorops.ml.repository.MlForecastValueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, transactionManager = "mlTransactionManager")
 public class ForecastQueryServiceImpl implements ForecastQueryService {
 
-    private final ForecastRunRepository forecastRunRepository;
-    private final ForecastValueRepository forecastValueRepository;
+    private final MlForecastRunRepository forecastRunRepository;
+    private final MlForecastValueRepository forecastValueRepository;
 
     @Override
     public List<ForecastRunResponse> getForecastRuns(Long vendorId) {
