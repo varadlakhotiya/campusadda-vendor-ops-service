@@ -108,7 +108,13 @@ async function loadDashboardData() {
     Utils.setText("analyticsTotalOrders", analytics.totalOrders ?? 0);
     Utils.setText("grossRevenue", Utils.formatCurrency(analytics.grossRevenue ?? 0));
     Utils.setText("avgOrderValue", Utils.formatCurrency(analytics.avgOrderValue ?? 0));
-    Utils.setText("openReorderCount", (reorders || []).filter((item) => Number(item.suggestedReorderQty || 0) > 0).length);
+    Utils.setText(
+  "openReorderCount",
+  uniqueBy(
+    (reorders || []).filter((item) => Number(item.suggestedReorderQty || 0) > 0),
+    (item) => `${Number(item.inventoryItemId)}-${String(item.recommendationDate || "")}`
+  ).length
+);
 
     renderDailySales(dailySales);
     await renderForecastCards(vendorId, topItems, forecastRuns);
@@ -367,8 +373,9 @@ function renderReorders(reorders, inventoryItems) {
   const actionable = uniqueBy(
     (reorders || [])
       .filter((item) => Number(item.suggestedReorderQty || 0) > 0)
-      .sort((a, b) => Number(b.recommendationDate ? new Date(b.recommendationDate).getTime() : 0) - Number(a.recommendationDate ? new Date(a.recommendationDate).getTime() : 0))
-      .slice(0, 20),
+      .sort((a, b) =>
+        new Date(b.recommendationDate || 0) - new Date(a.recommendationDate || 0)
+      ),
     (item) => `${Number(item.inventoryItemId)}-${String(item.recommendationDate || "")}`
   ).slice(0, 8);
 
@@ -551,15 +558,14 @@ function renderActionCenter(reorders, anomalies, inventoryItems) {
   `).join("");
 }
 
-
 function renderBusinessAdvisor(analytics, reorders, anomalies) {
   const container = document.getElementById("businessAdvisorCards");
   if (!container) return;
 
   const insights = [];
 
-  if (Number(analytics.grossRevenue || 0) > 10000) {
-    insights.push("Revenue performance is healthy.");
+  if (Number(analytics.grossRevenue || 0) > 0) {
+    insights.push(`Sales in the selected range were ${Utils.formatCurrency(analytics.grossRevenue || 0)}.`);
   }
 
   const actionableReorders = uniqueBy(
