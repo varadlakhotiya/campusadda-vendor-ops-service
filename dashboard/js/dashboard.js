@@ -112,7 +112,7 @@ async function loadDashboardData() {
   "openReorderCount",
   uniqueBy(
     (reorders || []).filter((item) => Number(item.suggestedReorderQty || 0) > 0),
-    (item) => `${Number(item.inventoryItemId)}-${String(item.recommendationDate || "")}`
+    (item) => `${String(inventoryNameMap.get(Number(item.inventoryItemId)) || "").toLowerCase()}-${String(item.recommendationDate || "")}`
   ).length
 );
 
@@ -352,12 +352,12 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
       </div>
       <h4>${Utils.escapeHtml(item.itemName)}</h4>
       <div class="mini-metrics">
-        <div><span class="mini-label">Sold in range</span><strong>${Utils.formatNumber(item.quantitySold ?? 0)}</strong></div>
+        <div><span class="mini-label">Today’s pace</span><strong>${Utils.formatNumber(item.quantitySold ?? 0)}</strong></div>
         <div><span class="mini-label">Tomorrow</span><strong>${item.tomorrow == null ? "—" : Utils.formatNumber(item.tomorrow)}</strong></div>
       </div>
       <div class="mini-metrics">
         <div><span class="mini-label">Next 7 days</span><strong>${item.total7d == null ? "—" : Utils.formatNumber(item.total7d)}</strong></div>
-        <div><span class="mini-label">Action</span><strong>${Utils.escapeHtml(item.action)}</strong></div>
+        <div><span class="mini-label">Do this</span><strong>${Utils.escapeHtml(item.action)}</strong></div>
       </div>
     </div>
   `).join("");
@@ -499,14 +499,6 @@ function businessForecastAction(tomorrow, next7Days) {
   return "Monitor today";
 }
 
-function businessReorderAction(qty) {
-  const q = Number(qty || 0);
-
-  if (q >= 10) return "Buy now";
-  if (q > 0) return "Buy soon";
-  return "OK";
-}
-
 function businessSourceLabel(source) {
   return String(source || "").toUpperCase() === "SYSTEM" ? "System" : "Ops";
 }
@@ -578,9 +570,9 @@ function renderBusinessAdvisor(analytics, reorders, anomalies) {
   }
 
   const openAnomalies = uniqueBy(
-    (anomalies || []).filter((a) => String(a.status || "").toUpperCase() !== "RESOLVED"),
-    (a) => `${Number(a.menuItemId)}-${String(a.anomalyType || "")}-${String(a.anomalyDate || "")}`
-  );
+  (anomalies || []).filter((a) => String(a.status || "").toUpperCase() !== "RESOLVED"),
+  (a) => `${Number(a.menuItemId)}-${String(a.anomalyType || "")}-${String(a.anomalyDate || "")}`
+).slice(0, 6);
 
   if (openAnomalies.length) {
     insights.push(`${openAnomalies.length} unusual demand pattern(s) detected.`);
