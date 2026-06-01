@@ -189,39 +189,44 @@ function renderAlerts(alerts, reorders, anomalies, inventoryItems) {
 
   const inventoryNameMap = new Map((inventoryItems || []).map((item) => [Number(item.id), item.itemName]));
 
-  const reorderAlerts = (reorders || [])
-    .filter((rec) => Number(rec.suggestedReorderQty || 0) > 0)
-    .slice(0, 6)
-    .map((rec) => ({
-      source: "OPS",
-      alertType: "RESTOCK",
-      title: `${inventoryNameMap.get(Number(rec.inventoryItemId)) || `Inventory #${rec.inventoryItemId}`} needs restocking`,
-      status: rec.recommendationStatus || "OPEN",
-      severity: Number(rec.suggestedReorderQty || 0) >= Number(rec.reorderPointQty || 0) * 0.5 ? "HIGH" : "WARNING"
-    }));
+  const reorderAlerts = uniqueBy(
+    (reorders || []).filter((rec) => Number(rec.suggestedReorderQty || 0) > 0),
+    (rec) => `${Number(rec.inventoryItemId)}-${String(rec.recommendationDate || "")}`
+  ).slice(0, 6).map((rec) => ({
+    source: "OPS",
+    alertType: "RESTOCK",
+    title: `${inventoryNameMap.get(Number(rec.inventoryItemId)) || `Inventory #${rec.inventoryItemId}`} needs restocking`,
+    status: rec.recommendationStatus || "OPEN",
+    severity: Number(rec.suggestedReorderQty || 0) >= Number(rec.reorderPointQty || 0) * 0.5 ? "HIGH" : "WARNING"
+  }));
 
-  const anomalyAlerts = (anomalies || [])
-    .filter((item) => String(item.status || "").toUpperCase() !== "RESOLVED")
-    .slice(0, 6)
-    .map((item) => ({
-      source: "OPS",
-      alertType: item.anomalyType || "REVIEW",
-      title: `${item.menuItemName || `Item #${item.menuItemId}`} needs review`,
-      status: item.status || "OPEN",
-      severity: item.severity || "WARNING"
-    }));
+  const anomalyAlerts = uniqueBy(
+    (anomalies || []).filter((item) => String(item.status || "").toUpperCase() !== "RESOLVED"),
+    (item) => `${Number(item.menuItemId)}-${String(item.anomalyType || "")}-${String(item.anomalyDate || "")}`
+  ).slice(0, 6).map((item) => ({
+    source: "OPS",
+    alertType: item.anomalyType || "REVIEW",
+    title: `${item.menuItemName || `Item #${item.menuItemId}`} needs review`,
+    status: item.status || "OPEN",
+    severity: item.severity || "WARNING"
+  }));
 
-  const systemAlerts = (alerts || [])
-    .slice(0, 8)
-    .map((alert) => ({
-      source: "SYSTEM",
-      alertType: alert.alertType ?? "-",
-      title: alert.title ?? "-",
-      status: alert.status ?? "-",
-      severity: alert.severity ?? "-"
-    }));
+  const systemAlerts = uniqueBy(
+    alerts || [],
+    (alert) => `${String(alert.alertType || "")}-${String(alert.title || "")}-${String(alert.triggeredAt || "")}`
+  ).slice(0, 8).map((alert) => ({
+    source: "SYSTEM",
+    alertType: alert.alertType ?? "-",
+    title: alert.title ?? "-",
+    status: alert.status ?? "-",
+    severity: alert.severity ?? "-"
+  }));
 
-  const combined = [...reorderAlerts, ...anomalyAlerts, ...systemAlerts].slice(0, 8);
+  const combined = uniqueBy(
+    [...reorderAlerts, ...anomalyAlerts, ...systemAlerts],
+    (item) => `${item.source}-${item.alertType}-${item.title}`
+  ).slice(0, 8);
+
   if (meta) meta.textContent = combined.length ? `${combined.length} action alert(s)` : "Action signals";
 
   if (!combined.length) {
@@ -231,14 +236,13 @@ function renderAlerts(alerts, reorders, anomalies, inventoryItems) {
 
   body.innerHTML = combined.map((item) => `
     <tr>
-      <td><span class="pill ${item.source === "SYSTEM" ? "pill-neutral" : "pill-info"}">${businessSourceLabel(item.source)}</span></td>
+      <td><span class="pill ${item.source === "SYSTEM" ? "pill-neutral" : "pill-info"}">${item.source === "SYSTEM" ? "System" : "Ops"}</span></td>
       <td>${Utils.escapeHtml(item.alertType)}</td>
       <td>${Utils.escapeHtml(item.title)}</td>
       <td><span class="pill pill-neutral">${Utils.escapeHtml(item.status)}</span></td>
       <td><span class="pill ${severityClass(item.severity)}">${Utils.escapeHtml(item.severity)}</span></td>
     </tr>`).join("");
 }
-
 function renderDailySales(dailySales) {
   const container = document.getElementById("dailySalesChart");
   const meta = document.getElementById("dailySalesMeta");
@@ -266,18 +270,18 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
   if (!container) return;
 
   const topItemMap = new Map((topItems || []).map((item) => [Number(item.menuItemId), item]));
+
   const latestRuns = [];
-  const seen = new Set();
+  const seenMenuItems = new Set();
 
   (forecastRuns || [])
     .filter((run) => String(run.status || "").toUpperCase() === "SUCCESS")
     .sort((a, b) => new Date(b.startedAt || 0) - new Date(a.startedAt || 0))
     .forEach((run) => {
       const menuItemId = Number(run.menuItemId);
-      if (!seen.has(menuItemId)) {
-        seen.add(menuItemId);
-        latestRuns.push(run);
-      }
+      if (seenMenuItems.has(menuItemId)) return;
+      seenMenuItems.add(menuItemId);
+      latestRuns.push(run);
     });
 
   const prioritized = latestRuns
@@ -285,11 +289,13 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
       const aTop = topItemMap.has(Number(a.menuItemId)) ? 1 : 0;
       const bTop = topItemMap.has(Number(b.menuItemId)) ? 1 : 0;
       if (aTop !== bTop) return bTop - aTop;
-      return Number(topItemMap.get(Number(b.menuItemId))?.quantitySold || 0) - Number(topItemMap.get(Number(a.menuItemId))?.quantitySold || 0);
+      return Number(topItemMap.get(Number(b.menuItemId))?.quantitySold || 0) -
+             Number(topItemMap.get(Number(a.menuItemId))?.quantitySold || 0);
     })
     .slice(0, 6);
 
   if (meta) meta.textContent = prioritized.length ? `${prioritized.length} item(s) to prepare for` : "Sales guidance";
+
   if (!prioritized.length) {
     container.innerHTML = `<div class="empty-state">No sales guidance available for this vendor.</div>`;
     return;
@@ -300,23 +306,31 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
       try {
         const response = await Api.get(`/vendors/${vendorId}/forecast-runs/${run.id}/values`);
         const values = response.data || [];
-        const next7Days = values.reduce((sum, point) => sum + Number(point.predictedQuantity || 0), 0);
+
+        const total7d = values.reduce((sum, point) => sum + Number(point.predictedQuantity || 0), 0);
         const tomorrow = Number(values[0]?.predictedQuantity || 0);
         const top = topItemMap.get(Number(run.menuItemId));
+
+        const action =
+          tomorrow >= 2 || total7d >= 10
+            ? "Prepare more today"
+            : total7d <= 3
+              ? "Reduce prep"
+              : "Monitor today";
 
         return {
           itemName: top?.itemName || `Menu Item #${run.menuItemId}`,
           quantitySold: Number(top?.quantitySold || 0),
-          next7Days,
+          total7d,
           tomorrow,
-          action: businessForecastAction(tomorrow, next7Days)
+          action
         };
       } catch (_) {
         const top = topItemMap.get(Number(run.menuItemId));
         return {
           itemName: top?.itemName || `Menu Item #${run.menuItemId}`,
           quantitySold: Number(top?.quantitySold || 0),
-          next7Days: null,
+          total7d: null,
           tomorrow: null,
           action: "Monitor today"
         };
@@ -332,24 +346,12 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
       </div>
       <h4>${Utils.escapeHtml(item.itemName)}</h4>
       <div class="mini-metrics">
-        <div>
-          <span class="mini-label">Sold in range</span>
-          <strong>${Utils.formatNumber(item.quantitySold ?? 0)}</strong>
-        </div>
-        <div>
-          <span class="mini-label">Tomorrow</span>
-          <strong>${item.tomorrow == null ? "—" : Utils.formatNumber(item.tomorrow)}</strong>
-        </div>
+        <div><span class="mini-label">Sold in range</span><strong>${Utils.formatNumber(item.quantitySold ?? 0)}</strong></div>
+        <div><span class="mini-label">Tomorrow</span><strong>${item.tomorrow == null ? "—" : Utils.formatNumber(item.tomorrow)}</strong></div>
       </div>
       <div class="mini-metrics">
-        <div>
-          <span class="mini-label">Next 7 days</span>
-          <strong>${item.next7Days == null ? "—" : Utils.formatNumber(item.next7Days)}</strong>
-        </div>
-        <div>
-          <span class="mini-label">Action</span>
-          <strong>${Utils.escapeHtml(item.action)}</strong>
-        </div>
+        <div><span class="mini-label">Next 7 days</span><strong>${item.total7d == null ? "—" : Utils.formatNumber(item.total7d)}</strong></div>
+        <div><span class="mini-label">Action</span><strong>${Utils.escapeHtml(item.action)}</strong></div>
       </div>
     </div>
   `).join("");
@@ -361,20 +363,33 @@ function renderReorders(reorders, inventoryItems) {
   if (!body) return;
 
   const inventoryNameMap = new Map((inventoryItems || []).map((item) => [Number(item.id), item.itemName]));
-  const actionable = (reorders || [])
-    .filter((item) => Number(item.suggestedReorderQty || 0) > 0)
-    .sort((a, b) => Number(b.suggestedReorderQty || 0) - Number(a.suggestedReorderQty || 0))
-    .slice(0, 8);
 
-  if (meta) meta.textContent = actionable.length ? `${actionable.length} item(s) need buying` : "Stock-out risk";
+  const actionable = uniqueBy(
+    (reorders || [])
+      .filter((item) => Number(item.suggestedReorderQty || 0) > 0)
+      .sort((a, b) => Number(b.recommendationDate ? new Date(b.recommendationDate).getTime() : 0) - Number(a.recommendationDate ? new Date(a.recommendationDate).getTime() : 0))
+      .slice(0, 20),
+    (item) => `${Number(item.inventoryItemId)}-${String(item.recommendationDate || "")}`
+  ).slice(0, 8);
+
+  if (meta) meta.textContent = actionable.length ? `${actionable.length} item(s) need buying today` : "Buy today";
+
   if (!actionable.length) {
     body.innerHTML = `<tr><td colspan="5">No items need buying right now</td></tr>`;
     return;
   }
 
   body.innerHTML = actionable.map((rec) => {
-    const priority = businessReorderAction(rec.suggestedReorderQty);
-    const pillClass = priority === "Buy now" ? "pill-danger" : priority === "Buy soon" ? "pill-warning" : "pill-neutral";
+    const qty = Number(rec.suggestedReorderQty || 0);
+    const priority =
+      qty >= 10 ? "Buy now" :
+      qty > 0 ? "Buy soon" :
+      "OK";
+
+    const pillClass =
+      priority === "Buy now" ? "pill-danger" :
+      priority === "Buy soon" ? "pill-warning" :
+      "pill-neutral";
 
     return `
       <tr>
@@ -392,11 +407,15 @@ function renderAnomalies(anomalies) {
   const meta = document.getElementById("anomalyMeta");
   if (!body) return;
 
-  const openAnomalies = (anomalies || [])
-    .filter((item) => String(item.status || "").toUpperCase() !== "RESOLVED")
-    .slice(0, 8);
+  const openAnomalies = uniqueBy(
+    (anomalies || [])
+      .filter((item) => String(item.status || "").toUpperCase() !== "RESOLVED")
+      .sort((a, b) => new Date(b.anomalyDate || 0) - new Date(a.anomalyDate || 0)),
+    (item) => `${Number(item.menuItemId)}-${String(item.anomalyType || "")}-${String(item.anomalyDate || "")}`
+  ).slice(0, 8);
 
   if (meta) meta.textContent = openAnomalies.length ? `${openAnomalies.length} item(s) need review` : "Demand risk";
+
   if (!openAnomalies.length) {
     body.innerHTML = `<tr><td colspan="5">No demand risks found</td></tr>`;
     return;
@@ -454,6 +473,16 @@ function severityClass(value) {
   return "pill-neutral";
 }
 
+function uniqueBy(list, keyFn) {
+  const seen = new Set();
+  return (list || []).filter((item) => {
+    const key = keyFn(item);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function businessForecastAction(tomorrow, next7Days) {
   const t = Number(tomorrow || 0);
   const w = Number(next7Days || 0);
@@ -483,8 +512,10 @@ function renderActionCenter(reorders, anomalies, inventoryItems) {
   const actions = [];
   const inventoryMap = new Map((inventoryItems || []).map((i) => [Number(i.id), i.itemName]));
 
-  (reorders || [])
-    .filter((r) => Number(r.suggestedReorderQty || 0) > 0)
+  uniqueBy(
+    (reorders || []).filter((r) => Number(r.suggestedReorderQty || 0) > 0),
+    (r) => `${Number(r.inventoryItemId)}-${String(r.recommendationDate || "")}`
+  )
     .slice(0, 5)
     .forEach((r) => {
       actions.push({
@@ -494,8 +525,10 @@ function renderActionCenter(reorders, anomalies, inventoryItems) {
       });
     });
 
-  (anomalies || [])
-    .filter((a) => String(a.status || "").toUpperCase() !== "RESOLVED")
+  uniqueBy(
+    (anomalies || []).filter((a) => String(a.status || "").toUpperCase() !== "RESOLVED"),
+    (a) => `${Number(a.menuItemId)}-${String(a.anomalyType || "")}-${String(a.anomalyDate || "")}`
+  )
     .slice(0, 3)
     .forEach((a) => {
       actions.push({
@@ -506,7 +539,7 @@ function renderActionCenter(reorders, anomalies, inventoryItems) {
     });
 
   if (!actions.length) {
-    container.innerHTML = `<div class="advisor-card">No urgent actions for today. Keep prep tight to reduce waste.</div>`;
+    container.innerHTML = `<div class="advisor-card">Business is operating normally.</div>`;
     return;
   }
 
@@ -524,28 +557,36 @@ function renderBusinessAdvisor(analytics, reorders, anomalies) {
   if (!container) return;
 
   const insights = [];
-  const actionableReorders = (reorders || []).filter((r) => Number(r.suggestedReorderQty || 0) > 0);
-  const openAnomalies = (anomalies || []).filter((a) => String(a.status || "").toUpperCase() !== "RESOLVED");
 
-  if (Number(analytics.grossRevenue || 0) > 0) {
-    insights.push(`Sales in the selected range were ${Utils.formatCurrency(analytics.grossRevenue || 0)}.`);
+  if (Number(analytics.grossRevenue || 0) > 10000) {
+    insights.push("Revenue performance is healthy.");
   }
+
+  const actionableReorders = uniqueBy(
+    (reorders || []).filter((r) => Number(r.suggestedReorderQty || 0) > 0),
+    (r) => `${Number(r.inventoryItemId)}-${String(r.recommendationDate || "")}`
+  );
 
   if (actionableReorders.length) {
-    insights.push(`${actionableReorders.length} item(s) need buying today to avoid stock-outs.`);
+    insights.push(`${actionableReorders.length} inventory item(s) require replenishment.`);
   }
 
+  const openAnomalies = uniqueBy(
+    (anomalies || []).filter((a) => String(a.status || "").toUpperCase() !== "RESOLVED"),
+    (a) => `${Number(a.menuItemId)}-${String(a.anomalyType || "")}-${String(a.anomalyDate || "")}`
+  );
+
   if (openAnomalies.length) {
-    insights.push(`${openAnomalies.length} item(s) need review because demand is not normal.`);
+    insights.push(`${openAnomalies.length} unusual demand pattern(s) detected.`);
   }
 
   if (!insights.length) {
-    insights.push("No urgent action required. Keep prep tight to reduce waste.");
+    insights.push("No critical business risks detected.");
   }
 
   container.innerHTML = insights.map((i) => `
     <div class="advisor-card">
-      <strong>Today</strong>
+      <strong>Recommendation</strong>
       ${Utils.escapeHtml(i)}
     </div>
   `).join("");
