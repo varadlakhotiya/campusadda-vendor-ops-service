@@ -150,6 +150,36 @@ function renderDashboardEmptyState() {
   Utils.setText("reorderMeta", "Inventory planning");
   Utils.setText("anomalyMeta", "ML scan results");
   Utils.setText("alertsMeta", "System + ML signals");
+
+  const actionCenter =
+ document.getElementById(
+   "actionCenterCards"
+ );
+
+if(actionCenter){
+ actionCenter.innerHTML =
+ `
+ <div class="empty-state">
+   No actions available.
+ </div>
+ `;
+}
+
+const advisor =
+ document.getElementById(
+   "businessAdvisorCards"
+ );
+
+if(advisor){
+ advisor.innerHTML =
+ `
+ <div class="empty-state">
+   Recommendations will appear here.
+ </div>
+ `;
+}
+
+
 }
 
 function renderAlerts(alerts, reorders, anomalies, inventoryItems) {
@@ -374,19 +404,25 @@ function renderActionCenter(
             priority:"high",
             title:"Restock Required",
             description:
-              `${inventoryMap.get(
-                 Number(r.inventoryItemId)
-              )} needs ${
+              `${
+ inventoryMap.get(
+   Number(r.inventoryItemId)
+ ) || `Inventory #${r.inventoryItemId}`
+} ${
                  r.suggestedReorderQty
               } units`
         });
       });
 
     anomalies
-      .slice(0,3)
-      .forEach(a => {
-
-        actions.push({
+    .filter(
+        a =>
+          String(a.status || "")
+          .toUpperCase() !== "RESOLVED"
+        )
+        .slice(0,3)
+        .forEach(a => {
+          actions.push({
             priority:"medium",
             title:"Demand Change",
             description:
@@ -441,17 +477,32 @@ function renderBusinessAdvisor(
         );
     }
 
-    if(reorders.length){
+    const actionableReorders =
+    reorders.filter(
+        r =>
+        Number(
+            r.suggestedReorderQty || 0
+        ) > 0
+    );
+
+if(actionableReorders.length){
         insights.push(
-          `${reorders.length}
+          `${actionableReorders.length}
           inventory item(s)
           require replenishment.`
         );
     }
 
-    if(anomalies.length){
+    const openAnomalies =
+    anomalies.filter(
+        a =>
+        String(a.status || "")
+        .toUpperCase() !== "RESOLVED"
+    );
+
+if(openAnomalies.length){
         insights.push(
-          `${anomalies.length}
+          `${openAnomalies.length}
           unusual demand pattern(s)
           detected.`
         );
