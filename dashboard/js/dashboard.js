@@ -151,7 +151,7 @@ function renderDashboardEmptyState() {
   document.getElementById("forecastCards").innerHTML = `<div class="empty-state">Sales guidance will appear here after loading data.</div>`;
   document.getElementById("dashboardReorderBody").innerHTML = `<tr><td colspan="5">No buy list to show.</td></tr>`;
   document.getElementById("dashboardAnomalyBody").innerHTML = `<tr><td colspan="5">No demand risks to show.</td></tr>`;
-  document.getElementById("recentAlertsBody").innerHTML = `<tr><td colspan="5">No action alerts to show.</td></tr>`;
+  document.getElementById("recentAlertsBody").innerHTML = `<tr><td colspan="2">No action alerts to show.</td></tr>`;
   Utils.setText("dailySalesMeta", "No data yet");
   Utils.setText("forecastMeta", "Sales guidance");
   Utils.setText("reorderMeta", "Buy list");
@@ -471,7 +471,7 @@ function renderAnomalies(anomalies) {
 <tr>
   <td>${Utils.escapeHtml(item.menuItemName ?? `Item #${item.menuItemId ?? "-"}`)}</td>
 
-  <td>${anomalyMessage(item)}</td>
+  <td>${Utils.escapeHtml(anomalyMessage(item))}</td>
 
   <td>
     <span class="pill ${severityClass(item.severity)}">
