@@ -10,7 +10,7 @@
     <aside id="sidebar" class="sidebar"></aside>
     <main class="main">
       <div class="topbar">
-        <div><div class="page-kicker">CampusAdda Vendor Ops</div><h2>Dashboard</h2><p class="page-subtitle">Monitor vendor activity, demand outlook, reorder risk, and anomaly signals from one place.</p></div>
+        <div><div class="page-kicker">CampusAdda Vendor Ops</div><h2>Dashboard</h2><p class="page-subtitle">See what to prepare, what to buy, and what to review today.</p></div>
         <div class="topbar-actions">
           <select id="rangeDaysSelect" class="compact-control">
             <option value="7">Last 7 days</option><option value="14">Last 14 days</option><option value="30" selected>Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="custom">Custom range</option>
@@ -19,8 +19,8 @@
             <input id="fromDateInput" type="date" class="compact-control"><input id="toDateInput" type="date" class="compact-control">
           </div>
           <button id="refreshDashboardBtn" class="btn-secondary" type="button">Refresh Insights</button>
-          <button id="generateRecommendationsBtn" class="btn-secondary" type="button">Generate Reorders</button>
-          <button id="scanAnomaliesBtn" class="btn-primary" type="button">Scan Anomalies</button>
+          <button id="generateRecommendationsBtn" class="btn-secondary" type="button">Refresh Buy List</button>
+          <button id="scanAnomaliesBtn" class="btn-primary" type="button">Check Demand Risks</button>
         </div>
       </div>
 
@@ -62,65 +62,111 @@
 
     <div class="card analytics-card">
   <div class="section-head">
-      <div>
-          <div class="page-kicker">AI Assistant</div>
-          <h3>What Needs Attention Today?</h3>
-      </div>
+    <div>
+      <div class="page-kicker">Today</div>
+      <h3>What should I do today?</h3>
+    </div>
   </div>
-
   <div id="actionCenterCards" class="mini-card-grid"></div>
 </div>
 
 <div class="card analytics-card">
   <div class="section-head">
-      <div>
-          <div class="page-kicker">Business Advisor</div>
-          <h3>Recommendations</h3>
-      </div>
+    <div>
+      <div class="page-kicker">Summary</div>
+      <h3>What to watch</h3>
+    </div>
   </div>
-
   <div id="businessAdvisorCards" class="mini-card-grid"></div>
 </div>
 
-    <!-- FORECAST -->
-
-    <div class="card analytics-card">
-
-        <div class="section-head">
-            <div>
-                <div class="page-kicker">Forecast</div>
-                <h3>Predicted Items</h3>
-            </div>
-
-            <span id="forecastMeta" class="subtle-badge">
-                Forecast coverage
-            </span>
-        </div>
-
-        <div id="forecastCards" class="mini-card-grid empty-state">
-            No forecast predictions available.
-        </div>
-
+<div class="card analytics-card">
+  <div class="section-head">
+    <div>
+      <div class="page-kicker">Sales Guidance</div>
+      <h3>Items to Prepare More Of</h3>
     </div>
+    <span id="forecastMeta" class="subtle-badge">Sales guidance</span>
+  </div>
+
+  <div id="forecastCards" class="mini-card-grid empty-state">
+    No sales guidance available yet.
+  </div>
+</div>
 
 </div>
 
-      <div class="analytics-grid">
-        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Operations</div><h3>Reorder Recommendations</h3></div><span id="reorderMeta" class="subtle-badge">Inventory planning</span></div>
-          <div class="table-wrapper">
-  <table><thead><tr><th>Item</th><th>Current Stock</th><th>Reorder Point</th><th>Suggested Qty</th><th>Status</th></tr></thead><tbody id="dashboardReorderBody"></tbody></table></div>
-        </div>
-        <div class="card analytics-card"><div class="section-head"><div><div class="page-kicker">Monitoring</div><h3>Anomaly Watchlist</h3></div><span id="anomalyMeta" class="subtle-badge">ML scan results</span></div>
-          <div class="table-wrapper">
-  <table><thead><tr><th>Item</th><th>Type</th><th>Observed</th><th>Expected</th><th>Severity</th></tr></thead><tbody id="dashboardAnomalyBody"></tbody></table></div>
-        </div>
-      </div>
-
       <div class="card analytics-card">
-        <div class="section-head"><div><div class="page-kicker">Alerts</div><h3>Recent Alerts</h3></div><span id="alertsMeta" class="subtle-badge">System + ML signals</span></div>
-        <div class="table-wrapper">
-  <table><thead><tr><th>Source</th><th>Type</th><th>Title</th><th>Status</th><th>Severity</th></tr></thead><tbody id="recentAlertsBody"></tbody></table></div>
-      </div>
+  <div class="section-head">
+    <div>
+      <div class="page-kicker">Stock</div>
+      <h3>Buy Today</h3>
+    </div>
+    <span id="reorderMeta" class="subtle-badge">Stock-out risk</span>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Stock on Hand</th>
+          <th>Safe Level</th>
+          <th>Buy Qty</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody id="dashboardReorderBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card analytics-card">
+  <div class="section-head">
+    <div>
+      <div class="page-kicker">Demand Risks</div>
+      <h3>Items to Review</h3>
+    </div>
+    <span id="anomalyMeta" class="subtle-badge">Demand risk</span>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Risk</th>
+          <th>Current</th>
+          <th>Normal</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody id="dashboardAnomalyBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card analytics-card">
+  <div class="section-head">
+    <div>
+      <div class="page-kicker">Alerts</div>
+      <h3>Today’s Action Alerts</h3>
+    </div>
+    <span id="alertsMeta" class="subtle-badge">Action signals</span>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Reason</th>
+          <th>What to Do</th>
+          <th>Status</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody id="recentAlertsBody"></tbody>
+    </table>
+  </div>
+</div>
 
       
 
