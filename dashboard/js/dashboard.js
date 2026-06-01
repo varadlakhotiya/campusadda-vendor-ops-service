@@ -112,7 +112,7 @@ async function loadDashboardData() {
   "openReorderCount",
   uniqueBy(
     (reorders || []).filter((item) => Number(item.suggestedReorderQty || 0) > 0),
-    (item) => `${String(inventoryNameMap.get(Number(item.inventoryItemId)) || "").toLowerCase()}-${String(item.recommendationDate || "")}`
+    (item) => `${Number(item.inventoryItemId)}-${String(item.recommendationDate || "")}`
   ).length
 );
 
