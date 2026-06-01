@@ -114,6 +114,17 @@ async function loadDashboardData() {
     await renderForecastCards(vendorId, topItems, forecastRuns);
     renderReorders(reorders, inventoryItems);
     renderAnomalies(anomalies);
+    renderActionCenter(
+    reorders,
+    anomalies,
+    inventoryItems
+);
+
+renderBusinessAdvisor(
+    analytics,
+    reorders,
+    anomalies
+);
     renderAlerts(alerts, reorders, anomalies, inventoryItems);
   } catch (err) {
     Utils.showMessage(err.message || "Failed to load dashboard data", "error");
@@ -331,4 +342,132 @@ function severityClass(value) {
   if (normalized === "WARNING" || normalized === "MEDIUM") return "pill-warning";
   if (normalized === "INFO") return "pill-info";
   return "pill-neutral";
+}
+
+
+function renderActionCenter(
+    reorders,
+    anomalies,
+    inventoryItems
+) {
+    const container =
+        document.getElementById("actionCenterCards");
+
+    if (!container) return;
+
+    const actions = [];
+
+    const inventoryMap =
+        new Map(
+            inventoryItems.map(i => [
+                Number(i.id),
+                i.itemName
+            ])
+        );
+
+    reorders
+      .filter(r => Number(r.suggestedReorderQty || 0) > 0)
+      .slice(0,5)
+      .forEach(r => {
+
+        actions.push({
+            priority:"high",
+            title:"Restock Required",
+            description:
+              `${inventoryMap.get(
+                 Number(r.inventoryItemId)
+              )} needs ${
+                 r.suggestedReorderQty
+              } units`
+        });
+      });
+
+    anomalies
+      .slice(0,3)
+      .forEach(a => {
+
+        actions.push({
+            priority:"medium",
+            title:"Demand Change",
+            description:
+              `${a.menuItemName}
+               shows unusual demand`
+        });
+      });
+
+    if (!actions.length) {
+
+        container.innerHTML =
+        `
+        <div class="advisor-card">
+            Business is operating normally.
+        </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+      actions.map(a => `
+        <div class="action-card action-priority-${a.priority}">
+            <h4>${a.title}</h4>
+            <div>${a.description}</div>
+        </div>
+      `).join("");
+}
+
+
+function renderBusinessAdvisor(
+    analytics,
+    reorders,
+    anomalies
+){
+    const container =
+      document.getElementById(
+        "businessAdvisorCards"
+      );
+
+    if(!container) return;
+
+    const insights = [];
+
+    if(
+      Number(
+        analytics.grossRevenue || 0
+      ) > 10000
+    ){
+        insights.push(
+          "Revenue performance is healthy."
+        );
+    }
+
+    if(reorders.length){
+        insights.push(
+          `${reorders.length}
+          inventory item(s)
+          require replenishment.`
+        );
+    }
+
+    if(anomalies.length){
+        insights.push(
+          `${anomalies.length}
+          unusual demand pattern(s)
+          detected.`
+        );
+    }
+
+    if(!insights.length){
+        insights.push(
+          "No critical business risks detected."
+        );
+    }
+
+    container.innerHTML =
+      insights.map(i => `
+        <div class="advisor-card">
+            <strong>Recommendation</strong>
+            ${i}
+        </div>
+      `).join("");
 }

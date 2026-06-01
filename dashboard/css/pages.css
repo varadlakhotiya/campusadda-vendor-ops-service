@@ -464,3 +464,47 @@
   .hero-card, .page-hero, .content-card, .error-card, .settings-card { padding: 18px; border-radius: 20px; }
   .panel-intro, .help-box { padding: 16px; border-radius: 18px; }
 }
+
+
+.action-card {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(217,226,241,.92);
+  background: rgba(255,255,255,.95);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.action-card h4{
+  margin:0;
+  font-size:1rem;
+}
+
+.action-priority-high{
+  border-left:5px solid #ef4444;
+}
+
+.action-priority-medium{
+  border-left:5px solid #f59e0b;
+}
+
+.action-priority-low{
+  border-left:5px solid #10b981;
+}
+
+.advisor-card{
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(
+      135deg,
+      rgba(37,99,235,.05),
+      rgba(124,58,237,.04)
+  );
+  border:1px solid rgba(37,99,235,.10);
+}
+
+.advisor-card strong{
+  display:block;
+  margin-bottom:6px;
+}
