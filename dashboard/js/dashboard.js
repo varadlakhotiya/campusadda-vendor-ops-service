@@ -90,15 +90,15 @@ async function loadDashboardData() {
         Api.get(`/vendors/${vendorId}/forecast-runs`)
       ]);
 
-    const summary = summaryResponse.data || {};
-    const analytics = analyticsResponse.data || {};
-    const dailySales = dailySalesResponse.data || [];
-    const topItems = topItemsResponse.data || [];
-    const alerts = alertsResponse.data || [];
-    const reorders = reorderResponse.data || [];
-    const anomalies = anomalyResponse.data || [];
-    const inventoryItems = inventoryResponse.data || [];
-    const forecastRuns = forecastRunsResponse.data || [];
+    const summary = unwrapObject(summaryResponse?.data);
+    const analytics = unwrapObject(analyticsResponse?.data);
+    const dailySales = unwrapList(dailySalesResponse?.data);
+    const topItems = unwrapList(topItemsResponse?.data);
+    const alerts = unwrapList(alertsResponse?.data);
+    const reorders = unwrapList(reorderResponse?.data);
+    const anomalies = unwrapList(anomalyResponse?.data);
+    const inventoryItems = unwrapList(inventoryResponse?.data);
+    const forecastRuns = unwrapList(forecastRunsResponse?.data);
 
     Utils.setText("assignedUserCount", summary.assignedUserCount ?? 0);
     Utils.setText("activeMenuItemCount", summary.activeMenuItemCount ?? 0);
@@ -349,7 +349,7 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
     prioritized.map(async (run) => {
       try {
         const response = await Api.get(`/vendors/${vendorId}/forecast-runs/${run.id}/values`);
-        const values = response.data || [];
+        const values = unwrapList(response?.data);
 
         const total7d = values.reduce((sum, point) => sum + Number(point.predictedQuantity || 0), 0);
         const tomorrow = Number(values[0]?.predictedQuantity || 0);
@@ -363,7 +363,7 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
               : "Monitor today";
 
         return {
-          itemName: top?.itemName || top?.menuItemName || top?.name || "Unknown item",
+          itemName: run.menuItemName || top?.itemName || top?.menuItemName || "Unknown item",
           quantitySold: Number(top?.quantitySold || 0),
           total7d,
           tomorrow,
@@ -372,7 +372,7 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
       } catch (_) {
         const top = topItemMap.get(Number(run.menuItemId));
         return {
-          itemName: top?.itemName || top?.menuItemName || top?.name || "Unknown item",
+          itemName: run.menuItemName || top?.itemName || top?.menuItemName || "Unknown item",
           quantitySold: Number(top?.quantitySold || 0),
           total7d: null,
           tomorrow: null,
@@ -558,6 +558,24 @@ function uniqueBy(list, keyFn) {
     seen.add(key);
     return true;
   });
+}
+
+function unwrapList(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  return [];
+}
+
+function unwrapObject(payload) {
+  if (
+    payload &&
+    typeof payload === "object" &&
+    !Array.isArray(payload) &&
+    "data" in payload
+  ) {
+    return payload.data ?? {};
+  }
+  return payload ?? {};
 }
 
 function renderActionCenter(reorders, anomalies, inventoryItems) {

@@ -114,6 +114,7 @@ public class ForecastServiceImpl implements ForecastService {
         return ForecastRunResponse.builder()
                 .id(run.getId())
                 .vendorId(vendorId)
+                .menuItemName(menuItem.getItemName())
                 .menuItemId(menuItem.getId())
                 .modelName(run.getModelName())
                 .modelVersion(run.getModelVersion())

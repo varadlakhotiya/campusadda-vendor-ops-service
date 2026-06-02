@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ForecastRunResponse {
     private Long id;
+    private String menuItemName;
     private Long vendorId;
     private Long menuItemId;
     private String modelName;

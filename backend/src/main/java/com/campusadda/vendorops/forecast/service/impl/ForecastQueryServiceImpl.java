@@ -64,6 +64,11 @@ public class ForecastQueryServiceImpl implements ForecastQueryService {
         return ForecastRunResponse.builder()
                 .id(run.getId())
                 .vendorId(run.getVendor().getId())
+                .menuItemName(
+                run.getMenuItem() != null
+                    ? run.getMenuItem().getItemName()
+                    : null
+            )
                 .menuItemId(run.getMenuItem().getId())
                 .modelName(run.getModelName())
                 .modelVersion(run.getModelVersion())
