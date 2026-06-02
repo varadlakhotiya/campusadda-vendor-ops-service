@@ -77,7 +77,11 @@ def run_training_job(cfg: dict) -> dict:
     item_panel = build_dense_item_panel(base, profiles, train_cfg)
     category_panel = build_category_panel(base, profiles)
 
-    item_xgb = train_global_xgb(item_panel[item_panel["series_type"].isin(["dense", "medium"])].copy())
+    item_xgb = train_global_xgb(
+    item_panel[
+        item_panel["series_type"] == "dense"
+    ].copy()
+)
     category_xgb = train_global_xgb(category_panel.copy())
 
     root = Path(cfg["paths"]["artifacts_root"])

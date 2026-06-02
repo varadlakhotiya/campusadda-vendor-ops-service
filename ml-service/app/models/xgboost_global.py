@@ -9,7 +9,7 @@ def train_global_xgb(df):
     X = df[features].fillna(0.0)
     y = df["quantity_sold"].astype(float).clip(lower=0.0)
     model = XGBRegressor(
-        objective="count:poisson",
+        objective="reg:squarederror",
         n_estimators=400,
         learning_rate=0.05,
         max_depth=6,
