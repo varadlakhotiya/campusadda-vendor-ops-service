@@ -6,5 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AnomalyRecordRepository extends JpaRepository<AnomalyRecord, Long> {
-    List<AnomalyRecord> findByVendor_IdOrderByAnomalyDateDesc(Long vendorId);
+    List<AnomalyRecord>
+findByVendor_IdAndStatusOrderByAnomalyDateDesc(
+        Long vendorId,
+        String status
+);
 }

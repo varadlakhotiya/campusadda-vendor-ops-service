@@ -116,7 +116,7 @@ public class ReorderRecommendationServiceImpl implements ReorderRecommendationSe
 
         mlClientService.generateReorderRecommendations(
                 MlGenerateReorderRecommendationsRequest.builder()
-                        .configPath(null)
+                        .configPath("config/ml_training_config.json")
                         .build()
         );
 

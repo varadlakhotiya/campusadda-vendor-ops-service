@@ -12,6 +12,7 @@ import com.campusadda.vendorops.vendor.validator.VendorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDate;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class AnomalyServiceImpl implements AnomalyService {
     public List<AnomalyResponse> scan(Long vendorId) {
         vendorAccessService.validateVendorAccess(vendorId);
         vendorValidator.validateVendorExists(vendorId);
-        mlClientService.generateAnomalies(MlGenerateAnomaliesRequest.builder().configPath(null).build());
+        mlClientService.generateAnomalies(MlGenerateAnomaliesRequest.builder().configPath("config/ml_training_config.json").build());
         return getAnomalies(vendorId);
     }
 
@@ -37,7 +38,12 @@ public class AnomalyServiceImpl implements AnomalyService {
     @Transactional(readOnly = true)
     public List<AnomalyResponse> getAnomalies(Long vendorId) {
         vendorAccessService.validateVendorAccess(vendorId);
-        return anomalyRecordRepository.findByVendor_IdOrderByAnomalyDateDesc(vendorId)
+        return anomalyRecordRepository
+        .findByVendor_IdAndStatusAndAnomalyDateGreaterThanEqualOrderByAnomalyDateDesc(
+                vendorId,
+                "OPEN",
+                LocalDate.now().minusDays(14)
+        )
                 .stream()
                 .map(this::map)
                 .toList();
