@@ -363,7 +363,7 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
               : "Monitor today";
 
         return {
-          itemName: top?.itemName || `Menu Item #${run.menuItemId}`,
+          itemName: top?.itemName || top?.menuItemName || top?.name || "Unknown item",
           quantitySold: Number(top?.quantitySold || 0),
           total7d,
           tomorrow,
@@ -372,7 +372,7 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
       } catch (_) {
         const top = topItemMap.get(Number(run.menuItemId));
         return {
-          itemName: top?.itemName || `Menu Item #${run.menuItemId}`,
+          itemName: top?.itemName || top?.menuItemName || top?.name || "Unknown item",
           quantitySold: Number(top?.quantitySold || 0),
           total7d: null,
           tomorrow: null,
@@ -383,12 +383,12 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
   );
 
   container.innerHTML = cards.map((item) => `
-<div class="advisor-card">
-  <strong>${Utils.escapeHtml(item.itemName)}</strong>
-  <div>${Utils.escapeHtml(item.action)}</div>
-  <small>${forecastReason(item)}</small>
-</div>
-`).join("");
+    <div class="advisor-card">
+      <strong>${Utils.escapeHtml(item.itemName)}</strong>
+      <div>${Utils.escapeHtml(item.action)}</div>
+      <small>${forecastReason(item)}</small>
+    </div>
+  `).join("");
 }
 
 function forecastReason(item){

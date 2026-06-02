@@ -29,7 +29,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(transactionManager = "mlTransactionManager")
 public class ReorderRecommendationServiceImpl implements ReorderRecommendationService {
 
     private final VendorValidator vendorValidator;
@@ -42,6 +41,7 @@ public class ReorderRecommendationServiceImpl implements ReorderRecommendationSe
     private final MlClientService mlClientService;
 
     @Override
+    @Transactional(transactionManager = "mlTransactionManager")
     public ReorderRecommendationResponse generateForInventoryItem(Long vendorId, Long inventoryItemId) {
         vendorAccessService.validateVendorAccess(vendorId);
         vendorValidator.validateVendorExists(vendorId);
@@ -137,6 +137,7 @@ public class ReorderRecommendationServiceImpl implements ReorderRecommendationSe
     }
 
     @Override
+    @Transactional(transactionManager = "mlTransactionManager")
     public ReorderRecommendationResponse updateStatus(Long vendorId, Long recommendationId, UpdateRecommendationStatusRequest request) {
         vendorAccessService.validateVendorAccess(vendorId);
         ReorderRecommendation rec = reorderRecommendationRepository.findById(recommendationId)

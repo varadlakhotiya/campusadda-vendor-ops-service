@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional("mlTransactionManager")
 public class AnomalyServiceImpl implements AnomalyService {
 
     private final VendorValidator vendorValidator;
@@ -35,21 +34,23 @@ public class AnomalyServiceImpl implements AnomalyService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "mlTransactionManager")
     public List<AnomalyResponse> getAnomalies(Long vendorId) {
         vendorAccessService.validateVendorAccess(vendorId);
-        return anomalyRecordRepository
-        .findByVendor_IdAndStatusAndAnomalyDateGreaterThanEqualOrderByAnomalyDateDesc(
-                vendorId,
-                "OPEN",
-                LocalDate.now().minusDays(14)
-        )
-                .stream()
-                .map(this::map)
-                .toList();
+        LocalDate cutoff = LocalDate.now().minusDays(90);
+return anomalyRecordRepository
+    .findByVendor_IdAndStatusAndAnomalyDateGreaterThanEqualOrderByAnomalyDateDesc(
+        vendorId,
+        "OPEN",
+        cutoff
+    )
+    .stream()
+    .map(this::map)
+    .toList();
     }
 
     @Override
+    @Transactional(transactionManager = "mlTransactionManager")
     public AnomalyResponse resolve(Long vendorId, Long anomalyId) {
         vendorAccessService.validateVendorAccess(vendorId);
         AnomalyRecord record = anomalyRecordRepository.findById(anomalyId)
