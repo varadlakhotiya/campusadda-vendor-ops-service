@@ -1,31 +1,241 @@
 {
+
+
+
+
+
+
+
   "mysql": {
+
+
+
+
+
+
+
     "host": "${MYSQL_HOST}",
+
+
+
+
+
+
+
     "port": "${MYSQL_PORT}",
+
+
+
+
+
+
+
     "user": "${MYSQL_USER}",
+
+
+
+
+
+
+
     "password": "${MYSQL_PASSWORD}",
+
+
+
+
+
+
+
     "database": "${MYSQL_DATABASE}"
+
+
+
+
+
+
+
   },
+
+
+
+
+
+
+
   "training": {
+
+
+
+
+
+
+
     "item_history_days": 110,
+
+
+
+
+
+
+
     "forecast_horizon_days": 7,
+
+
+
+
+
+
+
     "top_vendors_limit": 8,
+
+
+
+
+
+
+
     "top_items_per_vendor": 18,
+
+
+
+
+
+
+
     "dense_min_nonzero_days": 50,
+
+
+
+
+
+
+
     "dense_min_total_qty": 80,
+
+
+
+
+
+
+
     "medium_min_nonzero_days": 25,
+
+
+
+
+
+
+
     "medium_min_total_qty": 35,
+
+
+
+
+
+
+
     "validation_horizon_days": 7,
+
+
+
+
+
+
+
     "backtest_folds": 3
+
+
+
+
+
+
+
   },
+
+
+
+
+
+
+
   "paths": {
+
+
+
+
+
+
+
     "artifacts_root": "artifacts"
+
+
+
+
+
+
+
   },
+
+
+
+
+
+
+
   "reorder": {
+
+
+
+
+
+
+
     "use_upper_bound_multiplier": 1.15
+
+
+
+
+
+
+
   },
+
+
+
+
+
+
+
   "anomaly": {
+
+
+
+
+
+
+
     "spike_ratio_threshold": 1.75,
+
+
+
+
+
+
+
     "drop_ratio_threshold": 0.35
+
+
+
+
+
+
+
   }
+
+
+
+
+
+
+
 }

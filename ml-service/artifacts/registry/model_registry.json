@@ -9,8 +9,8 @@
       "category_id": 1004,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 182.4056,
-      "wmape": 66.0411
+      "smape": 28.5714,
+      "wmape": 100.0
     },
     {
       "vendor_id": 101,
@@ -18,17 +18,17 @@
       "category_id": 1002,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 181.0122,
-      "wmape": 88.1518
+      "smape": 38.0952,
+      "wmape": 100.0
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4002,
       "category_id": 1001,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 167.7763,
-      "wmape": 52.4265
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 165.5577,
+      "wmape": 157.5163
     },
     {
       "vendor_id": 101,
@@ -36,41 +36,41 @@
       "category_id": 1004,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 166.9996,
-      "wmape": 65.9535
+      "smape": 47.619,
+      "wmape": 100.0
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4001,
       "category_id": 1001,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 140.0743,
-      "wmape": 45.3117
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 150.085,
+      "wmape": 205.8824
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4007,
       "category_id": 1002,
-      "series_type": "medium",
-      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
-      "smape": 0.0,
-      "wmape": 0.0
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 109.0909,
+      "wmape": 116.6667
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4015,
       "category_id": 1003,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 184.928,
-      "wmape": 51.2608
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 126.9514,
+      "wmape": 151.4286
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4021,
       "category_id": 1004,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 145.0407,
       "wmape": 124.2424
@@ -79,52 +79,52 @@
       "vendor_id": 101,
       "menu_item_id": 4004,
       "category_id": 1001,
-      "series_type": "medium",
-      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
-      "smape": 47.619,
-      "wmape": 100.0
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 167.0847,
+      "wmape": 131.3725
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4014,
       "category_id": 1003,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 161.7156,
-      "wmape": 69.7785
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.5088,
+      "wmape": 101.9048
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4023,
       "category_id": 1004,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 177.343,
-      "wmape": 71.7952
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 103.6713,
+      "wmape": 69.697
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4012,
       "category_id": 1002,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 175.2424,
-      "wmape": 73.8742
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4013,
       "category_id": 1003,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 179.3319,
-      "wmape": 112.9418
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 116.5792,
+      "wmape": 100.0
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4003,
       "category_id": 1001,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 178.5049,
       "wmape": 110.9804
@@ -133,19 +133,19 @@
       "vendor_id": 101,
       "menu_item_id": 4005,
       "category_id": 1001,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 172.7091,
-      "wmape": 90.0469
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 146.2472,
+      "wmape": 126.1438
     },
     {
       "vendor_id": 101,
       "menu_item_id": 4011,
       "category_id": 1002,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 182.8281,
-      "wmape": 113.9695
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 76.5306,
+      "wmape": 110.0
     },
     {
       "vendor_id": 101,
@@ -160,7 +160,7 @@
       "vendor_id": 101,
       "menu_item_id": 4009,
       "category_id": 1002,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 84.7724,
       "wmape": 106.6667
@@ -170,9 +170,9 @@
       "menu_item_id": 4025,
       "category_id": 1006,
       "series_type": "medium",
-      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
-      "smape": 102.2715,
-      "wmape": 74.7748
+      "selected_model": "DIRECT_XGBOOST_GLOBAL",
+      "smape": 28.5714,
+      "wmape": 100.0
     },
     {
       "vendor_id": 102,
@@ -180,68 +180,68 @@
       "category_id": 1006,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 170.9757,
-      "wmape": 92.145
+      "smape": 66.6667,
+      "wmape": 100.0
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4039,
       "category_id": 1008,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 142.5089,
-      "wmape": 44.1967
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 120.6823,
+      "wmape": 258.5366
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4037,
       "category_id": 1008,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 177.1598,
-      "wmape": 99.667
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 73.4941,
+      "wmape": 57.3171
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4047,
       "category_id": 1009,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 163.9593,
-      "wmape": 46.8453
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 120.4482,
+      "wmape": 229.0323
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4033,
       "category_id": 1007,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 156.3836,
-      "wmape": 68.5828
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 114.2857,
+      "wmape": 0.0
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4045,
       "category_id": 1009,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 174.0597,
-      "wmape": 53.5706
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 126.9103,
+      "wmape": 125.8065
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4036,
       "category_id": 1007,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 180.106,
-      "wmape": 123.2255
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 94.3522,
+      "wmape": 225.0
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4028,
       "category_id": 1006,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 90.243,
       "wmape": 68.6486
@@ -250,10 +250,10 @@
       "vendor_id": 102,
       "menu_item_id": 4043,
       "category_id": 1009,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 172.5456,
-      "wmape": 49.4203
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 100.8168,
+      "wmape": 100.0
     },
     {
       "vendor_id": 102,
@@ -268,25 +268,25 @@
       "vendor_id": 102,
       "menu_item_id": 4029,
       "category_id": 1006,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 175.9298,
-      "wmape": 107.7194
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 134.952,
+      "wmape": 143.2432
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4031,
       "category_id": 1007,
-      "series_type": "medium",
-      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
-      "smape": 9.5238,
-      "wmape": 100.0
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 29.292,
+      "wmape": 44.2857
     },
     {
       "vendor_id": 102,
       "menu_item_id": 4041,
       "category_id": 1008,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 138.961,
       "wmape": 151.2195
@@ -331,16 +331,16 @@
       "vendor_id": 104,
       "menu_item_id": 4089,
       "category_id": 1017,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 166.7446,
-      "wmape": 69.981
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 75.0,
+      "wmape": 146.1538
     },
     {
       "vendor_id": 104,
       "menu_item_id": 4085,
       "category_id": 1017,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 85.7143,
       "wmape": 0.0
@@ -349,7 +349,7 @@
       "vendor_id": 104,
       "menu_item_id": 4081,
       "category_id": 1016,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 101.2245,
       "wmape": 92.5926
@@ -358,10 +358,10 @@
       "vendor_id": 104,
       "menu_item_id": 4086,
       "category_id": 1017,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 179.3625,
-      "wmape": 121.3551
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 61.9243,
+      "wmape": 82.0513
     },
     {
       "vendor_id": 104,
@@ -376,10 +376,10 @@
       "vendor_id": 104,
       "menu_item_id": 4098,
       "category_id": 1019,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 178.4231,
-      "wmape": 118.2333
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 69.6068,
+      "wmape": 60.8696
     },
     {
       "vendor_id": 104,
@@ -394,25 +394,25 @@
       "vendor_id": 104,
       "menu_item_id": 4094,
       "category_id": 1018,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 178.5162,
-      "wmape": 102.7765
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 94.4023,
+      "wmape": 62.5
     },
     {
       "vendor_id": 104,
       "menu_item_id": 4097,
       "category_id": 1019,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 173.0484,
-      "wmape": 101.7985
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 48.1324,
+      "wmape": 44.9275
     },
     {
       "vendor_id": 104,
       "menu_item_id": 4099,
       "category_id": 1019,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 77.3759,
       "wmape": 86.9565
@@ -493,19 +493,19 @@
       "vendor_id": 106,
       "menu_item_id": 4142,
       "category_id": 1028,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 165.3239,
-      "wmape": 62.6476
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 59.6273,
+      "wmape": 145.4545
     },
     {
       "vendor_id": 106,
       "menu_item_id": 4133,
       "category_id": 1027,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 164.8143,
-      "wmape": 58.5843
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 100.646,
+      "wmape": 102.8986
     },
     {
       "vendor_id": 106,
@@ -513,26 +513,26 @@
       "category_id": 1029,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 180.4518,
-      "wmape": 99.7896
+      "smape": 38.0952,
+      "wmape": 100.0
     },
     {
       "vendor_id": 106,
       "menu_item_id": 4151,
       "category_id": 1030,
-      "series_type": "medium",
-      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
-      "smape": 38.0952,
-      "wmape": 125.0
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 119.5342,
+      "wmape": 82.2222
     },
     {
       "vendor_id": 106,
       "menu_item_id": 4155,
       "category_id": 1030,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 182.6943,
-      "wmape": 119.3022
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 122.8213,
+      "wmape": 95.5556
     },
     {
       "vendor_id": 106,
@@ -547,10 +547,10 @@
       "vendor_id": 106,
       "menu_item_id": 4154,
       "category_id": 1030,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 170.5962,
-      "wmape": 88.179
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 105.7212,
+      "wmape": 66.6667
     },
     {
       "vendor_id": 106,
@@ -583,10 +583,10 @@
       "vendor_id": 106,
       "menu_item_id": 4146,
       "category_id": 1029,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 161.4282,
-      "wmape": 46.3738
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 87.218,
+      "wmape": 150.0
     },
     {
       "vendor_id": 106,
@@ -601,9 +601,9 @@
       "vendor_id": 106,
       "menu_item_id": 4152,
       "category_id": 1030,
-      "series_type": "medium",
-      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
-      "smape": 38.0952,
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 143.4565,
       "wmape": 133.3333
     },
     {
@@ -664,7 +664,7 @@
       "vendor_id": 107,
       "menu_item_id": 4171,
       "category_id": 1035,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 100.4329,
       "wmape": 116.0
@@ -817,25 +817,25 @@
       "vendor_id": 108,
       "menu_item_id": 4196,
       "category_id": 1040,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 184.7916,
-      "wmape": 68.0155
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 161.039,
+      "wmape": 166.6667
     },
     {
       "vendor_id": 108,
       "menu_item_id": 4205,
       "category_id": 1042,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 178.2191,
-      "wmape": 100.0581
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 200.0
     },
     {
       "vendor_id": 108,
       "menu_item_id": 4199,
       "category_id": 1041,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 9.8522,
       "wmape": 29.4118
@@ -844,10 +844,10 @@
       "vendor_id": 108,
       "menu_item_id": 4201,
       "category_id": 1041,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 180.671,
-      "wmape": 91.9959
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 29.3878,
+      "wmape": 111.7647
     },
     {
       "vendor_id": 108,
@@ -862,7 +862,7 @@
       "vendor_id": 108,
       "menu_item_id": 4193,
       "category_id": 1040,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 150.6494,
       "wmape": 138.8889
@@ -880,7 +880,7 @@
       "vendor_id": 108,
       "menu_item_id": 4194,
       "category_id": 1040,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 112.5688,
       "wmape": 88.3333
@@ -898,19 +898,19 @@
       "vendor_id": 108,
       "menu_item_id": 4197,
       "category_id": 1040,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 184.6782,
-      "wmape": 99.4457
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 155.102,
+      "wmape": 220.0
     },
     {
       "vendor_id": 108,
       "menu_item_id": 4198,
       "category_id": 1040,
-      "series_type": "medium",
-      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
-      "smape": 38.0952,
-      "wmape": 133.3333
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 147.0584,
+      "wmape": 125.9259
     },
     {
       "vendor_id": 108,
@@ -925,10 +925,10 @@
       "vendor_id": 108,
       "menu_item_id": 4189,
       "category_id": 1039,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 151.038,
-      "wmape": 66.8533
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 150.6953,
+      "wmape": 251.2195
     },
     {
       "vendor_id": 108,
@@ -981,23 +981,23 @@
       "category_id": 1053,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 164.5892,
-      "wmape": 82.4225
+      "smape": 66.6667,
+      "wmape": 100.0
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4251,
       "category_id": 1054,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 172.9443,
-      "wmape": 85.4719
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4252,
       "category_id": 1054,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 85.7143,
       "wmape": 0.0
@@ -1006,16 +1006,16 @@
       "vendor_id": 110,
       "menu_item_id": 4247,
       "category_id": 1054,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 179.317,
-      "wmape": 60.5236
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 64.4518,
+      "wmape": 115.2381
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4248,
       "category_id": 1054,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 76.1905,
       "wmape": 92.0
@@ -1024,70 +1024,70 @@
       "vendor_id": 110,
       "menu_item_id": 4243,
       "category_id": 1053,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 174.0548,
-      "wmape": 66.4376
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 60.0287,
+      "wmape": 107.8014
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4244,
       "category_id": 1053,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 167.0348,
-      "wmape": 78.9526
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 35.7631,
+      "wmape": 31.9149
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4253,
       "category_id": 1055,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 180.5529,
-      "wmape": 115.0972
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 72.437,
+      "wmape": 161.5385
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4263,
       "category_id": 1056,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 181.6017,
-      "wmape": 83.4309
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 64.7551,
+      "wmape": 55.6122
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4257,
       "category_id": 1055,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 174.754,
-      "wmape": 88.1227
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 90.3226,
+      "wmape": 269.2308
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4242,
       "category_id": 1053,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 159.2587,
-      "wmape": 80.4021
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 59.3838,
+      "wmape": 110.6383
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4264,
       "category_id": 1056,
-      "series_type": "medium",
-      "selected_model": "DIRECT_SEASONAL_NAIVE_7",
-      "smape": 60.3175,
-      "wmape": 116.6667
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 106.6345,
+      "wmape": 93.8776
     },
     {
       "vendor_id": 110,
       "menu_item_id": 4259,
       "category_id": 1056,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 119.7791,
       "wmape": 115.3061
@@ -1105,7 +1105,7 @@
       "vendor_id": 110,
       "menu_item_id": 4261,
       "category_id": 1056,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 142.8571,
       "wmape": 0.0
@@ -1123,7 +1123,7 @@
       "vendor_id": 110,
       "menu_item_id": 4246,
       "category_id": 1053,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 71.8894,
       "wmape": 93.617
@@ -1143,8 +1143,8 @@
       "category_id": 1059,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 161.6308,
-      "wmape": 55.2478
+      "smape": 57.1429,
+      "wmape": 100.0
     },
     {
       "vendor_id": 111,
@@ -1152,8 +1152,8 @@
       "category_id": 1059,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 161.489,
-      "wmape": 65.7333
+      "smape": 47.619,
+      "wmape": 100.0
     },
     {
       "vendor_id": 111,
@@ -1161,8 +1161,8 @@
       "category_id": 1059,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 175.4508,
-      "wmape": 128.9795
+      "smape": 38.0952,
+      "wmape": 100.0
     },
     {
       "vendor_id": 111,
@@ -1170,59 +1170,59 @@
       "category_id": 1058,
       "series_type": "medium",
       "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 156.3234,
-      "wmape": 55.5944
+      "smape": 57.1429,
+      "wmape": 100.0
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4272,
       "category_id": 1058,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 180.2633,
-      "wmape": 121.6849
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 71.0204,
+      "wmape": 111.5385
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4267,
       "category_id": 1057,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 170.3364,
-      "wmape": 84.1822
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 132.8571,
+      "wmape": 206.0606
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4271,
       "category_id": 1058,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 171.1386,
-      "wmape": 91.4006
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 85.7143,
+      "wmape": 0.0
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4279,
       "category_id": 1059,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 160.3431,
-      "wmape": 96.0664
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 96.1345,
+      "wmape": 162.069
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4281,
       "category_id": 1059,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 162.4612,
-      "wmape": 75.2121
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 87.9847,
+      "wmape": 90.3448
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4266,
       "category_id": 1057,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 142.8571,
       "wmape": 0.0
@@ -1231,34 +1231,34 @@
       "vendor_id": 111,
       "menu_item_id": 4265,
       "category_id": 1057,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 177.6686,
-      "wmape": 91.5873
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 100.0,
+      "wmape": 80.0
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4268,
       "category_id": 1057,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 187.792,
-      "wmape": 100.235
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 134.0659,
+      "wmape": 190.9091
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4277,
       "category_id": 1059,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 173.0491,
-      "wmape": 107.1819
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 108.1319,
+      "wmape": 196.5517
     },
     {
       "vendor_id": 111,
       "menu_item_id": 4273,
       "category_id": 1058,
-      "series_type": "medium",
+      "series_type": "sparse",
       "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
       "smape": 67.559,
       "wmape": 95.7265
@@ -1267,10 +1267,10 @@
       "vendor_id": 111,
       "menu_item_id": 4269,
       "category_id": 1057,
-      "series_type": "medium",
-      "selected_model": "DIRECT_XGBOOST_GLOBAL",
-      "smape": 184.8512,
-      "wmape": 138.2131
+      "series_type": "sparse",
+      "selected_model": "HIERARCHICAL_CATEGORY_XGBOOST",
+      "smape": 142.8571,
+      "wmape": 0.0
     },
     {
       "vendor_id": 111,

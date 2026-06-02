@@ -12,6 +12,7 @@ from app.jobs.predict_and_persist import run_predict_job
 from app.jobs.train_and_select import run_training_job
 from app.schemas import AnomalyRequest, PredictPersistRequest, ReorderRequest, TrainAndSelectRequest
 
+BASE_DIR = Path(__file__).resolve().parents[1]
 APP_DEFAULT_CONFIG = os.getenv("ML_TRAINING_CONFIG_PATH", "config/ml_training_config.json")
 
 app = FastAPI(title="CampusAdda Strong ML Service", version="3.1")
@@ -19,6 +20,8 @@ app = FastAPI(title="CampusAdda Strong ML Service", version="3.1")
 
 def _load_config(path: str | None) -> dict:
     file_path = Path(path or APP_DEFAULT_CONFIG)
+    if not file_path.is_absolute():
+        file_path = BASE_DIR / file_path
 
     content = file_path.read_text(encoding="utf-8")
 

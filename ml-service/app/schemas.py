@@ -1,20 +1,27 @@
 from __future__ import annotations
 
 from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class TrainAndSelectRequest(BaseModel):
-    config_path: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+    config_path: str | None = Field(default=None, alias="configPath")
 
 
 class PredictPersistRequest(BaseModel):
-    config_path: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+    config_path: str | None = Field(default=None, alias="configPath")
     horizon_days: int = 7
 
 
 class ReorderRequest(BaseModel):
-    config_path: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+    config_path: str | None = Field(default=None, alias="configPath")
+
 
 
 class AnomalyRequest(BaseModel):
-    config_path: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+    config_path: str | None = Field(default=None, alias="configPath")
+
