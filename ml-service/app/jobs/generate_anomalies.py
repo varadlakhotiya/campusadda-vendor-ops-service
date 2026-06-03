@@ -10,18 +10,19 @@ import pandas as pd
 from app.db import Db
 
 
-def _load_daily_history(db: Db) -> pd.DataFrame:
-    return db.read_sql(
-        """
-        SELECT vendor_id,
-               menu_item_id,
-               sales_date,
-               quantity_sold
+def _load_daily_history(db: Db, vendor_id=None) -> pd.DataFrame:
+    if vendor_id is None:
+        return db.read_sql("""
+            SELECT vendor_id, menu_item_id, sales_date, quantity_sold
+            FROM daily_item_sales
+            ORDER BY vendor_id, menu_item_id, sales_date
+        """)
+    return db.read_sql("""
+        SELECT vendor_id, menu_item_id, sales_date, quantity_sold
         FROM daily_item_sales
+        WHERE vendor_id = %s
         ORDER BY vendor_id, menu_item_id, sales_date
-        """
-    )
-
+    """, (vendor_id,))
 
 def _build_anomalies_for_group(
     vendor_id: int,
@@ -176,12 +177,11 @@ def _build_anomalies_for_group(
 
     return list(deduped.values())
 
-
-def run_anomaly_job(config: Dict[str, Any]) -> Dict[str, Any]:
+def run_anomaly_job(config: Dict[str, Any], vendor_id=None) -> Dict[str, Any]:
 
     db = Db(config)
 
-    history = _load_daily_history(db)
+    history = _load_daily_history(db, vendor_id)
 
     if history.empty:
         return {
@@ -241,13 +241,19 @@ def run_anomaly_job(config: Dict[str, Any]) -> Dict[str, Any]:
             "message": "No anomalies crossed thresholds."
         }
 
-    db.execute(
-        """
+    if vendor_id is None:
+        db.execute("""
         DELETE FROM anomaly_records
         WHERE status = 'OPEN'
         AND anomaly_date >= DATE_SUB(CURDATE(), INTERVAL 45 DAY)
-        """
-    )
+    """)
+    else:
+        db.execute("""
+        DELETE FROM anomaly_records
+        WHERE vendor_id = %s
+        AND status = 'OPEN'
+        AND anomaly_date >= DATE_SUB(CURDATE(), INTERVAL 45 DAY)
+    """, (vendor_id,))
 
     sql = """
         INSERT INTO anomaly_records

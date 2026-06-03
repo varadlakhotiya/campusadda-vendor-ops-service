@@ -13,4 +13,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MlGenerateAnomaliesRequest {
     private String configPath;
+    private Long vendorId;
 }

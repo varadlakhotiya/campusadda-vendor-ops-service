@@ -24,4 +24,5 @@ class ReorderRequest(BaseModel):
 class AnomalyRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
     config_path: str | None = Field(default=None, alias="configPath")
+    vendor_id: int | None = Field(default=None, alias="vendorId")
 

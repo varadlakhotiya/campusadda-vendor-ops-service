@@ -26,12 +26,19 @@ public class AnomalyServiceImpl implements AnomalyService {
     private final MlClientService mlClientService;
 
     @Override
-    public List<AnomalyResponse> scan(Long vendorId) {
-        vendorAccessService.validateVendorAccess(vendorId);
-        vendorValidator.validateVendorExists(vendorId);
-        mlClientService.generateAnomalies(MlGenerateAnomaliesRequest.builder().configPath("config/ml_training_config.json").build());
-        return getAnomalies(vendorId);
-    }
+public List<AnomalyResponse> scan(Long vendorId) {
+    vendorAccessService.validateVendorAccess(vendorId);
+    vendorValidator.validateVendorExists(vendorId);
+
+    mlClientService.generateAnomalies(
+        MlGenerateAnomaliesRequest.builder()
+            .configPath("config/ml_training_config.json")
+            .vendorId(vendorId)
+            .build()
+    );
+
+    return getAnomalies(vendorId);
+}
 
     @Override
     @Transactional(readOnly = true, transactionManager = "mlTransactionManager")

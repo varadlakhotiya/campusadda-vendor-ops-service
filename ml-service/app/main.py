@@ -60,7 +60,7 @@ def generate_reorder(request: ReorderRequest):
     return run_reorder_job(_load_config(request.config_path))
 
 
-@app.post("/jobs/generate-anomalies")
+@app.post("/jobs/anomalies/generate")
 @app.post("/jobs/anomalies/generate")
 def generate_anomalies(request: AnomalyRequest):
-    return run_anomaly_job(_load_config(request.config_path))
+    return run_anomaly_job(_load_config(request.config_path), request.vendor_id)
