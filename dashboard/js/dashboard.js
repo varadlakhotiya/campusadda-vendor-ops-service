@@ -355,12 +355,31 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
         const tomorrow = Number(values[0]?.predictedQuantity || 0);
         const top = topItemMap.get(Number(run.menuItemId));
 
-        const action =
-          tomorrow >= 2 || total7d >= 10
-            ? "Prepare more today"
-            : total7d <= 3
-              ? "Reduce prep"
-              : "Monitor today";
+        const historicalSales = Number(top?.quantitySold || 0);
+
+const avgDailySales =
+  historicalSales > 0
+    ? historicalSales / 30
+    : 0;
+
+const forecastDaily =
+  total7d > 0
+    ? total7d / 7
+    : 0;
+
+const growthRatio =
+  avgDailySales > 0
+    ? forecastDaily / avgDailySales
+    : 1;
+
+let action = "Monitor today";
+
+if (growthRatio >= 1.20) {
+  action = "Prepare more today";
+}
+else if (growthRatio <= 0.80) {
+  action = "Reduce prep";
+}
 
         return {
           itemName: run.menuItemName || top?.itemName || top?.menuItemName || "Unknown item",
@@ -393,15 +412,20 @@ async function renderForecastCards(vendorId, topItems, forecastRuns) {
 
 function forecastReason(item){
 
+  const forecast =
+    item.total7d != null
+      ? `${Math.round(item.total7d)} forecast sales next 7 days`
+      : "Forecast unavailable";
+
   if(item.action === "Prepare more today"){
-    return "Demand is expected to increase.";
+    return `${forecast}. Demand expected to increase.`;
   }
 
   if(item.action === "Reduce prep"){
-    return "Demand is expected to stay low.";
+    return `${forecast}. Demand expected to soften.`;
   }
 
-  return "Monitor demand today.";
+  return `${forecast}. Demand appears stable.`;
 }
 
 function renderReorders(reorders, inventoryItems) {
@@ -484,12 +508,27 @@ function renderAnomalies(anomalies) {
 
 function anomalyMessage(item){
 
+    const observed =
+      Number(item.observedValue || 0);
+
+    const expected =
+      Number(item.expectedValue || 0);
+
+    if(expected <= 0){
+        return "Demand pattern changed";
+    }
+
+    const pct =
+      Math.round(
+        ((observed - expected) / expected) * 100
+      );
+
     if(item.anomalyType === "SPIKE"){
-        return "Selling faster than usual";
+        return `Selling ${pct}% faster than normal`;
     }
 
     if(item.anomalyType === "DROP"){
-        return "Selling slower than usual";
+        return `Selling ${Math.abs(pct)}% slower than normal`;
     }
 
     return "Demand pattern changed";
@@ -624,75 +663,149 @@ function renderActionCenter(reorders, anomalies, inventoryItems) {
   `).join("");
 }
 
-function renderBusinessAdvisor(analytics, reorders, anomalies, inventoryItems) {
-  const container = document.getElementById("businessAdvisorCards");
-  if (!container) return;
+function renderBusinessAdvisor(
+  analytics,
+  reorders,
+  anomalies,
+  inventoryItems
+) {
 
-  const insights = [];
-  const inventoryMap = new Map(
-  (inventoryItems || []).map(
-    item => [Number(item.id), item.itemName]
-  )
-);
-  const actionableReorders = uniqueBy(
-    (reorders || []).filter((r) => Number(r.suggestedReorderQty || 0) > 0),
-    (r) => Number(r.inventoryItemId)
-  );
-
-  const topReorder = actionableReorders
-  .sort(
-    (a, b) =>
-      Number(b.suggestedReorderQty || 0) -
-      Number(a.suggestedReorderQty || 0)
-  )[0];
-
-if(topReorder){
-
-    const itemName =
-      inventoryMap.get(
-        Number(topReorder.inventoryItemId)
-      ) || "Inventory Item";
-
-    insights.push(
-      `Buy ${topReorder.suggestedReorderQty} units of ${itemName} today.`
+  const container =
+    document.getElementById(
+      "businessAdvisorCards"
     );
-}
 
-  const openAnomalies = uniqueBy(
-  (anomalies || []).filter((a) => String(a.status || "").toUpperCase() !== "RESOLVED"),
-  (a) => `${Number(a.menuItemId)}-${String(a.anomalyType || "")}-${String(a.anomalyDate || "")}`
-).slice(0, 6);
-
-  const topAnomaly = openAnomalies
-  .sort((a, b) => {
-    const severityRank = {
-      CRITICAL: 3,
-      HIGH: 2,
-      WARNING: 1
-    };
-
-    return (
-      (severityRank[b.severity] || 0) -
-      (severityRank[a.severity] || 0)
-    );
-  })[0];
-
-if(topAnomaly){
-    insights.push(
-      `Review demand for ${
-        topAnomaly.menuItemName || "a menu item"
-      }.`
-    );
-}
-
-  if (!insights.length) {
-    insights.push("No critical business risks detected.");
+  if(!container){
+    return;
   }
 
-  container.innerHTML = insights.map((i) => `
-    <div class="advisor-card">
-      <strong>Recommendation</strong>
-      ${Utils.escapeHtml(i)}
-    </div>
-  `).join("");
+  const recommendations = [];
+
+  const inventoryMap =
+    new Map(
+      (inventoryItems || []).map(
+        item => [
+          Number(item.id),
+          item.itemName
+        ]
+      )
+    );
+
+  const topReorder =
+    uniqueBy(
+      (reorders || [])
+        .filter(
+          r =>
+            Number(
+              r.suggestedReorderQty || 0
+            ) > 0
+        ),
+      r => Number(r.inventoryItemId)
+    )
+    .sort(
+      (a, b) =>
+        Number(
+          b.suggestedReorderQty || 0
+        ) -
+        Number(
+          a.suggestedReorderQty || 0
+        )
+    )[0];
+
+  if(topReorder){
+
+      recommendations.push({
+          priority: 1,
+          text:
+            `Buy ${
+              Utils.formatNumber(
+                topReorder.suggestedReorderQty
+              )
+            } units of ${
+              inventoryMap.get(
+                Number(
+                  topReorder.inventoryItemId
+                )
+              ) || "inventory item"
+            } today`
+      });
+  }
+
+  const topAnomaly =
+    uniqueBy(
+      (anomalies || [])
+        .filter(
+          a =>
+            String(
+              a.status || ""
+            ).toUpperCase()
+            !== "RESOLVED"
+        ),
+      a =>
+        `${a.menuItemId}-${a.anomalyType}`
+    )
+    .sort((a, b) => {
+
+      const rank = {
+        CRITICAL: 3,
+        HIGH: 2,
+        WARNING: 1
+      };
+
+      return (
+        (rank[b.severity] || 0)
+        -
+        (rank[a.severity] || 0)
+      );
+    })[0];
+
+  if(topAnomaly){
+
+      recommendations.push({
+          priority: 2,
+          text:
+            `Review demand trend for ${
+              topAnomaly.menuItemName
+            }`
+      });
+  }
+
+  if(
+    Number(
+      analytics?.grossRevenue || 0
+    ) > 0
+  ){
+      recommendations.push({
+          priority: 3,
+          text:
+            `Revenue generated: ${
+              Utils.formatCurrency(
+                analytics.grossRevenue
+              )
+            } in selected period`
+      });
+  }
+
+  if(!recommendations.length){
+
+      recommendations.push({
+          priority: 99,
+          text:
+            "No immediate action required."
+      });
+  }
+
+  container.innerHTML =
+    recommendations
+      .slice(0, 3)
+      .map(
+        r =>
+        `
+        <div class="advisor-card">
+          <strong>Recommendation</strong>
+          ${Utils.escapeHtml(r.text)}
+        </div>
+        `
+      )
+      .join("");
 }
