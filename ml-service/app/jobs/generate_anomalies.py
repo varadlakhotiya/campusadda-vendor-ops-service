@@ -79,6 +79,16 @@ def _build_anomalies_for_group(
             if pd.notna(row["baseline_mean_21"])
             else mean
         )
+        
+        # Ignore tiny-volume demand
+
+        if actual < 3 and (baseline is None or baseline < 3):
+            continue
+
+# Ignore changes smaller than 3 units
+
+        if baseline is not None and abs(actual - baseline) < 3:
+            continue
 
         if mean is None or baseline is None:
             continue
@@ -198,19 +208,19 @@ def run_anomaly_job(config: Dict[str, Any], vendor_id=None) -> Dict[str, Any]:
     )
 
     z_warn = float(
-        anomaly_cfg.get("z_warn_threshold", 1.35)
+        anomaly_cfg.get("z_warn_threshold", 2.0)
     )
 
     z_critical = float(
-        anomaly_cfg.get("z_critical_threshold", 2.10)
+        anomaly_cfg.get("z_critical_threshold", 3.0)
     )
 
     ratio_warn_up = float(
-        anomaly_cfg.get("ratio_warn_up", 2.0)
+        anomaly_cfg.get("ratio_warn_up", 3.0)
     )
 
     ratio_warn_down = float(
-        anomaly_cfg.get("ratio_warn_down", 0.45)
+        anomaly_cfg.get("ratio_warn_down", 0.25)
     )
 
     rows = []

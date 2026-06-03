@@ -374,11 +374,17 @@ const growthRatio =
 
 let action = "Monitor today";
 
-if (growthRatio >= 1.20) {
-  action = "Prepare more today";
+if (total7d <= 2) {
+    action = "Monitor today";
+}
+else if (total7d <= 5) {
+    action = "Prepare normally";
+}
+else if (growthRatio >= 1.20) {
+    action = "Prepare more today";
 }
 else if (growthRatio <= 0.80) {
-  action = "Reduce prep";
+    action = "Reduce prep";
 }
 
         return {
@@ -417,15 +423,23 @@ function forecastReason(item){
       ? `${Math.round(item.total7d)} forecast sales next 7 days`
       : "Forecast unavailable";
 
-  if(item.action === "Prepare more today"){
+  if(item.total7d <= 2){
+    return `${forecast}. Forecast volume is too low for a strong recommendation.`;
+}
+
+if(item.action === "Prepare more today"){
     return `${forecast}. Demand expected to increase.`;
-  }
+}
 
-  if(item.action === "Reduce prep"){
+if(item.action === "Reduce prep"){
     return `${forecast}. Demand expected to soften.`;
-  }
+}
 
-  return `${forecast}. Demand appears stable.`;
+if(item.action === "Prepare normally"){
+    return `${forecast}. Expected demand is moderate.`;
+}
+
+return `${forecast}. Demand appears stable.`;
 }
 
 function renderReorders(reorders, inventoryItems) {

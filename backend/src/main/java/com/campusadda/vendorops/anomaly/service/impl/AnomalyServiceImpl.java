@@ -38,7 +38,7 @@ public List<AnomalyResponse> scan(Long vendorId) {
             .build()
     );
 
-    LocalDate cutoff = LocalDate.now().minusDays(90);
+    LocalDate cutoff = LocalDate.now().minusDays(15);
     return anomalyRecordRepository
         .findByVendor_IdAndStatusAndAnomalyDateGreaterThanEqualOrderByAnomalyDateDesc(
             vendorId,
@@ -54,7 +54,7 @@ public List<AnomalyResponse> scan(Long vendorId) {
     @Transactional(readOnly = true, transactionManager = "mlTransactionManager")
     public List<AnomalyResponse> getAnomalies(Long vendorId) {
         vendorAccessService.validateVendorAccess(vendorId);
-        LocalDate cutoff = LocalDate.now().minusDays(90);
+        LocalDate cutoff = LocalDate.now().minusDays(15);
 return anomalyRecordRepository
     .findByVendor_IdAndStatusAndAnomalyDateGreaterThanEqualOrderByAnomalyDateDesc(
         vendorId,
