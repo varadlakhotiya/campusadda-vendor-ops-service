@@ -26,6 +26,7 @@ public class AnomalyServiceImpl implements AnomalyService {
     private final MlClientService mlClientService;
 
     @Override
+@Transactional(readOnly = true, transactionManager = "mlTransactionManager")
 public List<AnomalyResponse> scan(Long vendorId) {
     vendorAccessService.validateVendorAccess(vendorId);
     vendorValidator.validateVendorExists(vendorId);
@@ -37,7 +38,16 @@ public List<AnomalyResponse> scan(Long vendorId) {
             .build()
     );
 
-    return getAnomalies(vendorId);
+    LocalDate cutoff = LocalDate.now().minusDays(90);
+    return anomalyRecordRepository
+        .findByVendor_IdAndStatusAndAnomalyDateGreaterThanEqualOrderByAnomalyDateDesc(
+            vendorId,
+            "OPEN",
+            cutoff
+        )
+        .stream()
+        .map(this::map)
+        .toList();
 }
 
     @Override
